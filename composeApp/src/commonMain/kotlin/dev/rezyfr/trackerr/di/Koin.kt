@@ -1,19 +1,23 @@
 package dev.rezyfr.trackerr.di
 
-import dev.rezyfr.trackerr.screens.auth.AuthViewModel
+import dev.rezyfr.trackerr.data.di.getNetworkModule
+import dev.rezyfr.trackerr.data.di.getRepositoryModule
+import dev.rezyfr.trackerr.data.di.getServiceModule
+import dev.rezyfr.trackerr.domain.di.getUseCaseModule
+import dev.rezyfr.trackerr.presentation.di.getScreenModelModule
 import org.koin.core.context.GlobalContext.startKoin
 import org.koin.dsl.KoinAppDeclaration
-import org.koin.dsl.module
 
 fun initKoin(
     enableNetworkLogs: Boolean = false,
-    baseUrl: String,
     appDeclaration: KoinAppDeclaration = {},
 ) = startKoin {
     appDeclaration()
-    modules(getScreenModelModule())
-}
-
-fun getScreenModelModule() = module {
-    single { AuthViewModel() }
+    modules(listOf(
+        getNetworkModule(enableNetworkLogs),
+        getRepositoryModule(),
+        getServiceModule(),
+        getUseCaseModule(),
+        getScreenModelModule()
+    ))
 }

@@ -29,6 +29,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.material3)
+                implementation(compose.materialIconsExtended)
                 implementation(libs.libres)
                 implementation(libs.voyager.navigator)
                 implementation(libs.composeImageLoader)
@@ -39,6 +40,10 @@ kotlin {
                 implementation(libs.multiplatformSettings)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.mp)
+                implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.serialization)
+                implementation(libs.ktor.contentnegotiation)
+                implementation(libs.ktor.serialization.json)
             }
         }
 
@@ -112,6 +117,5 @@ tasks.getByPath("desktopProcessResources").dependsOn("libresGenerateResources")
 tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 
 buildConfig {
-  // BuildConfig configuration here.
-  // https://github.com/gmazzo/gradle-buildconfig-plugin#usage-in-kts
+    buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
 }

@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.theme
+package dev.rezyfr.trackerr.presentation.theme
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

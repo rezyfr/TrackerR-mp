@@ -4,13 +4,13 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import dev.rezyfr.trackerr.App
 import dev.rezyfr.trackerr.di.initKoin
-import dev.rezyfr.trackerr.screens.auth.AuthScreen
+import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 
 fun main() = application {
-    initKoin(baseUrl = "https://api.themoviedb.org/3/", enableNetworkLogs = true)
+    initKoin(enableNetworkLogs = true)
     Window(
         title = "TrackerR Multiplatform",
         state = rememberWindowState(width = 800.dp, height = 600.dp),
         onCloseRequest = ::exitApplication,
-    ) { AuthScreen() }
+    ) { App() }
 }

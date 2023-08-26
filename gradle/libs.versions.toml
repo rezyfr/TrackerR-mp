@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "1.9.0"
-agp = "8.1.0"
+agp = "8.0.0"
 compose = "1.4.3"
 androidx-appcompat = "1.6.1"
 androidx-activityCompose = "1.7.2"
@@ -17,12 +17,14 @@ kotlinx-serialization = "1.5.1"
 multiplatformSettings = "1.0.0"
 koin = "3.4.3"
 koin-compose-jb = "1.0.3"
+ktor-version = "2.3.2"
 
 [libraries]
 
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-activityCompose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 compose-uitooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-uitooling" }
+androidx-compose-iconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 libres = { module = "io.github.skeptick.libres:libres-compose", version.ref = "libres" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 composeImageLoader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "composeImageLoader" }
@@ -35,6 +37,10 @@ multiplatformSettings = { module = "com.russhwolf:multiplatform-settings", versi
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin" }
 koin-compose = {module = "io.insert-koin:koin-androidx-compose", version.ref = "koin"}
 koin-compose-mp = { module = "io.insert-koin:koin-compose", version.ref = "koin-compose-jb" }
+ktor-serialization = {module = "io.ktor:ktor-client-serialization", version.ref = "ktor-version"}
+ktor-serialization-json = {module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor-version"}
+ktor-contentnegotiation = {module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor-version"}
+ktor-client-logging = {module = "io.ktor:ktor-client-logging", version.ref = "ktor-version"}
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
