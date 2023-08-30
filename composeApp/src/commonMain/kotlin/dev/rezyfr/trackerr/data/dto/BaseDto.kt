@@ -5,10 +5,10 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseDto<T>(
-    @SerialName("success")
+    @SerialName("status")
     val isSuccess: Boolean,
     @SerialName("message")
     val message: String,
     @SerialName("data")
-    val data: T?
+    val data: T? = null
 )

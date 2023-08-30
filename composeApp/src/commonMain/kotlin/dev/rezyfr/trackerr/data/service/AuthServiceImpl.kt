@@ -2,6 +2,7 @@ package dev.rezyfr.trackerr.data.service
 
 import dev.rezyfr.trackerr.data.dto.BaseDto
 import dev.rezyfr.trackerr.data.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.dto.request.LoginRequest
 import dev.rezyfr.trackerr.data.dto.request.RegisterRequest
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setJsonBody
@@ -37,13 +38,12 @@ class AuthServiceImpl(
             httpClient.post {
                 url(login)
                 setJsonBody(
-                    RegisterRequest(
+                    LoginRequest(
                         email = email,
                         password = password,
-                        name = ""
                     )
                 )
-            }
+            }.body()
         }
     }
 }

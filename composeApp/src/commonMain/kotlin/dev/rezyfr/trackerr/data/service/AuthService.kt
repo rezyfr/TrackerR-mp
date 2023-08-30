@@ -1,6 +1,5 @@
 package dev.rezyfr.trackerr.data.service
 
-import dev.rezyfr.trackerr.data.dto.BaseDto
 import dev.rezyfr.trackerr.data.dto.NetworkResponse
 
 interface AuthService {

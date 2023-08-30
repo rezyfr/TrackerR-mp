@@ -23,22 +23,21 @@ fun getNetworkModule(enableNetworkLogs: Boolean) = module {
 fun createHttpClient(json: Json, enableNetworkLogs: Boolean) =
     HttpClient {
         install(HttpTimeout) {
-            requestTimeoutMillis = 10000
-            connectTimeoutMillis = 10000
-            socketTimeoutMillis = 10000
+            requestTimeoutMillis = 30000
+            connectTimeoutMillis = 30000
+            socketTimeoutMillis = 30000
         }
 
         install(HttpRequestRetry) {
             maxRetries = 3
-            retryIf { _, response -> !response.status.isSuccess() }
             retryOnExceptionIf { _, cause -> cause is HttpRequestTimeoutException }
-            delayMillis { 3000L } // retries in 3, 6, 9, etc. seconds
+            delayMillis { 3000L }
         }
         install(ContentNegotiation) {
             json(json)
         }
         install(Logging) {
-            logger = Logger.DEFAULT
+            logger = Logger.SIMPLE
             level = if (enableNetworkLogs) LogLevel.ALL else LogLevel.NONE
         }
     }
