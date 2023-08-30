@@ -1,39 +1,36 @@
 package dev.rezyfr.trackerr.presentation.screens.login
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme.colors
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import dev.rezyfr.trackerr.presentation.component.TrButton
+import dev.rezyfr.trackerr.domain.UiResult
+import dev.rezyfr.trackerr.presentation.HSpacer
+import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.TrTextField
+import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
+import dev.rezyfr.trackerr.presentation.theme.Light20
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -43,101 +40,220 @@ class LoginScreen() : Screen, KoinComponent {
         val viewModel: LoginViewModel by inject()
         val navigator = LocalNavigator.currentOrThrow
         val loginState by viewModel.uiState.collectAsState()
+
+        LifecycleEffect(
+            onStarted = {
+//                viewModel.checkUserLoggedIn()
+            }
+        )
+
+        LaunchedEffect(loginState.loginResult) {
+            if (loginState.loginResult is UiResult.Success) {
+                navigator.replaceAll(HomeScreen())
+            }
+        }
+
         LoginScreen(
             state = loginState,
             onLogin = {
-//                navigator.push(RegisterScreen())
-                viewModel.login("user2@gmail.com", "123456")
+                viewModel.login()
             },
             onChangeEmail = { viewModel.onEmailChange(it) },
             onChangePassword = { viewModel.onPasswordChange(it) },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            goToRegister = { navigator.push(RegisterScreen()) },
+            onBackPressed = { navigator.pop() }
         )
     }
-}
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginScreen(
-    state: LoginUiState,
-    onLogin: () -> Unit,
-    onChangeEmail: (String) -> Unit,
-    onChangePassword: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text(text = "Login", style = MaterialTheme.typography.titleSmall) },
-                navigationIcon = { Icon(Icons.Default.ArrowBack, null, modifier = Modifier.padding(start = 16.dp)) },
-                actions = { },
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
-        modifier = modifier
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun LoginScreen(
+        state: LoginUiState,
+        onLogin: () -> Unit,
+        onChangeEmail: (String) -> Unit,
+        onChangePassword: (String) -> Unit,
+        modifier: Modifier = Modifier,
+        goToRegister: () -> Unit,
+        onBackPressed: () -> Unit
     ) {
-        LoginContent(
-            state = state,
-            onLogin = onLogin,
-            modifier = Modifier.padding(it),
-            onChangeEmail = onChangeEmail,
-            onChangePassword = onChangePassword
-        )
+        Scaffold(
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text(text = "Login", style = MaterialTheme.typography.titleSmall) },
+                    navigationIcon = {
+                        IconButton(
+                            onClick = onBackPressed
+                        ) {
+                            Icon(
+                                Icons.Default.ArrowBack,
+                                null,
+                                modifier = Modifier.padding(start = 16.dp)
+                            )
+                        }
+                    },
+                    actions = { },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            },
+            modifier = modifier
+        ) {
+            LoginContent(
+                state = state,
+                onLogin = onLogin,
+                modifier = Modifier.padding(it),
+                onChangeEmail = onChangeEmail,
+                onChangePassword = onChangePassword,
+                goToRegister = goToRegister
+            )
+        }
     }
-}
-@Composable
-fun LoginContent(
-    state: LoginUiState,
-    onLogin: () -> Unit,
-    onChangeEmail: (String) -> Unit,
-    onChangePassword: (String) -> Unit,
-    modifier: Modifier
-) {
-    Column(modifier) {
-        Spacer(Modifier.height(36.dp))
-        LoginEmailField(
-            email = state.email,
-            onChangeEmail = { onChangeEmail(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp)
-        )
-        Spacer(Modifier.height(24.dp))
-        LoginEmailField(
-            email = state.email,
-            onChangeEmail = { onChangeEmail(it) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp)
-        )
-        Spacer(Modifier.height(40.dp))
-        LoginButton(
-            onLogin = onLogin
-        )
+    @Composable
+    fun LoginContent(
+        state: LoginUiState,
+        onLogin: () -> Unit,
+        onChangeEmail: (String) -> Unit,
+        onChangePassword: (String) -> Unit,
+        goToRegister: () -> Unit,
+        modifier: Modifier
+    ) {
+        Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+            VSpacer(36)
+            LoginEmailField(
+                email = state.email,
+                onChangeEmail = { onChangeEmail(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+            )
+            VSpacer(24)
+            LoginPasswordField(
+                password = state.password,
+                onChangePassword = { onChangePassword(it) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+            )
+            VSpacer(40)
+            LoginButton(
+                onLogin = onLogin
+            )
+            VSpacer(32)
+            NoAccountText(goToRegister = goToRegister)
+            VSpacer(16)
+            LoginStateResult(
+                state = state,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+        }
     }
-}
-@Composable
-fun LoginEmailField(
-    modifier: Modifier = Modifier,
-    onChangeEmail: (String) -> Unit = {},
-    email: String
-) {
-    TrTextField(
-        modifier = modifier,
-        value = email,
-        onValueChange = onChangeEmail,
-        placeholder = "Email"
-    )
-}
+    @Composable
+    private fun LoginStateResult(
+        state: LoginUiState,
+        modifier: Modifier = Modifier
+    ) {
+        when (state.loginResult) {
+            is UiResult.Loading -> {
+                CircularProgressIndicator(modifier = modifier)
+            }
 
-@Composable
-fun LoginButton(
-    onLogin: () -> Unit = { },
-) {
-    TrPrimaryButton(
-        onClick = onLogin,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp),
-        text = "Login"
-    )
+            is UiResult.Error -> {
+                Text(
+                    text = "${state.loginResult.exception.message}",
+                    modifier = modifier.padding(16.dp),
+                    style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.error),
+                    textAlign = TextAlign.Center
+                )
+            }
+
+            else -> Unit
+        }
+    }
+    @Composable
+    fun LoginEmailField(
+        modifier: Modifier = Modifier,
+        onChangeEmail: (String) -> Unit = {},
+        email: String
+    ) {
+        TrTextField(
+            modifier = modifier,
+            value = email,
+            onValueChange = onChangeEmail,
+            placeholder = "Email"
+        )
+    }
+    @Composable
+    fun LoginPasswordField(
+        modifier: Modifier = Modifier,
+        onChangePassword: (String) -> Unit = {},
+        password: String
+    ) {
+        var passwordVisibility: Boolean by remember { mutableStateOf(false) }
+        TrTextField(
+            modifier = modifier,
+            value = password,
+            onValueChange = onChangePassword,
+            placeholder = "Password",
+            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(
+                    onClick = {
+                        passwordVisibility = !passwordVisibility
+                    }) {
+                    Icon(
+                        imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        null
+                    )
+                }
+            }
+        )
+    }
+    @Composable
+    fun NoAccountText(
+        modifier: Modifier = Modifier,
+        goToRegister: () -> Unit = {}
+    ) {
+        val annotatedText = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = Light20)) {
+                append("Don't have an account yet? ")
+            }
+            pushStringAnnotation(
+                tag = "SignUp",
+                annotation = "SignUp"
+            )
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
+                append("Register")
+            }
+            pop()
+        }
+        ClickableText(
+            text = annotatedText,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = modifier,
+        ) { offset ->
+            annotatedText.getStringAnnotations(
+                tag = "SignUp",
+                start = offset,
+                end = offset
+            ).firstOrNull()?.let {
+                goToRegister()
+            }
+        }
+    }
+    @Composable
+    fun LoginButton(
+        onLogin: () -> Unit = { },
+    ) {
+        TrPrimaryButton(
+            onClick = onLogin,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            text = "Login"
+        )
+    }
 }

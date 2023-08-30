@@ -32,8 +32,10 @@ class LoginViewModel (
         _uiState.update { _uiState.value.copy(password = password) }
     }
 
-    fun login(email: String, password: String) {
+    fun login() {
         viewModelScope.launch {
+            _uiState.update { _uiState.value.copy(loginResult = UiResult.Loading) }
+            val (_, email, password) = _uiState.value
             loginUseCase.execute(LoginUseCase.Params(email, password)).handleResult(
                 ifError = { ex ->
                     _uiState.update { _uiState.value.copy(loginResult = UiResult.Error(ex)) }
