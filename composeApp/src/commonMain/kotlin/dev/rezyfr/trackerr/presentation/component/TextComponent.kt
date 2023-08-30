@@ -16,6 +16,15 @@ fun ButtonText(text: String) {
 }
 
 @Composable
+fun SecondaryButtonText(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.titleSmall,
+        color = MaterialTheme.colorScheme.primary
+    )
+}
+
+@Composable
 fun OutlinedButtonText(text: String) {
     Text(
         text = text,

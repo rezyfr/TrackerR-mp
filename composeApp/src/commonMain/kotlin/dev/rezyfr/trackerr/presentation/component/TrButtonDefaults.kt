@@ -40,4 +40,11 @@ object TrButtonDefaults {
         disabledContainerColor = Color.Transparent,
         disabledContentColor = MaterialTheme.colorScheme.primaryContainer,
     )
+
+    @Composable
+    fun secondaryColors() = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primaryContainer,
+        disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+        contentColor = MaterialTheme.colorScheme.primary
+    )
 }

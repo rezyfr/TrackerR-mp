@@ -68,6 +68,23 @@ fun TrPrimaryButton(
     )
 }
 
+@Composable
+fun TrSecondaryButton(
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    text: String,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    onClick: () -> Unit,
+) {
+    TrButton(
+        onClick = onClick,
+        modifier = modifier,
+        enabled = enabled,
+        colors = TrButtonDefaults.secondaryColors(),
+        text = { SecondaryButtonText(text = text) },
+        leadingIcon = leadingIcon
+    )
+}
 /**
  * TrackerR filled button with text and icon content slots.
  *

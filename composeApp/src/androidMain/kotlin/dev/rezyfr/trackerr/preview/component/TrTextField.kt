@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +24,7 @@ fun PreviewTrxTextField() {
             Spacer(modifier = Modifier.padding(8.dp))
             TrTextField(
                 placeholder = "Category",
-                trailingIcon = Icons.Outlined.Visibility
+                trailingIcon = { Icon(Icons.Outlined.Visibility, null) }
             )
             Spacer(modifier = Modifier.padding(8.dp))
             TrTextField(

@@ -9,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.rezyfr.trackerr.presentation.theme.Light20
@@ -20,9 +21,10 @@ fun TrTextField(
     value: String? = "",
     placeholder: String = "",
     onValueChange: (String) -> Unit = {},
-    trailingIcon: ImageVector? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
-) {
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    ) {
     OutlinedTextField(
         value = value.orEmpty(),
         onValueChange = onValueChange,
@@ -52,13 +54,9 @@ fun TrTextField(
             unfocusedBorderColor = MaterialTheme.colorScheme.outline
         ),
         trailingIcon = {
-            if (trailingIcon != null) {
-                Icon(
-                    trailingIcon,
-                    contentDescription = "trailing_icon"
-                )
-            }
+            trailingIcon?.invoke()
         },
-        enabled = onClick == null
+        enabled = onClick == null,
+        visualTransformation = visualTransformation
     )
 }
