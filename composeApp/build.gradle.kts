@@ -75,11 +75,11 @@ kotlin {
 
 android {
     namespace = "dev.rezyfr.trackerr"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
 
         applicationId = "dev.rezyfr.trackerr.androidApp"
         versionCode = 1
