@@ -7,6 +7,7 @@ import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.AccountModel
 import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.domain.model.IconType
+import dev.rezyfr.trackerr.domain.usecase.CreateWalletUseCase
 import dev.rezyfr.trackerr.domain.usecase.GetIconUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import io.github.aakira.napier.Napier
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class AddAccountViewModel(
-    private val getIconUseCase: GetIconUseCase
+    private val getIconUseCase: GetIconUseCase,
+    private val createWalletUseCase: CreateWalletUseCase
 ) : ScreenModel {
 
     private val job = SupervisorJob()
@@ -42,7 +44,7 @@ class AddAccountViewModel(
                     ifError = { ex ->
                         Napier.e("Error getIconUseCase: ${ex.message}")
                     },
-                    ifSuccess = {  list ->
+                    ifSuccess = { list ->
                         _uiState.update { it.copy(iconList = list) }
                     }
                 )
@@ -61,12 +63,34 @@ class AddAccountViewModel(
     fun onSelectIcon(iconId: Int) {
         _uiState.update { it.copy(icon = iconId) }
     }
+
+    fun onContinue() {
+        viewModelScope.launch {
+            val state = uiState.value
+            createWalletUseCase.executeFlow(
+                CreateWalletUseCase.Params(
+                    name = state.name,
+                    balance = state.balance.text.toInt(),
+                    icon = state.iconList.find { it.id == state.icon }!!.url
+                )
+            ).collectLatest {
+                it.handleResult(
+                    ifError = { ex ->
+                        _uiState.update { it.copy(result = UiResult.Error(ex)) }
+                    },
+                    ifSuccess = {
+                        _uiState.update { it.copy(result = UiResult.Success(Unit)) }
+                    }
+                )
+            }
+        }
+    }
 }
 
 data class AddAccountState(
     val name: String = "",
     val balance: TextFieldValue = TextFieldValue("0"),
     val icon: Int = -1,
-    val result: UiResult<AccountModel> = UiResult.Uninitialized,
+    val result: UiResult<Unit> = UiResult.Uninitialized,
     val iconList: List<IconModel> = listOf()
 )

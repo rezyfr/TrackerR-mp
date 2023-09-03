@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.rememberImagePainter
+import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.AmountTextField
@@ -54,6 +56,8 @@ import dev.rezyfr.trackerr.presentation.component.TrTextField
 import dev.rezyfr.trackerr.presentation.component.TrTopBar
 import dev.rezyfr.trackerr.presentation.component.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
+import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
+import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -65,8 +69,15 @@ class AddAccountScreen : Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel by inject<AddAccountViewModel>()
         val uiState by viewModel.uiState.collectAsState()
+
+        LaunchedEffect(uiState.result) {
+            if (uiState.result is UiResult.Success) {
+                navigator.replaceAll(HomeScreen())
+            }
+        }
+
         AddAccountScreen(
-            onContinue = { },
+            onContinue = { viewModel.onContinue() },
             onChangeName = { viewModel.onChangeName(it) },
             onChangeBalance = { viewModel.onChangeBalance(it) },
             onSelectIcon = { viewModel.onSelectIcon(it) },

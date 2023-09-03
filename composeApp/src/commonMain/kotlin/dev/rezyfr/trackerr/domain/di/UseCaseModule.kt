@@ -1,5 +1,6 @@
 package dev.rezyfr.trackerr.domain.di
 
+import dev.rezyfr.trackerr.domain.usecase.CreateWalletUseCase
 import dev.rezyfr.trackerr.domain.usecase.GetIconUseCase
 import dev.rezyfr.trackerr.domain.usecase.LoginUseCase
 import dev.rezyfr.trackerr.domain.usecase.RegisterUseCase
@@ -12,4 +13,7 @@ fun getUseCaseModule() = module {
 
     // Icon
     single { GetIconUseCase(get()) }
+
+    // Wallet
+     single { CreateWalletUseCase(get()) }
 }
