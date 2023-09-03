@@ -1,9 +1,9 @@
 package dev.rezyfr.trackerr.data.di
 
-import dev.rezyfr.trackerr.data.service.AuthService
-import dev.rezyfr.trackerr.data.service.AuthServiceImpl
-import dev.rezyfr.trackerr.data.service.IconService
-import dev.rezyfr.trackerr.data.service.IconServiceImpl
+import dev.rezyfr.trackerr.data.remote.service.AuthService
+import dev.rezyfr.trackerr.data.remote.service.AuthServiceImpl
+import dev.rezyfr.trackerr.data.remote.service.IconService
+import dev.rezyfr.trackerr.data.remote.service.IconServiceImpl
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

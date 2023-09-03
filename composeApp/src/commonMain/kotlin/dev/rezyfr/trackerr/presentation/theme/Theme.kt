@@ -59,47 +59,47 @@ private val LightDefaultColorScheme = lightColorScheme(
 
 val MainTypography = Typography(
     headlineLarge = TextStyle(
-        fontWeight = FontWeight.W700,
+        fontWeight = FontWeight.Bold,
         fontSize = 64.sp,
         lineHeight = 80.sp,
     ),
     titleLarge = TextStyle(
-        fontWeight = FontWeight.W700,
+        fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 34.sp
     ),
     titleMedium = TextStyle(
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
         lineHeight = 22.sp,
     ),
     titleSmall = TextStyle(
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
         lineHeight = 22.sp,
     ),
     bodyLarge = TextStyle(
-        fontWeight = FontWeight.W600,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),
     bodyMedium = TextStyle(
-        fontWeight = FontWeight.W500,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),
     bodySmall = TextStyle(
-        fontWeight = FontWeight.W500,
+        fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 18.sp,
     ),
     labelMedium = TextStyle(
-        fontWeight = FontWeight.W500,
+        fontWeight = FontWeight.Medium,
         fontSize = 13.sp,
         lineHeight = 16.sp,
     ),
     labelSmall = TextStyle(
-        fontWeight = FontWeight.W500,
+        fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         lineHeight = 12.sp
     )

@@ -26,9 +26,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.VSpacer
+import dev.rezyfr.trackerr.presentation.component.ButtonText
 import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.TrTextField
+import dev.rezyfr.trackerr.presentation.component.TrTopBar
 import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
+import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
 import org.koin.core.component.KoinComponent
@@ -49,7 +52,7 @@ class LoginScreen() : Screen, KoinComponent {
 
         LaunchedEffect(loginState.loginResult) {
             if (loginState.loginResult is UiResult.Success) {
-                navigator.replaceAll(HomeScreen())
+                navigator.replaceAll(OnboardingScreen())
             }
         }
 
@@ -78,22 +81,7 @@ class LoginScreen() : Screen, KoinComponent {
     ) {
         Scaffold(
             topBar = {
-                CenterAlignedTopAppBar(
-                    title = { Text(text = "Login", style = MaterialTheme.typography.titleSmall) },
-                    navigationIcon = {
-                        IconButton(
-                            onClick = onBackPressed
-                        ) {
-                            Icon(
-                                Icons.Default.ArrowBack,
-                                null,
-                                modifier = Modifier.padding(start = 16.dp)
-                            )
-                        }
-                    },
-                    actions = { },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                TrTopBar(text = "Login", onBackPressed = onBackPressed)
             },
             modifier = modifier
         ) {
@@ -253,7 +241,7 @@ class LoginScreen() : Screen, KoinComponent {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp),
-            text = "Login"
+            text = { ButtonText(text = "Login") }
         )
     }
 }

@@ -1,7 +1,7 @@
 package dev.rezyfr.trackerr.data.util
 
-import dev.rezyfr.trackerr.data.dto.BaseDto
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.remote.dto.BaseDto
+import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
 import io.ktor.client.request.*
@@ -12,7 +12,7 @@ suspend inline fun <reified T> execute(
     block: () -> HttpResponse
 ): NetworkResponse<T> {
     val result = block()
-    return if (result.status.isSuccess()) NetworkResponse.Success(result.body())
+    return if (result.status.isSuccess()) NetworkResponse.Success((result.body() as BaseDto<T>).data ?: Unit as T)
     else NetworkResponse.Failure(Exception((result.body() as BaseDto<Unit>).message))
 }
 

@@ -23,6 +23,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.Res.image
 import dev.rezyfr.trackerr.presentation.VSpacer
+import dev.rezyfr.trackerr.presentation.component.ButtonText
 import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.TrSecondaryButton
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
@@ -74,7 +75,7 @@ class StartScreen : Screen {
         goToRegister: () -> Unit
     ) {
         TrPrimaryButton(
-            text = "Sign Up",
+            text = { ButtonText("Sign Up") },
             onClick = goToRegister,
             modifier = Modifier.fillMaxWidth()
         )

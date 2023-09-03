@@ -1,9 +1,9 @@
 package dev.rezyfr.trackerr.data.repository
 
 
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
-import dev.rezyfr.trackerr.data.dto.handleResponse
-import dev.rezyfr.trackerr.data.service.AuthService
+import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.remote.dto.handleResponse
+import dev.rezyfr.trackerr.data.remote.service.AuthService
 import dev.rezyfr.trackerr.domain.repository.AuthRepository
 
 class AuthRepositoryImpl(

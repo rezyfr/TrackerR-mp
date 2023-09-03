@@ -1,14 +1,12 @@
-package dev.rezyfr.trackerr.data.dto.request
+package dev.rezyfr.trackerr.data.remote.dto.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegisterRequest(
+data class LoginRequest(
     @SerialName("email")
     val email: String,
     @SerialName("password")
-    val password: String,
-    @SerialName("name")
-    val name: String
+    val password: String
 )

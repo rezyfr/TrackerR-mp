@@ -1,9 +1,9 @@
-package dev.rezyfr.trackerr.data.service
+package dev.rezyfr.trackerr.data.remote.service
 
-import dev.rezyfr.trackerr.data.dto.BaseDto
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
-import dev.rezyfr.trackerr.data.dto.request.LoginRequest
-import dev.rezyfr.trackerr.data.dto.request.RegisterRequest
+import dev.rezyfr.trackerr.data.remote.dto.BaseDto
+import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.remote.dto.request.LoginRequest
+import dev.rezyfr.trackerr.data.remote.dto.request.RegisterRequest
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setJsonBody
 import io.ktor.client.*

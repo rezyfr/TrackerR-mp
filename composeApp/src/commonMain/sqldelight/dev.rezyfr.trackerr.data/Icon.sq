@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS IconEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    url TEXT NOT NULL,
+    type TEXT NOT NULL
+);
+
+insertIcon:
+INSERT OR REPLACE INTO IconEntity (id, url, type) VALUES (:id, :url, :type);
+
+getIconByType:
+SELECT * FROM IconEntity WHERE type = :type;

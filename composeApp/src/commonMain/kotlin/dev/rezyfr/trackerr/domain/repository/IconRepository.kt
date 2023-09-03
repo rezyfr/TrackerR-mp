@@ -1,9 +1,10 @@
 package dev.rezyfr.trackerr.domain.repository
 
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
-import dev.rezyfr.trackerr.data.dto.response.IconResponse
+import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.domain.model.IconType
+import kotlinx.coroutines.flow.Flow
 
 interface IconRepository {
-    suspend fun getIcons(type: IconType): NetworkResponse<List<IconResponse>>
+    suspend fun fetchIcon(type: IconType)
+    fun getIcons(type: IconType): Flow<List<IconModel>>
 }

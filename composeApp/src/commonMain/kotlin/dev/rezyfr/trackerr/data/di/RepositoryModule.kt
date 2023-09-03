@@ -8,5 +8,5 @@ import org.koin.dsl.module
 
 fun getRepositoryModule() = module {
     single<AuthRepository> { AuthRepositoryImpl(get()) }
-    single<IconRepository> { IconRepositoryImpl(get()) }
+    single<IconRepository> { IconRepositoryImpl(get(), get(), get()) }
 }

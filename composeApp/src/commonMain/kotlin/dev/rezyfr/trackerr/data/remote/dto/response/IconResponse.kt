@@ -1,6 +1,7 @@
-package dev.rezyfr.trackerr.data.dto.response
+package dev.rezyfr.trackerr.data.remote.dto.response
 
 import dev.rezyfr.trackerr.domain.model.IconModel
+import devrezyfrtrackerrdata.IconEntity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -10,9 +11,4 @@ data class IconResponse(
     val id: Int,
     @SerialName("url")
     val url: String,
-) {
-    fun mapToDomain() = IconModel(
-        id = id,
-        url = url,
-    )
-}
+)

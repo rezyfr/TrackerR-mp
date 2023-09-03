@@ -54,7 +54,7 @@ fun TrDangerButton(
 fun TrPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    text: String,
+    text: @Composable (() -> Unit),
     leadingIcon: @Composable (() -> Unit)? = null,
     onClick: () -> Unit,
 ) {
@@ -63,7 +63,7 @@ fun TrPrimaryButton(
         modifier = modifier,
         enabled = enabled,
         colors = TrButtonDefaults.primaryColors(),
-        text = { ButtonText(text = text) },
+        text = text,
         leadingIcon = leadingIcon
     )
 }

@@ -1,6 +1,6 @@
-package dev.rezyfr.trackerr.data.service
+package dev.rezyfr.trackerr.data.remote.service
 
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 
 interface AuthService {
     suspend fun register(email: String, password: String, name: String) : NetworkResponse<String>

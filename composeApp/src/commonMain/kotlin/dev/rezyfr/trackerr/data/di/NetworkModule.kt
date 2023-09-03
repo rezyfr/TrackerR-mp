@@ -9,6 +9,7 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 

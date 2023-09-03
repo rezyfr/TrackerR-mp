@@ -1,12 +1,13 @@
 package dev.rezyfr.trackerr.domain
 
-import dev.rezyfr.trackerr.data.dto.NetworkResponse
+import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 
 sealed class UiResult<out T> {
     data class Success<T>(val data: T) : UiResult<T>()
     data class Error(val exception: Exception) : UiResult<Nothing>()
     data object Loading : UiResult<Nothing>()
     data object Uninitialized : UiResult<Nothing>()
+
 }
 
 inline fun <reified T> handleResult(
@@ -18,6 +19,15 @@ inline fun <reified T> handleResult(
     }
 }
 
+inline fun <reified T, R> handleResult(
+    block: () -> NetworkResponse<T>,
+    map: (T) -> R
+): UiResult<R> {
+    return when (val result = block()) {
+        is NetworkResponse.Success -> UiResult.Success(result.data.let(map))
+        is NetworkResponse.Failure -> UiResult.Error(Exception(result.throwable.message))
+    }
+}
 inline fun <reified T> UiResult<T>.handleResult(
     ifError: (Exception) -> Unit,
     ifSuccess: (T) -> Unit

@@ -1,11 +1,11 @@
-package dev.rezyfr.trackerr.data.dto
+package dev.rezyfr.trackerr.data.remote.dto
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseDto<T>(
-    @SerialName("status")
+    @SerialName("success")
     val isSuccess: Boolean,
     @SerialName("message")
     val message: String,

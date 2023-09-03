@@ -7,6 +7,15 @@ plugins {
     alias(libs.plugins.libres)
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.sqldelight)
+}
+
+sqldelight {
+    databases {
+        create("Database") {
+            packageName.set("dev.rezyfr.trackerr.data.local.entity")
+        }
+    }
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -44,6 +53,8 @@ kotlin {
                 implementation(libs.ktor.serialization)
                 implementation(libs.ktor.contentnegotiation)
                 implementation(libs.ktor.serialization.json)
+                implementation(libs.sqldelight.runtime)
+                implementation(libs.sqldelight.coroutines)
             }
         }
 
@@ -60,6 +71,7 @@ kotlin {
                 implementation(libs.compose.uitooling)
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.koin.compose)
+                implementation(libs.sqldelight.android.driver)
             }
         }
 
@@ -67,6 +79,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.common)
                 implementation(compose.desktop.currentOs)
+                implementation(libs.sqldelight.sqlite.driver)
             }
         }
 
