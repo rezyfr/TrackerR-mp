@@ -1,4 +1,4 @@
-package io.rezyfr.trackerr.core.ui.component.button
+package dev.rezyfr.trackerr.presentation.component.base
 
 sealed interface TrButtonType {
     object Primary : TrButtonType

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
@@ -24,13 +23,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.UiResult
-import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.VSpacer
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
-import dev.rezyfr.trackerr.presentation.component.TrTextField
-import dev.rezyfr.trackerr.presentation.component.TrTopBar
-import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.TrTextField
+import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
@@ -201,7 +198,7 @@ class LoginScreen() : Screen, KoinComponent {
         goToRegister: () -> Unit = {}
     ) {
         val annotatedText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Light20)) {
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
                 append("Don't have an account yet? ")
             }
             pushStringAnnotation(

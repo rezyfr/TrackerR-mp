@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.component
+package dev.rezyfr.trackerr.presentation.component.base
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -32,7 +31,7 @@ fun TrTextField(
             Text(
                 text = placeholder,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Light20
+                    color = MaterialTheme.colorScheme.tertiary
                 ),
                 textAlign = TextAlign.Center
             )

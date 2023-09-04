@@ -14,8 +14,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.presentation.VSpacer
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.screens.create.account.AddAccountScreen
 
 class OnboardingScreen : Screen {

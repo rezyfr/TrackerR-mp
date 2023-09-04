@@ -23,9 +23,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.Res.image
 import dev.rezyfr.trackerr.presentation.VSpacer
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
-import dev.rezyfr.trackerr.presentation.component.TrSecondaryButton
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.TrSecondaryButton
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
@@ -189,7 +189,7 @@ class StartScreen : Screen {
                 text = description,
                 modifier = Modifier.padding(horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    color = Light20
+                    color = MaterialTheme.colorScheme.tertiary
                 ),
                 textAlign = TextAlign.Center
             )

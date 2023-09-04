@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.component
+package dev.rezyfr.trackerr.presentation.component.base
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text

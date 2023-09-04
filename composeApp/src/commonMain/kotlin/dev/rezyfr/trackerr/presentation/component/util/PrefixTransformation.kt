@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.component
+package dev.rezyfr.trackerr.presentation.component.util
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.OffsetMapping
@@ -10,6 +10,7 @@ class PrefixTransformation(private val prefix: String) : VisualTransformation {
         return prefixFilter(text, prefix)
     }
 }
+
 
 private fun prefixFilter(number: AnnotatedString, prefix: String): TransformedText {
 

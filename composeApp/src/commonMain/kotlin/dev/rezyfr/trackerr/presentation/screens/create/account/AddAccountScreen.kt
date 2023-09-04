@@ -56,11 +56,11 @@ import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.AmountTextField
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
-import dev.rezyfr.trackerr.presentation.component.TrTextField
-import dev.rezyfr.trackerr.presentation.component.TrTopBar
-import dev.rezyfr.trackerr.presentation.component.TrTopBarDefaults
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.TrTextField
+import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
+import dev.rezyfr.trackerr.presentation.component.base.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
 import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
 import kotlinx.coroutines.delay

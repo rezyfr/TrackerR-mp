@@ -5,10 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrDangerButton
-import dev.rezyfr.trackerr.presentation.component.TrOutlinedButton
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrDangerButton
+import dev.rezyfr.trackerr.presentation.component.base.TrOutlinedButton
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.theme.AppTheme
 
 

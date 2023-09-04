@@ -31,7 +31,8 @@ private val LightDefaultColorScheme = lightColorScheme(
     onBackground = Dark50,
     surface = Light100,
     onSurface = Dark50,
-    outline = Light60
+    outline = Light60,
+    tertiary = Light20
 )
 
 /**

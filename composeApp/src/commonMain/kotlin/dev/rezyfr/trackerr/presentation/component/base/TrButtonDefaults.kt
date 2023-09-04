@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.component
+package dev.rezyfr.trackerr.presentation.component.base
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ButtonDefaults

@@ -1,23 +1,18 @@
 package dev.rezyfr.trackerr.presentation.screens.register
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,10 +34,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.VSpacer
-import dev.rezyfr.trackerr.presentation.component.ButtonText
-import dev.rezyfr.trackerr.presentation.component.TrPrimaryButton
-import dev.rezyfr.trackerr.presentation.component.TrTextField
-import dev.rezyfr.trackerr.presentation.component.TrTopBar
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.TrTextField
+import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
 import org.koin.core.component.KoinComponent
@@ -194,7 +189,7 @@ class RegisterScreen() : Screen, KoinComponent {
         goToLogin: () -> Unit = {}
     ) {
         val annotatedText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = Light20)) {
+            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
                 append("Already have an account? ")
             }
             pushStringAnnotation(
