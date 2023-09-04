@@ -8,6 +8,7 @@ import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.domain.model.IconType
 import dev.rezyfr.trackerr.domain.repository.IconRepository
 import dev.rezyfr.trackerr.ioDispatcher
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -22,13 +23,13 @@ class IconRepositoryImpl(
     override suspend fun fetchIcon(type: IconType) {
         when (val response = iconService.getIcons(type)) {
             is NetworkResponse.Success -> {
-                response.data.forEach {
+                response.data.data?.forEach {
                     iconDao.insertIcon(iconMapper.mapResponseToEntity(it, type.name))
                 }
             }
 
             is NetworkResponse.Failure -> {
-                throw Exception(response.throwable.message)
+                Napier.e("Error: ${response.throwable.message}")
             }
         }
     }

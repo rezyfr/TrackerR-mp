@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,12 @@ class RegisterScreen() : Screen, KoinComponent {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: RegisterViewModel by inject()
         val registerState by viewModel.uiState.collectAsState()
+
+        LaunchedEffect(registerState.registerResult) {
+            if (registerState.registerResult is UiResult.Success) {
+                navigator.replaceAll(LoginScreen())
+            }
+        }
 
         RegisterScreen(
             state = registerState,
@@ -165,7 +172,7 @@ class RegisterScreen() : Screen, KoinComponent {
 
     @Composable
     fun SignUpButton(
-        registerResult: UiResult<String>,
+        registerResult: UiResult<Unit>,
         onClick: () -> Unit = { },
     ) {
         TrPrimaryButton(

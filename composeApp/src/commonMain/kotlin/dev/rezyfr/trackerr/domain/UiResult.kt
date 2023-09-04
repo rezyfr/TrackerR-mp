@@ -12,21 +12,12 @@ sealed class UiResult<out T> {
 
 }
 
-inline fun <reified T> handleResult(
-    block: () -> NetworkResponse<T>
-): UiResult<T> {
-    return when (val result = block()) {
-        is NetworkResponse.Success -> UiResult.Success(result.data)
-        is NetworkResponse.Failure -> UiResult.Error(Exception(result.throwable.message))
-    }
-}
-
-inline fun <reified T, R> handleResult(
-    block: () -> NetworkResponse<T>,
-    map: (T) -> R
+suspend fun <R, T> handleResult(
+    execute: suspend () -> NetworkResponse<T>,
+    onSuccess: (T) -> R
 ): UiResult<R> {
-    return when (val result = block()) {
-        is NetworkResponse.Success -> UiResult.Success(result.data.let(map))
+    return when (val result = execute()) {
+        is NetworkResponse.Success -> UiResult.Success(onSuccess(result.data))
         is NetworkResponse.Failure -> UiResult.Error(Exception(result.throwable.message))
     }
 }

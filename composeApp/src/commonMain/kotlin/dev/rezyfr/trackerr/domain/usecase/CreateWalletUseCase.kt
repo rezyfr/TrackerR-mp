@@ -19,7 +19,7 @@ class CreateWalletUseCase(
                     CreateWalletRequest(
                         params.name,
                         params.balance,
-                        icon = params.icon
+                        iconId = params.icon
                     )
                 )
             },
@@ -32,6 +32,6 @@ class CreateWalletUseCase(
     data class Params(
         val name: String,
         val balance: Int,
-        val icon: String
+        val icon: Int
     )
 }

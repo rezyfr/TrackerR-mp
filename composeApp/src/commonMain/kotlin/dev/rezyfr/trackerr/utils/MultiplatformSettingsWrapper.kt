@@ -1,7 +1,6 @@
 package dev.rezyfr.trackerr.utils
 
 import com.russhwolf.settings.ObservableSettings
+import org.koin.core.scope.Scope
 
-expect class MultiplatformSettingsWrapper {
-    fun createSettings(): ObservableSettings
-}
+expect fun Scope.createSettings(): ObservableSettings

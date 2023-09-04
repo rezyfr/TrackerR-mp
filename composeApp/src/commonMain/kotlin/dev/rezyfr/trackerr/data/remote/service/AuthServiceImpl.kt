@@ -6,22 +6,29 @@ import dev.rezyfr.trackerr.data.remote.dto.request.LoginRequest
 import dev.rezyfr.trackerr.data.remote.dto.request.RegisterRequest
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setJsonBody
+import dev.rezyfr.trackerr.data.util.setNoAuthHeader
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
+import io.ktor.http.isSuccess
 
 class AuthServiceImpl(
     private val httpClient: HttpClient,
     baseUrl: String
 ) : AuthService {
 
-    private val register = "$baseUrl/register"
+    private val register = "$baseUrl/user/register"
     private val login = "$baseUrl/user/login"
 
-    override suspend fun register(email: String, password: String, name: String): NetworkResponse<String> {
+    override suspend fun register(
+        email: String,
+        password: String,
+        name: String
+    ): NetworkResponse<BaseDto<String>> {
         return execute {
             httpClient.post {
                 url(register)
+                setNoAuthHeader()
                 setJsonBody(
                     RegisterRequest(
                         email = email,
@@ -33,14 +40,15 @@ class AuthServiceImpl(
         }
     }
 
-    override suspend fun login(email: String, password: String): NetworkResponse<String> {
+    override suspend fun login(email: String, password: String): NetworkResponse<BaseDto<String>> {
         return execute {
             httpClient.post {
                 url(login)
+                setNoAuthHeader()
                 setJsonBody(
                     LoginRequest(
                         email = email,
-                        password = password,
+                        password = password
                     )
                 )
             }.body()

@@ -8,5 +8,5 @@ data class CreateWalletRequest(
     val name: String,
     val balance: Int,
     val color: Int = 0,
-    val icon: String = ""
+    val iconId: Int
 )

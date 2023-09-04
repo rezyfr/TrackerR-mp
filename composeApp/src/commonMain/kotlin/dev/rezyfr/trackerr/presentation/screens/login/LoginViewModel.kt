@@ -36,7 +36,7 @@ class LoginViewModel (
         viewModelScope.launch {
             _uiState.update { _uiState.value.copy(loginResult = UiResult.Loading) }
             val (_, email, password) = _uiState.value
-            loginUseCase.execute(LoginUseCase.Params(email, password)).handleResult(
+            loginUseCase.execute(LoginUseCase.Params(email.trim(), password.trim())).handleResult(
                 ifError = { ex ->
                     _uiState.update { _uiState.value.copy(loginResult = UiResult.Error(ex)) }
                 },
@@ -49,7 +49,7 @@ class LoginViewModel (
 }
 
 data class LoginUiState (
-    val loginResult: UiResult<String> = UiResult.Uninitialized,
+    val loginResult: UiResult<Unit> = UiResult.Uninitialized,
     val email: String = "",
     val password: String = ""
 )

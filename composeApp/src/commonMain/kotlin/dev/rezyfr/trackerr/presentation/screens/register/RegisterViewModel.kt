@@ -53,7 +53,7 @@ class RegisterViewModel(
 }
 
 data class RegisterUiState (
-    val registerResult: UiResult<String> = UiResult.Uninitialized,
+    val registerResult: UiResult<Unit> = UiResult.Uninitialized,
     val email: String = "",
     val password: String = "",
     val name: String = ""

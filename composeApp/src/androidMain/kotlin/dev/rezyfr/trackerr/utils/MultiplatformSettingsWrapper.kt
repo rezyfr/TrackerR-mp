@@ -3,11 +3,11 @@ package dev.rezyfr.trackerr.utils
 import android.content.Context
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.SharedPreferencesSettings
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.scope.Scope
 
-actual class MultiplatformSettingsWrapper(private val context: Context) {
-    actual fun createSettings(): ObservableSettings {
-        val sharedPreferences =
-            context.getSharedPreferences("trackerr", Context.MODE_PRIVATE)
-        return SharedPreferencesSettings(delegate = sharedPreferences)
-    }
+actual fun Scope.createSettings(): ObservableSettings {
+    val sharedPreferences =
+        androidContext().getSharedPreferences("trackerr", Context.MODE_PRIVATE)
+    return SharedPreferencesSettings(delegate = sharedPreferences)
 }

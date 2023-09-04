@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BaseDto<T>(
-    @SerialName("success")
-    val isSuccess: Boolean,
+    @SerialName("status")
+    val status: Boolean,
     @SerialName("message")
     val message: String,
     @SerialName("data")

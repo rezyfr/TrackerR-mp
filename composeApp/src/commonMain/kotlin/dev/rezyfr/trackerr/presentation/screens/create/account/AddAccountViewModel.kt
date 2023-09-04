@@ -71,7 +71,7 @@ class AddAccountViewModel(
                 CreateWalletUseCase.Params(
                     name = state.name,
                     balance = state.balance.text.toInt(),
-                    icon = state.iconList.find { it.id == state.icon }!!.url
+                    icon = state.iconList.find { it.id == state.icon }!!.id
                 )
             ).collectLatest {
                 it.handleResult(

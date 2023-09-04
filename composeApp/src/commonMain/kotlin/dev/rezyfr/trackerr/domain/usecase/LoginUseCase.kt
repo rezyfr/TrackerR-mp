@@ -7,10 +7,15 @@ import dev.rezyfr.trackerr.domain.repository.AuthRepository
 
 class LoginUseCase(
     private val authRepository: AuthRepository
-) : UseCase<UiResult<String>, LoginUseCase.Params> {
+) : UseCase<UiResult<Unit>, LoginUseCase.Params> {
 
-    override suspend fun execute(params: Params): UiResult<String> {
-        return handleResult { authRepository.login(params.email, params.password) }
+    override suspend fun execute(params: Params): UiResult<Unit> {
+        return handleResult(
+            execute = { authRepository.login(params.email, params.password) },
+            onSuccess = {
+                authRepository.saveToken(it.data.orEmpty())
+            }
+        )
     }
 
     data class Params(

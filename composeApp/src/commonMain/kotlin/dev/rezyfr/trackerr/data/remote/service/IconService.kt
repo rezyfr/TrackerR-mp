@@ -6,5 +6,5 @@ import dev.rezyfr.trackerr.data.remote.dto.response.IconResponse
 import dev.rezyfr.trackerr.domain.model.IconType
 
 interface IconService {
-    suspend fun getIcons(type: IconType): NetworkResponse<List<IconResponse>>
+    suspend fun getIcons(type: IconType): NetworkResponse<BaseDto<List<IconResponse>>>
 }

@@ -50,6 +50,7 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.mp)
                 implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.auth)
                 implementation(libs.ktor.serialization)
                 implementation(libs.ktor.contentnegotiation)
                 implementation(libs.ktor.serialization.json)
@@ -130,5 +131,6 @@ tasks.getByPath("desktopProcessResources").dependsOn("libresGenerateResources")
 tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 
 buildConfig {
-    buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
+//    buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
+    buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/v1\"")
 }

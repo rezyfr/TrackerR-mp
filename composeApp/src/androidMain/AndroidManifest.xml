@@ -5,7 +5,8 @@
         android:name=".AndroidApp"
         android:icon="@android:drawable/ic_menu_compass"
         android:label="TrackerR Multiplatform"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+        android:usesCleartextTraffic="true">
         <activity
             android:name=".AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
