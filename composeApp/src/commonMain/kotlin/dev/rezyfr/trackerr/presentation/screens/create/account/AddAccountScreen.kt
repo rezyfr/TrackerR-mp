@@ -1,5 +1,8 @@
 package dev.rezyfr.trackerr.presentation.screens.create.account
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -38,6 +41,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -46,6 +51,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.rememberImagePainter
+import dev.rezyfr.trackerr.Res.image
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.presentation.VSpacer
@@ -57,7 +63,7 @@ import dev.rezyfr.trackerr.presentation.component.TrTopBar
 import dev.rezyfr.trackerr.presentation.component.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
 import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
-import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
+import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -70,18 +76,13 @@ class AddAccountScreen : Screen, KoinComponent {
         val viewModel by inject<AddAccountViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
-        LaunchedEffect(uiState.result) {
-            if (uiState.result is UiResult.Success) {
-                navigator.replaceAll(HomeScreen())
-            }
-        }
-
         AddAccountScreen(
             onContinue = { viewModel.onContinue() },
             onChangeName = { viewModel.onChangeName(it) },
             onChangeBalance = { viewModel.onChangeBalance(it) },
             onSelectIcon = { viewModel.onSelectIcon(it) },
             onBackPressed = { navigator.pop() },
+            onSuccess = { navigator.replaceAll(HomeScreen()) },
             state = uiState
         )
     }
@@ -94,30 +95,71 @@ class AddAccountScreen : Screen, KoinComponent {
         onChangeBalance: (TextFieldValue) -> Unit = { },
         onSelectIcon: (Int) -> Unit = { },
         onBackPressed: () -> Unit = { },
+        onSuccess: () -> Unit = { },
         state: AddAccountState
     ) {
-        Scaffold(
-            topBar = {
-                TrTopBar(
-                    text = "Add new account",
-                    onBackPressed = onBackPressed,
-                    color = TrTopBarDefaults.primaryBarColor()
-                )
-            },
-        ) {
-            Box(
-                Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary),
-                contentAlignment = Alignment.BottomCenter
+        Box(Modifier.fillMaxSize()) {
+            Scaffold(
+                topBar = {
+                    TrTopBar(
+                        text = "Add new account",
+                        onBackPressed = onBackPressed,
+                        color = TrTopBarDefaults.primaryBarColor()
+                    )
+                },
             ) {
-                AddAccountDialog(
-                    onContinue = onContinue,
-                    onChangeName = onChangeName,
-                    onChangeBalance = onChangeBalance,
-                    onSelectIcon = onSelectIcon,
-                    state = state
-                )
+                Box(
+                    Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primary),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    AddAccountDialog(
+                        onContinue = onContinue,
+                        onChangeName = onChangeName,
+                        onChangeBalance = onChangeBalance,
+                        onSelectIcon = onSelectIcon,
+                        state = state
+                    )
+                }
             }
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxSize(),
+                visible = state.result is UiResult.Success,
+                enter = slideInVertically(
+                    animationSpec = tween(1000),
+                    initialOffsetY = { fullHeight -> fullHeight }
+                ),
+            ) {
+                SuccessScreen(Modifier.fillMaxSize())
+
+                LaunchedEffect(state.result) {
+                    if (state.result is UiResult.Success){
+                        delay(3000)
+                        onSuccess()
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun SuccessScreen(modifier: Modifier = Modifier) {
+        Column(
+            modifier = modifier
+                .background(MaterialTheme.colorScheme.background),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(image.ic_success),
+                null
+            )
+            VSpacer(16)
+            Text(
+                text = "You are set!",
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
         }
     }
 
