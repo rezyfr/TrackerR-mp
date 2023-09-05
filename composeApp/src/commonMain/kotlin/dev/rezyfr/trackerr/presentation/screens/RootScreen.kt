@@ -27,7 +27,6 @@ class RootScreen : Screen {
         TabNavigator(tab = HomeTab()) { nav ->
             Scaffold(
                 bottomBar = {
-//                    var tabs by remember { listOf() }
                     RootNavBar(
                         tabs = tabs,
                         onTabSelected = { tab ->

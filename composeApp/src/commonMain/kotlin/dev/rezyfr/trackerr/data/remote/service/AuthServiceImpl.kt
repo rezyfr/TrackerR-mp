@@ -57,6 +57,6 @@ class AuthServiceImpl(
     }
 
     override suspend fun checkToken(): NetworkResponse<BaseDto<Unit>> {
-        return execute { httpClient.get { url(login) }.body() }
+        return execute { httpClient.get { url(checkToken) }.body() }
     }
 }

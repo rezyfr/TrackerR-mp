@@ -3,6 +3,7 @@ package dev.rezyfr.trackerr.presentation.screens.login
 import cafe.adriel.voyager.core.model.ScreenModel
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
+import dev.rezyfr.trackerr.domain.usecase.CheckTokenUseCase
 import dev.rezyfr.trackerr.domain.usecase.LoginUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class LoginViewModel (
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val checkTokenUseCase: CheckTokenUseCase
 ) : ScreenModel {
     private val job = SupervisorJob()
     private val coroutineContextX: CoroutineContext = job + ioDispatcher
@@ -30,6 +32,17 @@ class LoginViewModel (
 
     fun onPasswordChange(password: String) {
         _uiState.update { _uiState.value.copy(password = password) }
+    }
+
+    fun checkUserToken() {
+        viewModelScope.launch {
+            checkTokenUseCase.execute(Unit).handleResult(
+                ifSuccess = { result ->
+                    _uiState.update { _uiState.value.copy(isTokenValid = result) }
+                },
+                ifError = { /*NoOp*/ }
+            )
+        }
     }
 
     fun login() {
@@ -51,5 +64,6 @@ class LoginViewModel (
 data class LoginUiState (
     val loginResult: UiResult<Unit> = UiResult.Uninitialized,
     val email: String = "",
-    val password: String = ""
+    val password: String = "",
+    val isTokenValid: Boolean = false,
 )

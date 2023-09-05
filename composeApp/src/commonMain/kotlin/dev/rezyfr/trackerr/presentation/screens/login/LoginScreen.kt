@@ -28,6 +28,7 @@ import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
+import dev.rezyfr.trackerr.presentation.screens.RootScreen
 import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
@@ -43,11 +44,14 @@ class LoginScreen() : Screen, KoinComponent {
 
         LifecycleEffect(
             onStarted = {
-//                viewModel.checkUserLoggedIn()
+                viewModel.checkUserToken()
             }
         )
 
-        LaunchedEffect(loginState.loginResult) {
+        LaunchedEffect(loginState) {
+            if (loginState.isTokenValid) {
+                navigator.replaceAll(RootScreen())
+            }
             if (loginState.loginResult is UiResult.Success) {
                 navigator.replaceAll(OnboardingScreen())
             }

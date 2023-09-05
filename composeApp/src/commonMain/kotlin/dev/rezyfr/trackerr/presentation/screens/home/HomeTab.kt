@@ -1,12 +1,20 @@
 package dev.rezyfr.trackerr.presentation.screens.home
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -18,6 +26,8 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.rezyfr.trackerr.Res
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.presentation.component.base.TrCapsuleButton
+import dev.rezyfr.trackerr.presentation.component.base.TrSecondaryButton
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
@@ -37,7 +47,6 @@ class HomeTab : Tab, KoinComponent {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val viewModel: HomeViewModel by inject()
 
         val state by viewModel.state.collectAsState()
@@ -73,6 +82,17 @@ class HomeTab : Tab, KoinComponent {
     fun RecentTransaction(
         recent: UiResult<List<TransactionModel>>
     ) {
+        Row(
+            Modifier.fillMaxWidth().padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Recent Transaction", style = MaterialTheme.typography.titleSmall)
+            TrCapsuleButton(
+                onClick = { /*TODO*/ },
+                text = "See All"
+            )
+        }
         when (recent) {
             is UiResult.Success -> {
                 recent.data.let {

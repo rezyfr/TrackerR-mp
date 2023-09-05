@@ -31,7 +31,7 @@ fun TransactionItem(
 ) {
     Box(
         modifier = Modifier
-            .padding(16.dp)
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
             .clip(RoundedCornerShape(24.dp))
             .background(color = MaterialTheme.colorScheme.onPrimary)
             .padding(16.dp)

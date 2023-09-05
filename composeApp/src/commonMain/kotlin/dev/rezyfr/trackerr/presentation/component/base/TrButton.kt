@@ -85,6 +85,27 @@ fun TrSecondaryButton(
         leadingIcon = leadingIcon
     )
 }
+
+@Composable
+fun TrCapsuleButton(
+    text: String,
+    onClick: () -> Unit,
+) {
+    TrButton(
+        onClick = onClick,
+        text = {
+            Text(
+                text = text, style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+        colors = TrButtonDefaults.secondaryColors(),
+        padding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+        shape = RoundedCornerShape(40.dp)
+    )
+}
+
 /**
  * TrackerR filled button with text and icon content slots.
  *
@@ -102,7 +123,9 @@ fun TrButton(
     enabled: Boolean = true,
     text: @Composable () -> Unit,
     colors: ButtonColors,
-    leadingIcon: @Composable (() -> Unit)? = null
+    leadingIcon: @Composable (() -> Unit)? = null,
+    padding: PaddingValues = TrButtonDefaults.padding(),
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp)
 ) {
     Button(
         onClick = onClick,
@@ -111,10 +134,10 @@ fun TrButton(
         contentPadding = if (leadingIcon != null) {
             TrButtonDefaults.paddingWithStartIcon()
         } else {
-            TrButtonDefaults.padding()
+            padding
         },
         colors = colors,
-        shape = RoundedCornerShape(16.dp)
+        shape = shape
     ) {
         TrButtonContent(
             text = text,

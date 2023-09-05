@@ -18,7 +18,7 @@ fun getUseCaseModule() = module {
     single { GetIconUseCase(get()) }
 
     // Wallet
-     single { CreateWalletUseCase(get()) }
+    single { CreateWalletUseCase(get()) }
 
     // Transaction
     single { GetRecentTransactionUseCase(get(), get()) }

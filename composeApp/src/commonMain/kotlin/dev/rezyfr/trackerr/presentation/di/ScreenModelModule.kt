@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 
 fun getScreenModelModule() = module {
-    single { LoginViewModel(get()) }
+    single { LoginViewModel(get(), get()) }
     single { RegisterViewModel(get()) }
     single { AddAccountViewModel(get(), get()) }
 
