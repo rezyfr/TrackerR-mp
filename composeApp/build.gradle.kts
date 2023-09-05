@@ -42,6 +42,7 @@ kotlin {
                 implementation(libs.libres)
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
+                implementation(libs.voyager.tabnavigator)
                 implementation(libs.composeImageLoader)
                 implementation(libs.napier)
                 implementation(libs.kotlinx.coroutines.core)

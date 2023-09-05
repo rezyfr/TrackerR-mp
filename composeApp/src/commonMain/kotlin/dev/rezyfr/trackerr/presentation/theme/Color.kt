@@ -31,5 +31,6 @@ val GreenIcon = Color(0xff00A86B)
 val TealIcon = Color(0xff26a69a)
 val OrangeIcon = Color(0xffff5722)
 val CyanIcon = Color(0xff29b6f6)
+val Disabled = Color(0xffC6C6C6)
 
 val IconColors = listOf(BlueIcon, RedIcon, VioletIcon, YellowIcon, GreenIcon, TealIcon, OrangeIcon, CyanIcon)
