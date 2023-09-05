@@ -62,7 +62,7 @@ import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
-import dev.rezyfr.trackerr.presentation.screens.home.HomeScreen
+import dev.rezyfr.trackerr.presentation.screens.RootScreen
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -82,7 +82,7 @@ class AddAccountScreen : Screen, KoinComponent {
             onChangeBalance = { viewModel.onChangeBalance(it) },
             onSelectIcon = { viewModel.onSelectIcon(it) },
             onBackPressed = { navigator.pop() },
-            onSuccess = { navigator.replaceAll(HomeScreen()) },
+            onSuccess = { navigator.replaceAll(RootScreen()) },
             state = uiState
         )
     }

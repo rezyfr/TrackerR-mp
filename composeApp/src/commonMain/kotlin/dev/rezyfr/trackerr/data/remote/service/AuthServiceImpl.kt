@@ -19,6 +19,7 @@ class AuthServiceImpl(
 
     private val register = "$baseUrl/user/register"
     private val login = "$baseUrl/user/login"
+    private val checkToken = "$baseUrl/user/check-token"
 
     override suspend fun register(
         email: String,
@@ -53,5 +54,9 @@ class AuthServiceImpl(
                 )
             }.body()
         }
+    }
+
+    override suspend fun checkToken(): NetworkResponse<BaseDto<Unit>> {
+        return execute { httpClient.get { url(login) }.body() }
     }
 }

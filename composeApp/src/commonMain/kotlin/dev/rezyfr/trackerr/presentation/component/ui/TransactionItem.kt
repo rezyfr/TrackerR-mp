@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberImagePainter
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.presentation.HSpacer
+import dev.rezyfr.trackerr.presentation.component.util.format
+import dev.rezyfr.trackerr.presentation.component.util.toDateFormat
 
 @Composable
 fun TransactionItem(
@@ -29,8 +31,9 @@ fun TransactionItem(
 ) {
     Box(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.onPrimary)
+            .padding(16.dp)
             .clip(RoundedCornerShape(24.dp))
+            .background(color = MaterialTheme.colorScheme.onPrimary)
             .padding(16.dp)
     ) {
         Row(
@@ -62,13 +65,13 @@ fun TransactionItem(
                 horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    "- Rp${transaction.amount}",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        color = MaterialTheme.colorScheme.error
+                    transaction.amountLabel,
+                    style = MaterialTheme.typography.bodyLarge.copy(
+                        color = transaction.labelColor
                     )
                 )
                 Text(
-                    transaction.date,
+                    transaction.date.toDateFormat(newFormat = "HH:mm"),
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.tertiary)
                 )
             }

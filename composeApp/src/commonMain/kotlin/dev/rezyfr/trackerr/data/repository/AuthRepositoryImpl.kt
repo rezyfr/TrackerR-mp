@@ -24,4 +24,8 @@ class AuthRepositoryImpl(
     override fun saveToken(token: String) {
         settings.putString(SettingsConstant.KEY_TOKEN, token)
     }
+
+    override suspend fun checkToken(): NetworkResponse<BaseDto<Unit>> {
+        return authService.checkToken()
+    }
 }
