@@ -3,6 +3,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
     alias(libs.plugins.multiplatform)
     alias(libs.plugins.compose)
+    alias(libs.plugins.cocoapods)
     alias(libs.plugins.android.application)
     alias(libs.plugins.libres)
     alias(libs.plugins.buildConfig)
@@ -16,6 +17,7 @@ sqldelight {
             packageName.set("dev.rezyfr.trackerr.data.local.entity")
         }
     }
+    linkSqlite = true
 }
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
@@ -30,6 +32,22 @@ kotlin {
     }
 
     jvm("desktop")
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
+
+    cocoapods {
+        version = "1.0.0"
+        summary = "Compose application framework"
+        homepage = "empty"
+        ios.deploymentTarget = "11.0"
+        podfile = project.file("../iosApp/Podfile")
+        framework {
+            baseName = "ComposeApp"
+            isStatic = true
+        }
+    }
 
     sourceSets {
         val commonMain by getting {
@@ -86,6 +104,11 @@ kotlin {
             }
         }
 
+        val iosMain by getting {
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
     }
 }
 
@@ -133,6 +156,10 @@ tasks.getByPath("desktopProcessResources").dependsOn("libresGenerateResources")
 tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 
 buildConfig {
-//    buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
-    buildConfigField("String", "BASE_URL", "\"http://localhost:8080/v1\"")
+    buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
+//    buildConfigField("String", "BASE_URL", "\"http://localhost:8080/v1\"")
+}
+
+compose {
+    kotlinCompilerPlugin.set("org.jetbrains.compose.compiler:compiler:1.5.1")
 }
