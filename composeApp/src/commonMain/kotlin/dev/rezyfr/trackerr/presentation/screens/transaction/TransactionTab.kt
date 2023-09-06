@@ -1,13 +1,14 @@
 package dev.rezyfr.trackerr.presentation.screens.transaction
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.painterResource
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import dev.rezyfr.trackerr.Res
+import io.github.skeptick.libres.compose.painterResource
 
-class TransactionTab : Tab {
+internal class TransactionTab : Tab {
     override val options: TabOptions
         @Composable get() {
             val navigator = LocalTabNavigator.current
@@ -20,6 +21,8 @@ class TransactionTab : Tab {
 
     @Composable
     override fun Content() {
+        Column {
 
+        }
     }
 }

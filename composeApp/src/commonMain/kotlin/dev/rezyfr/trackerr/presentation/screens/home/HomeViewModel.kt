@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
 import dev.rezyfr.trackerr.domain.usecase.GetRecentTransactionUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -42,5 +43,7 @@ class HomeViewModel(
 }
 
 data class HomeState(
-    val recentTransaction: UiResult<List<TransactionModel>> = UiResult.Uninitialized
+    val recentTransaction: UiResult<List<TransactionModel>> = UiResult.Uninitialized,
+    val accBalance: UiResult<Long> = UiResult.Success(94000),//UiResult.Uninitialized,
+    val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Success(TransactionSummaryModel(5000, 1200))
 )

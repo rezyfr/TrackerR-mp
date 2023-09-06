@@ -174,7 +174,7 @@ class RegisterScreen() : Screen, KoinComponent {
     ) {
         TrPrimaryButton(
             text = {
-                if (registerResult is UiResult.Loading) CircularProgressIndicator()
+                if (registerResult is UiResult.Loading) CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
                 else ButtonText("Sign Up")
             },
             modifier = Modifier

@@ -41,7 +41,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
@@ -63,6 +62,7 @@ import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
 import dev.rezyfr.trackerr.presentation.screens.RootScreen
+import io.github.skeptick.libres.compose.painterResource
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
