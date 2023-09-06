@@ -1,5 +1,6 @@
 package dev.rezyfr.trackerr.presentation.screens.login
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
@@ -10,6 +11,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -49,7 +51,7 @@ class LoginScreen() : Screen, KoinComponent {
         )
 
         LaunchedEffect(loginState) {
-            if (loginState.isTokenValid) {
+            if (loginState.isTokenValid is UiResult.Success) {
                 navigator.replaceAll(RootScreen())
             }
             if (loginState.loginResult is UiResult.Success) {
@@ -69,6 +71,7 @@ class LoginScreen() : Screen, KoinComponent {
             onBackPressed = { navigator.pop() }
         )
     }
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun LoginScreen(
@@ -94,6 +97,14 @@ class LoginScreen() : Screen, KoinComponent {
                 onChangePassword = onChangePassword,
                 goToRegister = goToRegister
             )
+        }
+
+        if (state.isTokenValid is UiResult.Loading) {
+            Box(Modifier.fillMaxSize().background(Light20.copy(alpha = 0.3f))) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
     @Composable

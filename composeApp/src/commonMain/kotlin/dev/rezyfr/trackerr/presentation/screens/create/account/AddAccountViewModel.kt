@@ -4,11 +4,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import cafe.adriel.voyager.core.model.ScreenModel
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.model.AccountModel
 import dev.rezyfr.trackerr.domain.model.IconModel
 import dev.rezyfr.trackerr.domain.model.IconType
-import dev.rezyfr.trackerr.domain.usecase.CreateWalletUseCase
-import dev.rezyfr.trackerr.domain.usecase.GetIconUseCase
+import dev.rezyfr.trackerr.domain.usecase.wallet.CreateWalletUseCase
+import dev.rezyfr.trackerr.domain.usecase.icon.GetIconUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope

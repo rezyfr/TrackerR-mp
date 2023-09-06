@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.flow
 
 sealed class UiResult<out T> {
     data class Success<T>(val data: T) : UiResult<T>()
+    object SuccessEmpty : UiResult<Nothing>()
     data class Error(val exception: Exception) : UiResult<Nothing>()
     data object Loading : UiResult<Nothing>()
     data object Uninitialized : UiResult<Nothing>()
@@ -13,23 +14,33 @@ sealed class UiResult<out T> {
 }
 
 suspend fun <R, T> handleResult(
-    execute: suspend () -> NetworkResponse<T>,
-    onSuccess: (T) -> R
+    execute: suspend () -> Result<T>,
+    onSuccess: (T) -> R,
 ): UiResult<R> {
-    return when (val result = execute()) {
-        is NetworkResponse.Success -> UiResult.Success(onSuccess(result.data))
-        is NetworkResponse.Failure -> UiResult.Error(Exception(result.throwable.message))
+    execute().onSuccess {
+        if (it is Collection<*> && it.isEmpty()) {
+            return UiResult.SuccessEmpty
+        }
+        return UiResult.Success(onSuccess(it))
+    }.onFailure {
+        return UiResult.Error(Exception(it.message))
     }
+    return UiResult.Error(Exception("Something went wrong"))
 }
 
 fun <R, T> handleFlowResult(
-    execute: suspend () -> NetworkResponse<T>,
+    execute: suspend () -> Result<T>,
     onSuccess: (T) -> R
 ) : Flow<UiResult<R>> = flow {
     emit(UiResult.Loading)
-    when (val result = execute()) {
-        is NetworkResponse.Success -> emit(UiResult.Success(onSuccess(result.data)))
-        is NetworkResponse.Failure -> emit(UiResult.Error(Exception(result.throwable.message)))
+    execute().onSuccess {
+        if (it is Collection<*> && it.isEmpty()) {
+            emit(UiResult.SuccessEmpty)
+        } else {
+            emit(UiResult.Success(onSuccess(it)))
+        }
+    }.onFailure {
+        emit(UiResult.Error(Exception(it.message)))
     }
 }
 

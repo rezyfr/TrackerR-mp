@@ -3,14 +3,14 @@ package dev.rezyfr.trackerr.presentation.screens.login
 import cafe.adriel.voyager.core.model.ScreenModel
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.usecase.CheckTokenUseCase
-import dev.rezyfr.trackerr.domain.usecase.LoginUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.CheckTokenUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.LoginUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
@@ -36,12 +36,9 @@ class LoginViewModel (
 
     fun checkUserToken() {
         viewModelScope.launch {
-            checkTokenUseCase.execute(Unit).handleResult(
-                ifSuccess = { result ->
-                    _uiState.update { _uiState.value.copy(isTokenValid = result) }
-                },
-                ifError = { /*NoOp*/ }
-            )
+            checkTokenUseCase.executeFlow(Unit).collectLatest { result ->
+                _uiState.update { _uiState.value.copy(isTokenValid = result) }
+            }
         }
     }
 
@@ -65,5 +62,5 @@ data class LoginUiState (
     val loginResult: UiResult<Unit> = UiResult.Uninitialized,
     val email: String = "",
     val password: String = "",
-    val isTokenValid: Boolean = false,
+    val isTokenValid: UiResult<Boolean> = UiResult.Loading,
 )

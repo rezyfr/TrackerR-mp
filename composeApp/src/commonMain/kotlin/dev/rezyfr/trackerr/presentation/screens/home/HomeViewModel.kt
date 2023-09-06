@@ -5,7 +5,9 @@ import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
-import dev.rezyfr.trackerr.domain.usecase.GetRecentTransactionUseCase
+import dev.rezyfr.trackerr.domain.usecase.transaction.GetRecentTransactionUseCase
+import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
+import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -16,7 +18,9 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 class HomeViewModel(
-    private val getRecentTransactionUseCase: GetRecentTransactionUseCase
+    private val getRecentTransactionUseCase: GetRecentTransactionUseCase,
+    private val getWalletBalanceUseCase: GetWalletBalanceUseCase,
+    private val getTransactionSummaryUseCase: GetTransactionSummaryUseCase
 ) : ScreenModel {
     private val job = SupervisorJob()
     private val coroutineContextX: CoroutineContext = job + ioDispatcher
@@ -27,7 +31,23 @@ class HomeViewModel(
 
     init {
         getRecentTransaction()
+        getWalletBalance()
+        getTransactionSummary()
     }
+
+    private fun getWalletBalance() {
+        viewModelScope.launch {
+            getWalletBalanceUseCase.execute(null).handleResult(
+                ifError = { ex ->
+                    _state.update { it.copy(accBalance = UiResult.Error(ex)) }
+                },
+                ifSuccess = { result ->
+                    _state.update { it.copy(accBalance = UiResult.Success(result)) }
+                }
+            )
+        }
+    }
+
     private fun getRecentTransaction() {
         viewModelScope.launch {
             getRecentTransactionUseCase.execute(null).handleResult(
@@ -40,10 +60,23 @@ class HomeViewModel(
             )
         }
     }
+
+    private fun getTransactionSummary() {
+        viewModelScope.launch {
+            getTransactionSummaryUseCase.execute(8).handleResult(
+                ifError = { ex ->
+                    _state.update { it.copy(transactionSummary = UiResult.Error(ex)) }
+                },
+                ifSuccess = { result ->
+                    _state.update { it.copy(transactionSummary = UiResult.Success(result)) }
+                }
+            )
+        }
+    }
 }
 
 data class HomeState(
     val recentTransaction: UiResult<List<TransactionModel>> = UiResult.Uninitialized,
-    val accBalance: UiResult<Long> = UiResult.Success(94000),//UiResult.Uninitialized,
-    val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Success(TransactionSummaryModel(5000, 1200))
+    val accBalance: UiResult<Long> = UiResult.Uninitialized,
+    val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized
 )

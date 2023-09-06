@@ -159,8 +159,9 @@ internal class HomeTab : Tab, KoinComponent {
             modifier.background(HomeTopBackground).padding(bottom = 16.dp), state.accBalance
         )
         TransactionSummary(
-            modifier.background(HomeTopBackground)
+            modifier
                 .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+                .background(HomeTopBackground)
                 .padding(bottom = 24.dp), state.transactionSummary
         )
     }
@@ -171,7 +172,7 @@ internal class HomeTab : Tab, KoinComponent {
         summary: UiResult<TransactionSummaryModel>
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             modifier = modifier.padding(horizontal = 16.dp)
         ) {
             if (summary is UiResult.Success) {
@@ -180,21 +181,26 @@ internal class HomeTab : Tab, KoinComponent {
                     shape = RoundedCornerShape(28.dp),
                     colors = CardDefaults.cardColors(containerColor = Green100)
                 ) {
-                    Row(Modifier.fillMaxWidth().padding(16.dp)) {
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier.clip(RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.onPrimary)
-                                .size(48.dp)
+                                .size(36.dp)
                         ) {
                             Image(
-                                rememberImagePainter(Res.image.ic_income),
+                                Res.image.ic_income.painterResource(),
                                 null,
-                                Modifier.size(32.dp).align(Alignment.Center)
+                                Modifier.size(24.dp).align(Alignment.Center)
                             )
                         }
                         HSpacer(10)
                         Column(
-                            Modifier.height(48.dp),
+                            Modifier.height(40.dp),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -203,7 +209,7 @@ internal class HomeTab : Tab, KoinComponent {
                             )
                             Text(
                                 "Rp${summary.data.totalIncome.format()}",
-                                style = MaterialTheme.typography.titleSmall.copy(color = MaterialTheme.colorScheme.onPrimary),
+                                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
                             )
                         }
                     }
@@ -213,21 +219,25 @@ internal class HomeTab : Tab, KoinComponent {
                     shape = RoundedCornerShape(28.dp),
                     colors = CardDefaults.cardColors(containerColor = Red100)
                 ) {
-                    Row(Modifier.fillMaxWidth().padding(16.dp)) {
+                    Row(
+                        Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier.clip(RoundedCornerShape(16.dp))
                                 .background(MaterialTheme.colorScheme.onPrimary)
-                                .size(48.dp)
+                                .size(36.dp)
                         ) {
                             Image(
-                                rememberImagePainter(Res.image.ic_expense),
+                                Res.image.ic_expense.painterResource(),
                                 null,
-                                Modifier.size(32.dp).align(Alignment.Center)
+                                Modifier.size(24.dp).align(Alignment.Center)
                             )
                         }
                         HSpacer(10)
                         Column(
-                            Modifier.height(48.dp),
+                            Modifier.height(40.dp),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -236,7 +246,7 @@ internal class HomeTab : Tab, KoinComponent {
                             )
                             Text(
                                 "Rp${summary.data.totalExpense.format()}",
-                                style = MaterialTheme.typography.titleSmall.copy(color = MaterialTheme.colorScheme.onPrimary)
+                                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary)
                             )
                         }
                     }

@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.domain.usecase
+package dev.rezyfr.trackerr.domain.usecase.icon
 
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase

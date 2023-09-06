@@ -3,7 +3,7 @@ package dev.rezyfr.trackerr.presentation.screens.register
 import cafe.adriel.voyager.core.model.ScreenModel
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.usecase.RegisterUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.RegisterUseCase
 import dev.rezyfr.trackerr.ioDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

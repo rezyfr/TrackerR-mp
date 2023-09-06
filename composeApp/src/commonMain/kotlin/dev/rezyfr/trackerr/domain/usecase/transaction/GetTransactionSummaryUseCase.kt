@@ -1,23 +1,23 @@
-package dev.rezyfr.trackerr.domain.usecase
+package dev.rezyfr.trackerr.domain.usecase.transaction
 
 import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
-class GetRecentTransactionUseCase(
+class GetTransactionSummaryUseCase(
     private val transactionRepository: TransactionRepository,
     private val mapper: TransactionMapper
-) : UseCase<UiResult<List<TransactionModel>>, Nothing?> {
-    override suspend fun execute(params: Nothing?): UiResult<List<TransactionModel>> {
+) : UseCase<UiResult<TransactionSummaryModel>, Int> {
+    override suspend fun execute(params: Int): UiResult<TransactionSummaryModel> {
         return handleResult(
             execute = {
-                transactionRepository.fetchRecentTransaction()
+                 transactionRepository.fetchTransactionSummary(params)
             },
             onSuccess = { data ->
-                data.data?.map { mapper.mapResponseToDomain(it) }.orEmpty()
+                mapper.mapSummaryResponseToDomain(data)
             }
         )
     }

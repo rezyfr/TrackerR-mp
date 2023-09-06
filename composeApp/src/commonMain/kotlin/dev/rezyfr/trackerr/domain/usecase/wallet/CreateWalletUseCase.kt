@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.domain.usecase
+package dev.rezyfr.trackerr.domain.usecase.wallet
 
 import dev.rezyfr.trackerr.data.remote.dto.request.CreateWalletRequest
 import dev.rezyfr.trackerr.domain.UiResult

@@ -1,13 +1,25 @@
 package dev.rezyfr.trackerr.presentation.component.base
+
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -89,21 +101,52 @@ fun TrSecondaryButton(
 @Composable
 fun TrCapsuleButton(
     text: String,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    TrButton(
+    val containerColor = MaterialTheme.colorScheme.primaryContainer
+    val contentColor = MaterialTheme.colorScheme.primary
+    Surface(
         onClick = onClick,
-        text = {
-            Text(
-                text = text, style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.primary
+        modifier = modifier.semantics { role = Role.Button },
+        shape = RoundedCornerShape(16.dp),
+        color = containerColor,
+        contentColor = contentColor,
+    ) {
+        CompositionLocalProvider(LocalContentColor provides contentColor) {
+            ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
+                Row(
+                    Modifier.padding(PaddingValues(horizontal = 16.dp, vertical = 4.dp)),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    content = {
+                        TrButtonContent(
+                            text = {
+                                Text(
+                                    text = text, style = MaterialTheme.typography.bodySmall.copy(
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                )
+                            },
+                        )
+                    }
                 )
-            )
-        },
-        colors = TrButtonDefaults.secondaryColors(),
-        padding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-        shape = RoundedCornerShape(40.dp)
-    )
+            }
+        }
+    }
+//    TrButton(
+//        onClick = onClick,
+//        text = {
+//            Text(
+//                text = text, style = MaterialTheme.typography.bodySmall.copy(
+//                    color = MaterialTheme.colorScheme.primary
+//                )
+//            )
+//        },
+//        colors = TrButtonDefaults.secondaryColors(),
+//        padding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+//        shape = RoundedCornerShape(40.dp)
+//    )
 }
 
 /**
@@ -116,6 +159,7 @@ fun TrCapsuleButton(
  * @param text The button text label content.
  * @param leadingIcon The button leading icon content. Pass `null` here for no leading icon.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrButton(
     onClick: () -> Unit,

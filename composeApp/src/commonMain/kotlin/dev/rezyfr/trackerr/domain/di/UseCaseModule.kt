@@ -1,11 +1,13 @@
 package dev.rezyfr.trackerr.domain.di
 
-import dev.rezyfr.trackerr.domain.usecase.CheckTokenUseCase
-import dev.rezyfr.trackerr.domain.usecase.CreateWalletUseCase
-import dev.rezyfr.trackerr.domain.usecase.GetIconUseCase
-import dev.rezyfr.trackerr.domain.usecase.GetRecentTransactionUseCase
-import dev.rezyfr.trackerr.domain.usecase.LoginUseCase
-import dev.rezyfr.trackerr.domain.usecase.RegisterUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.CheckTokenUseCase
+import dev.rezyfr.trackerr.domain.usecase.wallet.CreateWalletUseCase
+import dev.rezyfr.trackerr.domain.usecase.icon.GetIconUseCase
+import dev.rezyfr.trackerr.domain.usecase.transaction.GetRecentTransactionUseCase
+import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.LoginUseCase
+import dev.rezyfr.trackerr.domain.usecase.user.RegisterUseCase
+import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
 import org.koin.dsl.module
 
 fun getUseCaseModule() = module {
@@ -19,7 +21,9 @@ fun getUseCaseModule() = module {
 
     // Wallet
     single { CreateWalletUseCase(get()) }
+    single { GetWalletBalanceUseCase(get()) }
 
     // Transaction
     single { GetRecentTransactionUseCase(get(), get()) }
+    single { GetTransactionSummaryUseCase(get(), get()) }
 }

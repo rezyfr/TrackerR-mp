@@ -12,9 +12,13 @@ suspend inline fun <reified T> execute(
     block: () -> HttpResponse
 ): NetworkResponse<T> {
     val result = block()
+
     return try {
-        if (result.status.isSuccess()) NetworkResponse.Success((result.body()) ?: throw Exception("Data is null"))
-        else NetworkResponse.Failure(Exception((result.body() as BaseDto<Nothing>).message))
+        if (result.status.isSuccess()) {
+            NetworkResponse.Success((result.body()) ?: throw Exception("Data is null"))
+        } else {
+            NetworkResponse.Failure(Exception((result.body() as BaseDto<Nothing>).message), result.status.value)
+        }
     } catch (e: Exception) {
         NetworkResponse.Failure(e)
     }

@@ -8,6 +8,7 @@ import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setJsonBody
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.url
 
@@ -17,11 +18,20 @@ class WalletServiceImpl(
 ) : WalletService {
 
     private val create = "$baseUrl/wallet/create"
+    private val getBalance = "$baseUrl/wallet/balance"
     override suspend fun createWallet(request: CreateWalletRequest): NetworkResponse<BaseDto<WalletResponse>> {
         return execute {
             httpClient.post {
                 url(create)
                 setJsonBody(request)
+            }.body()
+        }
+    }
+
+    override suspend fun getWalletBalance(): NetworkResponse<BaseDto<Long>> {
+        return execute {
+            httpClient.get {
+                url(getBalance)
             }.body()
         }
     }

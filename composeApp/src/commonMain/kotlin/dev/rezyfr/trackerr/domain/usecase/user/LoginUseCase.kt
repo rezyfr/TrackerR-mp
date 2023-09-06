@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.domain.usecase
+package dev.rezyfr.trackerr.domain.usecase.user
 
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
@@ -13,7 +13,7 @@ class LoginUseCase(
         return handleResult(
             execute = { authRepository.login(params.email, params.password) },
             onSuccess = {
-                authRepository.saveToken(it.data.orEmpty())
+                authRepository.saveToken(it)
             }
         )
     }
