@@ -1,6 +1,7 @@
 package dev.rezyfr.trackerr.presentation.di
 
 import dev.rezyfr.trackerr.presentation.screens.create.account.AddAccountViewModel
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionViewModel
 import dev.rezyfr.trackerr.presentation.screens.home.HomeViewModel
 import dev.rezyfr.trackerr.presentation.screens.login.LoginViewModel
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterViewModel
@@ -13,4 +14,5 @@ fun getScreenModelModule() = module {
     single { AddAccountViewModel(get(), get()) }
 
     single { HomeViewModel(get(), get(), get())}
+    single { AddTransactionViewModel() }
 }

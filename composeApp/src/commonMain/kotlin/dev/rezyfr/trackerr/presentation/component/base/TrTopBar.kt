@@ -14,6 +14,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,5 +53,11 @@ object TrTopBarDefaults {
         containerColor = MaterialTheme.colorScheme.primary,
         titleContentColor = MaterialTheme.colorScheme.onPrimary,
         navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+    )
+
+    @Composable
+    fun transparentBarColor() = TopAppBarDefaults.centerAlignedTopAppBarColors(
+        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+        containerColor = Color.Transparent
     )
 }

@@ -40,3 +40,10 @@ val Disabled = Color(0xffC6C6C6)
 val HomeTopBackground = Color(0xFFFFF6E5)
 
 val IconColors = listOf(BlueIcon, RedIcon, VioletIcon, YellowIcon, GreenIcon, TealIcon, OrangeIcon, CyanIcon)
+
+
+fun String.typeIndicatorColor() = when (this) {
+    "Expense"-> Red100
+    "Income" -> Green100
+    else -> Green100
+}

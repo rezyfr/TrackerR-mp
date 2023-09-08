@@ -39,9 +39,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import dev.rezyfr.trackerr.Res
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionScreen
 import dev.rezyfr.trackerr.presentation.screens.home.HomeTab
 import dev.rezyfr.trackerr.presentation.screens.transaction.TransactionTab
 import dev.rezyfr.trackerr.presentation.theme.Disabled
@@ -67,6 +70,7 @@ class RootScreen : Screen {
         val rotation = remember { Animatable(0f) }
         val bgTranslation = remember { Animatable(0f) }
         val transactionTranslation = remember { Animatable(0f) }
+        val navigator = LocalNavigator.currentOrThrow
 
         LaunchedEffect(isFabFocused) {
             awaitAll(
@@ -92,7 +96,10 @@ class RootScreen : Screen {
                         translation = transactionTranslation.value,
                         onClick = {
                             isFabFocused = !isFabFocused
-                        }
+                        },
+                        onExpenseClick = {
+                            navigator.push(AddTransactionScreen())
+                        },
                     )
                 },
                 floatingActionButtonPosition = FabPosition.Center,
@@ -118,14 +125,8 @@ class RootScreen : Screen {
         onExpenseClick: () -> Unit = {},
         onIncomeClick: () -> Unit = {},
     ) {
-        IncomeFab(
-            translation = translation,
-            onClick = onIncomeClick
-        )
-        ExpenseFab(
-            translation = translation,
-            onClick = onExpenseClick
-        )
+        IncomeFab(translation = translation, onClick = onIncomeClick)
+        ExpenseFab(translation = translation, onClick = onExpenseClick)
         MainFab(rotation, onClick)
     }
 
@@ -195,9 +196,7 @@ class RootScreen : Screen {
                     )
                 }
             },
-            elevation = FloatingActionButtonDefaults.elevation(
-                defaultElevation = 0.dp
-            ),
+            elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp),
             shape = CircleShape,
             backgroundColor = bgColor,
             modifier = modifier
@@ -220,8 +219,7 @@ class RootScreen : Screen {
                         end = Offset(0f, 0f)
                     )
                 )
-        ) {
-        }
+        )
     }
 
     @Composable
