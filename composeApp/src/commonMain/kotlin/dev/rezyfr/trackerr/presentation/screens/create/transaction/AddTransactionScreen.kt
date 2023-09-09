@@ -1,9 +1,13 @@
 package dev.rezyfr.trackerr.presentation.screens.create.transaction
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -19,11 +23,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import dev.rezyfr.trackerr.presentation.component.AmountTextField
+import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
+import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.ui.TypeSelector
+import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.theme.typeIndicatorColor
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -37,7 +48,11 @@ class AddTransactionScreen : Screen, KoinComponent {
 
         AddTransactionScreen(
             state,
-            onChangeType = { viewModel.onChangeType(it)}
+            onChangeType = { viewModel.onChangeType(it) },
+            onChangeAmount = { viewModel.onChangeAmount(it.text) },
+            onChangeDate = { viewModel.onChangeDate(it) },
+            onChangeDescription = { viewModel.onChangeDescription(it) },
+            onContinue = { viewModel.onContinue() },
         )
     }
 
@@ -48,7 +63,7 @@ class AddTransactionScreen : Screen, KoinComponent {
         onBack: () -> Unit = {},
         onChangeCategory: (Int) -> Unit = {},
         onChangeDate: (String) -> Unit = {},
-        onChangeAmount: (String) -> Unit = {},
+        onChangeAmount: (TextFieldValue) -> Unit = {},
         onChangeDescription: (String) -> Unit = {},
         onChangeType: (String) -> Unit = {}
     ) {
@@ -66,7 +81,69 @@ class AddTransactionScreen : Screen, KoinComponent {
                 },
                 containerColor = state.type.typeIndicatorColor()
             ) {
+                Box(
+                    Modifier.fillMaxSize()
+                        .background(state.type.typeIndicatorColor()),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    AddTransactionDialog(
+                        state = state,
+                        onContinue = onContinue,
+                        onChangeDate = onChangeDate,
+                        onChangeAmount = onChangeAmount,
+                        onChangeDescription = onChangeDescription,
+                    )
+                }
+            }
+        }
+    }
 
+    @Composable
+    fun AddTransactionDialog(
+        modifier: Modifier = Modifier,
+        state: AddTransactionState,
+        onContinue: () -> Unit,
+        onChangeDate: (String) -> Unit,
+        onChangeAmount: (TextFieldValue) -> Unit,
+        onChangeDescription: (String) -> Unit,
+    ) {
+        Column(
+            modifier = modifier.fillMaxWidth()
+        ) {
+            val formattedAmount = state.amount.format()
+            AmountTextField(
+                modifier = Modifier.padding(16.dp),
+                label = "How much?",
+                onValueChange =  onChangeAmount,
+                value = TextFieldValue(formattedAmount, TextRange(formattedAmount.length)),
+            )
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(
+                            topStart = 32.dp, topEnd = 32.dp
+                        )
+                    )
+                    .padding(horizontal = 16.dp, vertical = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                TrTextField(
+                    placeholder = "Description",
+                    value = state.description,
+                    onValueChange = onChangeDescription
+                )
+                TrTextField(
+                    placeholder = "Date",
+                    value = state.createdDate,
+                    onValueChange = onChangeDate
+                )
+                TrPrimaryButton(
+                    Modifier.fillMaxWidth(),
+                    text = { ButtonText("Continue") },
+                    onClick = onContinue
+                )
             }
         }
     }

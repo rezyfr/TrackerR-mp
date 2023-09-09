@@ -17,6 +17,7 @@ class WalletServiceImpl(
     baseUrl: String
 ) : WalletService {
 
+    private val getWallet = "$baseUrl/wallet"
     private val create = "$baseUrl/wallet/create"
     private val getBalance = "$baseUrl/wallet/balance"
     override suspend fun createWallet(request: CreateWalletRequest): NetworkResponse<BaseDto<WalletResponse>> {
@@ -32,6 +33,14 @@ class WalletServiceImpl(
         return execute {
             httpClient.get {
                 url(getBalance)
+            }.body()
+        }
+    }
+
+    override suspend fun getWallets(): NetworkResponse<BaseDto<List<WalletResponse>>> {
+        return execute {
+            httpClient.get {
+                url(getWallet)
             }.body()
         }
     }

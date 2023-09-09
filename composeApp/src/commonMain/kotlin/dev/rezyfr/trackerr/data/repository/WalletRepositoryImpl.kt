@@ -16,4 +16,8 @@ class WalletRepositoryImpl(
     override suspend fun getWalletBalance(): Result<Long> {
         return walletService.getWalletBalance().handleResponse()
     }
+
+    override suspend fun getWallets(): Result<List<WalletResponse>> {
+        return walletService.getWallets().handleResponse()
+    }
 }

@@ -14,5 +14,5 @@ fun getScreenModelModule() = module {
     single { AddAccountViewModel(get(), get()) }
 
     single { HomeViewModel(get(), get(), get())}
-    single { AddTransactionViewModel() }
+    single { AddTransactionViewModel(get(), get()) }
 }

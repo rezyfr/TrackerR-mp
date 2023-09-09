@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class WalletResponse(
     val id: Int,
     val name: String,
-    val balance: Int,
+    val balance: Long,
     val color: Int,
     val icon: String,
 )
