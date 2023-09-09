@@ -66,6 +66,7 @@ kotlin {
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.insetsx)
                 implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.multiplatformSettings)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.mp)

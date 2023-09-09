@@ -1,6 +1,5 @@
 package dev.rezyfr.trackerr.domain
 
-import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

@@ -6,7 +6,20 @@ import dev.rezyfr.trackerr.domain.model.WalletModel
 import dev.rezyfr.trackerr.domain.usecase.transaction.CreateTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletsUseCase
 import dev.rezyfr.trackerr.presentation.base.BaseScreenModel
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.DateProperty
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.DayOfMonth
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Year
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateDayOfMonths
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateMonths
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateYears
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.toDayOfMonth
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.toMonth
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.toYear
+import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
+import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import dev.rezyfr.trackerr.utils.NumberUtils
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,6 +29,11 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.number
 
 class AddTransactionViewModel(
     private val createTransactionUseCase: CreateTransactionUseCase,
@@ -33,7 +51,7 @@ class AddTransactionViewModel(
     val state = combine(
         _state,
         _trxResult,
-        _walletResult
+        _walletResult,
     ) { state, trx, wallet ->
         AddTransactionState(
             type = state.type,
@@ -42,8 +60,13 @@ class AddTransactionViewModel(
             createdDate = state.createdDate,
             description = state.description,
             walletId = state.walletId,
+            selectedDay = state.selectedDay,
+            selectedMonth = state.selectedMonth,
+            selectedYear = state.selectedYear,
             transactionResult = trx,
-            walletResult = wallet
+            walletResult = wallet,
+            dateOptions = state.dateOptions,
+            datePickerSheet = state.datePickerSheet
         )
     }.flowOn(Dispatchers.Default)
         .stateIn(
@@ -65,8 +88,29 @@ class AddTransactionViewModel(
         _state.update { it.copy(categoryId = categoryId) }
     }
 
-    fun onChangeDate(createdDate: String) {
-        _state.update { it.copy(createdDate = createdDate) }
+    fun onChangeDayOfMonth(dom: Int) {
+        Napier.d("onChangeDayOfMonth: $dom")
+        _state.update {
+            it.copy(selectedDay = it.dateOptions.first.find { it.value == dom }!!)
+        }
+    }
+
+    fun onChangeMonth(month: Int) {
+        Napier.d("onChangeMonth: $month")
+        _state.update {
+            it.copy(
+                selectedMonth = it.dateOptions.second.find { it.value == month }!!
+            )
+        }
+    }
+
+    fun onChangeYear(year: Int) {
+        Napier.d("onChangeYear: $year")
+        _state.update { state ->
+            state.dateOptions.third.find { it.value == year }?.let {
+                state.copy(selectedYear = it)
+            } ?:  state
+        }
     }
 
     fun onChangeDescription(description: String) {
@@ -84,7 +128,7 @@ class AddTransactionViewModel(
                 CreateTransactionUseCase.Param(
                     amount = state.amount,
                     categoryId = state.categoryId,
-                    createdDate = state.createdDate,
+                    createdDate = "",
                     description = state.description,
                     walletId = state.walletId
                 )
@@ -107,9 +151,18 @@ data class AddTransactionState(
     val type: String = "Expense",
     val amount: Double = 0.0,
     val categoryId: Int = 0,
-    val createdDate: String = "",
+    val createdDate: LocalDateTime = getCurrentLdt(),
+    val selectedDay: DateProperty = createdDate.toDayOfMonth(),
+    val selectedMonth: DateProperty = createdDate.toMonth(),
+    val selectedYear: DateProperty = createdDate.toYear(IntRange(2000, 2100)),
     val description: String = "",
     val walletId: Int = 0,
     val transactionResult: UiResult<TransactionModel> = UiResult.Uninitialized,
-    val walletResult: UiResult<List<WalletModel>> = UiResult.Uninitialized
+    val walletResult: UiResult<List<WalletModel>> = UiResult.Uninitialized,
+    val dateOptions: Triple<List<DateProperty>, List<DateProperty>, List<DateProperty>> = Triple(
+        calculateDayOfMonths(),
+        calculateMonths(),
+        calculateYears()
+    ),
+    val datePickerSheet: BottomSheet = BottomSheet()
 )

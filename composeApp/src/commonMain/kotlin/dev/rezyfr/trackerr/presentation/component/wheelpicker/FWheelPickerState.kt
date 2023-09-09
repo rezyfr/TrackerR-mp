@@ -136,6 +136,8 @@ class FWheelPickerState(
                 synchronizeCurrentIndex()
             }
         }
+
+
     }
 
     private fun synchronizeCurrentIndex() {
