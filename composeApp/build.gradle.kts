@@ -15,6 +15,7 @@ sqldelight {
     databases {
         create("Database") {
             packageName.set("dev.rezyfr.trackerr.data.local.entity")
+            deriveSchemaFromMigrations = true
         }
     }
     linkSqlite = true

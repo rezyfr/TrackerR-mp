@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS CategoryEntity (
+    id INTEGER PRIMARY KEY NOT NULL,
+    icon TEXT NOT NULL,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    color TEXT NOT NULL
+);

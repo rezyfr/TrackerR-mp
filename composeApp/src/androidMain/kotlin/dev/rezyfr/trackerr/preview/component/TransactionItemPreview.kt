@@ -19,12 +19,13 @@ fun TransactionItemPreview() {
         TransactionItem(
             TransactionModel(
                 id = 1,
-                category = "Food",
+                categoryName = "Food",
                 categoryIcon = "https://img.icons8.com/ios/452/food.png",
                 desc = "Bought some food",
                 amount = 100000,
                 date = "07.30 PM",
-                type = CategoryType.EXPENSE
+                type = CategoryType.EXPENSE,
+                categoryColor = "#FF0000"
             )
         )
     }

@@ -9,10 +9,8 @@ import kotlinx.serialization.Serializable
 data class TransactionResponse(
     @SerialName("amount")
     val amount: Double,
-    @SerialName("category")
-    val category: String,
-    @SerialName("categoryIcon")
-    val categoryIcon: String,
+    @SerialName("categoryName")
+    val categoryName: String,
     @SerialName("createdDate")
     val createdDate: String,
     @SerialName("description")
@@ -24,5 +22,7 @@ data class TransactionResponse(
     @SerialName("wallet")
     val wallet: String,
     @SerialName("walletIcon")
-    val walletIcon: String
+    val walletIcon: String,
+    @SerialName("category")
+    val category: CategoryResponse
 )

@@ -1,10 +1,12 @@
 package dev.rezyfr.trackerr.data.di
 
 import dev.rezyfr.trackerr.data.repository.AuthRepositoryImpl
+import dev.rezyfr.trackerr.data.repository.CategoryRepositoryImpl
 import dev.rezyfr.trackerr.data.repository.IconRepositoryImpl
 import dev.rezyfr.trackerr.data.repository.TransactionRepositoryImpl
 import dev.rezyfr.trackerr.data.repository.WalletRepositoryImpl
 import dev.rezyfr.trackerr.domain.repository.AuthRepository
+import dev.rezyfr.trackerr.domain.repository.CategoryRepository
 import dev.rezyfr.trackerr.domain.repository.IconRepository
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 import dev.rezyfr.trackerr.domain.repository.WalletRepository
@@ -15,4 +17,5 @@ fun getRepositoryModule() = module {
     single<IconRepository> { IconRepositoryImpl(get(), get(), get()) }
     single<WalletRepository> { WalletRepositoryImpl(get()) }
     single<TransactionRepository> { TransactionRepositoryImpl(get()) }
+    single<CategoryRepository> { CategoryRepositoryImpl(get(), get()) }
 }

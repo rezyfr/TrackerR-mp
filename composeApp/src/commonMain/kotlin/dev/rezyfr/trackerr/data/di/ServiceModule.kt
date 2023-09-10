@@ -2,6 +2,8 @@ package dev.rezyfr.trackerr.data.di
 
 import dev.rezyfr.trackerr.data.remote.service.AuthService
 import dev.rezyfr.trackerr.data.remote.service.AuthServiceImpl
+import dev.rezyfr.trackerr.data.remote.service.CategoryService
+import dev.rezyfr.trackerr.data.remote.service.CategoryServiceImpl
 import dev.rezyfr.trackerr.data.remote.service.IconService
 import dev.rezyfr.trackerr.data.remote.service.IconServiceImpl
 import dev.rezyfr.trackerr.data.remote.service.TransactionService
@@ -16,4 +18,5 @@ fun getServiceModule() = module {
     single<IconService> { IconServiceImpl(get(), get(named("baseUrl"))) }
     single<WalletService> { WalletServiceImpl(get(), get(named("baseUrl"))) }
     single<TransactionService> { TransactionServiceImpl(get(), get(named("baseUrl"))) }
+    single<CategoryService> { CategoryServiceImpl(get(), get(named("baseUrl"))) }
 }

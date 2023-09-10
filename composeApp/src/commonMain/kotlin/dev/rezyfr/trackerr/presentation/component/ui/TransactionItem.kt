@@ -18,12 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberImagePainter
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.component.util.toDateFormat
+import dev.rezyfr.trackerr.presentation.theme.color
 
 @Composable
 fun TransactionItem(
@@ -46,14 +48,15 @@ fun TransactionItem(
                 modifier = Modifier.size(60.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.primaryContainer)
-                    .padding(16.dp)
+                    .padding(16.dp),
+                colorFilter = ColorFilter.tint(transaction.categoryColor.color())
             )
             HSpacer(8)
             Column(
                 Modifier.height(52.dp),
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(transaction.category, style = MaterialTheme.typography.bodyMedium)
+                Text(transaction.categoryName, style = MaterialTheme.typography.bodyMedium)
                 Text(
                     transaction.desc,
                     style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.tertiary)

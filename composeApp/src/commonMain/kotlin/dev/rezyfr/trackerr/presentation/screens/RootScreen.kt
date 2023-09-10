@@ -21,9 +21,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,28 +60,25 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 
-class RootScreen : Screen {
+class RootScreen : Screen, KoinComponent {
 
     private val tabs = listOf(HomeTab(), TransactionTab())
 
     @Composable
     override fun Content() {
         var isFabFocused by remember { mutableStateOf(false) }
-
+        val viewModel: RootViewModel by inject()
         val rotation = remember { Animatable(0f) }
         val bgTranslation = remember { Animatable(0f) }
         val transactionTranslation = remember { Animatable(0f) }
         val navigator = LocalNavigator.currentOrThrow
+        val errorMessage by viewModel.errorMessage.collectAsState()
+        val snackbarHostState = remember { SnackbarHostState() }
 
-        LaunchedEffect(isFabFocused) {
-            awaitAll(
-                async { transactionTranslation.animateTo(targetValue = if (isFabFocused) -57f else 0f) },
-                async { bgTranslation.animateTo(targetValue = if (isFabFocused) 100f else 0f) },
-                async { rotation.animateTo(targetValue = if (isFabFocused) 45f else 0f) }
-            )
-        }
         TabNavigator(tab = HomeTab()) { nav ->
             Scaffold(
                 bottomBar = {
@@ -103,7 +103,10 @@ class RootScreen : Screen {
                     )
                 },
                 floatingActionButtonPosition = FabPosition.Center,
-                isFloatingActionButtonDocked = true
+                isFloatingActionButtonDocked = true,
+                snackbarHost = {
+                    SnackbarHost(snackbarHostState)
+                }
             ) {
                 Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
                     nav.current.Content()
@@ -113,6 +116,20 @@ class RootScreen : Screen {
                         )
                     )
                 }
+            }
+        }
+
+        LaunchedEffect(isFabFocused) {
+            awaitAll(
+                async { transactionTranslation.animateTo(targetValue = if (isFabFocused) -57f else 0f) },
+                async { bgTranslation.animateTo(targetValue = if (isFabFocused) 100f else 0f) },
+                async { rotation.animateTo(targetValue = if (isFabFocused) 45f else 0f) }
+            )
+        }
+
+        LaunchedEffect(errorMessage) {
+            if (errorMessage.isNullOrEmpty().not()) {
+                snackbarHostState.showSnackbar("Error: $errorMessage")
             }
         }
     }

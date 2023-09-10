@@ -1,5 +1,6 @@
 package dev.rezyfr.trackerr.data.di
 
+import dev.rezyfr.trackerr.data.mapper.CategoryMapper
 import dev.rezyfr.trackerr.data.mapper.IconMapper
 import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.data.mapper.WalletMapper
@@ -9,4 +10,5 @@ fun getMapperModule() = module {
     single { IconMapper() }
     single { TransactionMapper() }
     single { WalletMapper() }
+    single { CategoryMapper() }
 }

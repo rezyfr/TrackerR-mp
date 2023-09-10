@@ -13,8 +13,9 @@ class TransactionMapper {
             date = response.createdDate,
             desc = response.description,
             type = response.type,
-            categoryIcon = response.categoryIcon,
-            category = response.category
+            categoryIcon = response.category.icon,
+            categoryName = response.categoryName,
+            categoryColor = response.category.color,
         )
     }
 

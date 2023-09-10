@@ -5,6 +5,7 @@ import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
+import dev.rezyfr.trackerr.domain.usecase.category.SyncCategoryUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetRecentTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
@@ -20,7 +21,7 @@ import kotlin.coroutines.CoroutineContext
 class HomeViewModel(
     private val getRecentTransactionUseCase: GetRecentTransactionUseCase,
     private val getWalletBalanceUseCase: GetWalletBalanceUseCase,
-    private val getTransactionSummaryUseCase: GetTransactionSummaryUseCase
+    private val getTransactionSummaryUseCase: GetTransactionSummaryUseCase,
 ) : ScreenModel {
     private val job = SupervisorJob()
     private val coroutineContextX: CoroutineContext = job + ioDispatcher
@@ -78,5 +79,6 @@ class HomeViewModel(
 data class HomeState(
     val recentTransaction: UiResult<List<TransactionModel>> = UiResult.Uninitialized,
     val accBalance: UiResult<Long> = UiResult.Uninitialized,
-    val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized
+    val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized,
+    val errorMessage: String = ""
 )

@@ -1,0 +1,5 @@
+insertCategory:
+INSERT OR REPLACE INTO CategoryEntity (id, icon, type, name, color) VALUES (:id, :url, :type, :name, :color);
+
+getCategories:
+SELECT * FROM CategoryEntity WHERE type = :type;

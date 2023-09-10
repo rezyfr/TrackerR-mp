@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,11 +25,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -73,13 +80,13 @@ internal class HomeTab : Tab, KoinComponent {
         val state by viewModel.state.collectAsState()
 
         HomeScreen(
-            state = state
+            state = state,
         )
     }
 
     @Composable
     fun HomeScreen(
-        state: HomeState
+        state: HomeState,
     ) {
         Scaffold(
             topBar = {
@@ -200,7 +207,7 @@ internal class HomeTab : Tab, KoinComponent {
                         }
                         HSpacer(10)
                         Column(
-                            Modifier.height(40.dp),
+                            Modifier.wrapContentHeight(),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -237,7 +244,7 @@ internal class HomeTab : Tab, KoinComponent {
                         }
                         HSpacer(10)
                         Column(
-                            Modifier.height(40.dp),
+                            Modifier.wrapContentHeight(),
                             verticalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(

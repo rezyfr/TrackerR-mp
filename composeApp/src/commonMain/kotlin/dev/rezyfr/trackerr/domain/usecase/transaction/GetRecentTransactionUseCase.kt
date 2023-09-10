@@ -5,6 +5,7 @@ import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.repository.CategoryRepository
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
 class GetRecentTransactionUseCase(
