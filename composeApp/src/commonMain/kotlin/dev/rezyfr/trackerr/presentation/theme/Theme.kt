@@ -35,29 +35,6 @@ private val LightDefaultColorScheme = lightColorScheme(
     tertiary = Light20
 )
 
-/**
- * Dark default theme color scheme
- */
-//private val DarkDefaultColorScheme = darkColorScheme(
-//    primary = Blue40,
-//    onPrimary = Blue10,
-//    primaryContainer = Blue30,
-//    onPrimaryContainer = Blue90,
-//    secondary = Orange80,
-//    onSecondary = Orange20,
-//    secondaryContainer = Orange30,
-//    onSecondaryContainer = Orange90,
-//    error = Red80,
-//    onError = Red20,
-//    errorContainer = Red30,
-//    onErrorContainer = Red90,
-//    background = DarkBlue10,
-//    onBackground = DarkBlue90,
-//    surface = DarkBlue10,
-//    onSurface = DarkBlue90,
-//    outline = DarkBlue80
-//)
-
 val MainTypography = Typography(
     headlineLarge = TextStyle(
         fontWeight = FontWeight.Bold,

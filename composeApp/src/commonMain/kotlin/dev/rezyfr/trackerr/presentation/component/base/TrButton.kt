@@ -134,19 +134,6 @@ fun TrCapsuleButton(
             }
         }
     }
-//    TrButton(
-//        onClick = onClick,
-//        text = {
-//            Text(
-//                text = text, style = MaterialTheme.typography.bodySmall.copy(
-//                    color = MaterialTheme.colorScheme.primary
-//                )
-//            )
-//        },
-//        colors = TrButtonDefaults.secondaryColors(),
-//        padding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-//        shape = RoundedCornerShape(40.dp)
-//    )
 }
 
 /**
