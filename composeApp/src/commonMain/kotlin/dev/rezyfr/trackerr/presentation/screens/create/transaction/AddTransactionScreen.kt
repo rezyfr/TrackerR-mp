@@ -45,18 +45,17 @@ import androidx.compose.ui.zIndex
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.component.AmountTextField
 import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
-import dev.rezyfr.trackerr.presentation.component.base.datepicker.DayOfMonth
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.DefaultWheelDatePicker
-import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
-import dev.rezyfr.trackerr.presentation.component.base.datepicker.Year
 import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
 import dev.rezyfr.trackerr.presentation.component.ui.TypeSelector
 import dev.rezyfr.trackerr.presentation.component.util.format
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.DatePickerSheet
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.WalletPickerSheet
 import dev.rezyfr.trackerr.presentation.theme.typeIndicatorColor
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -75,6 +74,7 @@ class AddTransactionScreen : Screen, KoinComponent {
             onChangeDate = { viewModel.onChangeDayOfMonth(it) },
             onChangeMonth = { viewModel.onChangeMonth(it) },
             onChangeYear = { viewModel.onChangeYear(it) },
+            onChangeWallet = { viewModel.onChangeWallet(it) },
             onChangeDescription = { viewModel.onChangeDescription(it) },
             onContinue = { viewModel.onContinue() },
         )
@@ -85,7 +85,7 @@ class AddTransactionScreen : Screen, KoinComponent {
         state: AddTransactionState,
         onContinue: () -> Unit = {},
         onBack: () -> Unit = {},
-        onChangeCategory: (Int) -> Unit = {},
+        onChangeWallet: (Int) -> Unit = {},
         onChangeDate: (Int) -> Unit = {},
         onChangeMonth: (Int) -> Unit = {},
         onChangeYear: (Int) -> Unit = {},
@@ -121,19 +121,23 @@ class AddTransactionScreen : Screen, KoinComponent {
                 }
             }
             RevealingSheet(state.datePickerSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
-                DatePickerSection(
-                    Modifier.fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(
-                                topStart = 32.dp, topEnd = 32.dp
-                            )
-                        )
-                        .padding(horizontal = 16.dp, vertical = 24.dp),
-                    state,
+                DatePickerSheet(
+                    Modifier.fillMaxWidth(),
+                    state = state,
                     onChangeDay = { onChangeDate(it) },
                     onChangeMonth = { onChangeMonth(it) },
                     onChangeYear = { onChangeYear(it) },
+                )
+            }
+            RevealingSheet(state.walletBottomSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
+                WalletPickerSheet(
+                    Modifier.fillMaxWidth(),
+                    wallets = state.walletResult,
+                    onContinue = {
+                        onChangeWallet(it)
+                        state.walletBottomSheet.collapse()
+                    },
+                    currentWallet = state.selectedWallet
                 )
             }
         }
@@ -147,9 +151,7 @@ class AddTransactionScreen : Screen, KoinComponent {
         onChangeAmount: (TextFieldValue) -> Unit,
         onChangeDescription: (String) -> Unit,
     ) {
-        Column(
-            modifier = modifier.fillMaxWidth()
-        ) {
+        Column(modifier = modifier.fillMaxWidth()) {
             val formattedAmount = state.amount.format()
             AmountTextField(
                 modifier = Modifier.padding(16.dp),
@@ -170,6 +172,11 @@ class AddTransactionScreen : Screen, KoinComponent {
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TrTextField(
+                    placeholder = "Wallet",
+                    value = state.selectedWallet?.name.orEmpty(),
+                    onClick = { state.walletBottomSheet.expand() }
+                )
+                TrTextField(
                     placeholder = "Description",
                     value = state.description,
                     onValueChange = onChangeDescription
@@ -185,102 +192,6 @@ class AddTransactionScreen : Screen, KoinComponent {
                     onClick = onContinue
                 )
             }
-        }
-    }
-
-    @Composable
-    fun DatePickerSection(
-        modifier: Modifier = Modifier,
-        state: AddTransactionState,
-        onChangeDay: (Int) -> Unit = {},
-        onChangeMonth: (Int) -> Unit = {},
-        onChangeYear: (Int) -> Unit = {},
-    ) {
-        var selectedDate by remember { mutableStateOf(state.selectedDay) }
-        var selectedMonth by remember { mutableStateOf(state.selectedMonth) }
-        var selectedYear by remember { mutableStateOf(state.selectedYear) }
-
-        Column(modifier) {
-            Text(
-                "Date",
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground)
-            )
-            Row(Modifier.fillMaxWidth()) {
-                DefaultWheelDatePicker(
-                    modifier = Modifier.weight(1f),
-                    items = state.dateOptions.first,
-                    selectedItem = state.selectedDay
-                ) {
-                    selectedDate = it
-                }
-                DefaultWheelDatePicker(
-                    modifier = Modifier.weight(1f),
-                    items = state.dateOptions.second,
-                    selectedItem = state.selectedMonth
-                ) {
-                    selectedMonth = it
-                }
-                DefaultWheelDatePicker(
-                    modifier = Modifier.weight(1f),
-                    items = state.dateOptions.third,
-                    selectedItem = state.selectedYear
-                ) {
-                    selectedYear = it
-                }
-            }
-            TrPrimaryButton(
-                Modifier.fillMaxWidth(),
-                text = { ButtonText("Continue") },
-                onClick = {
-                    onChangeDay(selectedDate.value)
-                    onChangeMonth(selectedMonth.value)
-                    onChangeYear(selectedYear.value)
-                    state.datePickerSheet.collapse()
-                }
-            )
-        }
-    }
-
-    @OptIn(ExperimentalComposeUiApi::class)
-    @Composable
-    fun RevealingSheet(
-        bottomSheet: BottomSheet,
-        modifier: Modifier = Modifier,
-        content: @Composable () -> Unit
-    ) {
-        val visible by bottomSheet.visibilityState
-        AnimatedVisibility(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(1_000f),
-            visible = visible,
-            enter = fadeIn(),
-            exit = fadeOut()
-        ) {
-            val keyboardController = LocalSoftwareKeyboardController.current
-            Spacer(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.4f))
-                    .testTag("modal_outside_blur")
-                    .clickable(
-                        onClick = {
-                            keyboardController?.hide()
-                            bottomSheet.collapse()
-                        },
-                        enabled = visible
-                    )
-            )
-        }
-        AnimatedVisibility(
-            modifier = modifier.zIndex(1_100f),
-            visible = visible,
-            enter = slideInVertically(
-                animationSpec = tween(500),
-                initialOffsetY = { fullHeight -> fullHeight }
-            ),
-        ) {
-            content()
         }
     }
 

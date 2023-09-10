@@ -59,14 +59,15 @@ class AddTransactionViewModel(
             categoryId = state.categoryId,
             createdDate = state.createdDate,
             description = state.description,
-            walletId = state.walletId,
             selectedDay = state.selectedDay,
             selectedMonth = state.selectedMonth,
             selectedYear = state.selectedYear,
+            selectedWallet = state.selectedWallet,
             transactionResult = trx,
             walletResult = wallet,
             dateOptions = state.dateOptions,
-            datePickerSheet = state.datePickerSheet
+            datePickerSheet = state.datePickerSheet,
+            walletBottomSheet = state.walletBottomSheet
         )
     }.flowOn(Dispatchers.Default)
         .stateIn(
@@ -118,7 +119,11 @@ class AddTransactionViewModel(
     }
 
     fun onChangeWallet(walletId: Int) {
-        _state.update { it.copy(walletId = walletId) }
+        _state.update {
+            it.copy(
+                selectedWallet = (_walletResult.value as UiResult.Success).data.find { it.id == walletId }
+            )
+        }
     }
 
     fun onContinue() {
@@ -130,7 +135,7 @@ class AddTransactionViewModel(
                     categoryId = state.categoryId,
                     createdDate = "",
                     description = state.description,
-                    walletId = state.walletId
+                    walletId = state.selectedWallet!!.id
                 )
             ).collectLatest {
                 _trxResult.value = it
@@ -156,7 +161,7 @@ data class AddTransactionState(
     val selectedMonth: DateProperty = createdDate.toMonth(),
     val selectedYear: DateProperty = createdDate.toYear(IntRange(2000, 2100)),
     val description: String = "",
-    val walletId: Int = 0,
+    val selectedWallet: WalletModel? = null,
     val transactionResult: UiResult<TransactionModel> = UiResult.Uninitialized,
     val walletResult: UiResult<List<WalletModel>> = UiResult.Uninitialized,
     val dateOptions: Triple<List<DateProperty>, List<DateProperty>, List<DateProperty>> = Triple(
@@ -164,5 +169,6 @@ data class AddTransactionState(
         calculateMonths(),
         calculateYears()
     ),
-    val datePickerSheet: BottomSheet = BottomSheet()
+    val datePickerSheet: BottomSheet = BottomSheet(),
+    val walletBottomSheet: BottomSheet = BottomSheet()
 )
