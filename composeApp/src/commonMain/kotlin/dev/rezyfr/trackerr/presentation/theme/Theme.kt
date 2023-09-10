@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.rezyfr.trackerr.interFontFamily
 
 /**
  * Light default theme color scheme
@@ -37,46 +38,55 @@ private val LightDefaultColorScheme = lightColorScheme(
 
 val MainTypography = Typography(
     headlineLarge = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 64.sp,
         lineHeight = 80.sp,
     ),
     titleLarge = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Bold,
         fontSize = 32.sp,
         lineHeight = 34.sp
     ),
     titleMedium = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 24.sp,
         lineHeight = 22.sp,
     ),
     titleSmall = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 18.sp,
         lineHeight = 22.sp,
     ),
     bodyLarge = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),
     bodyMedium = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),
     bodySmall = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 18.sp,
     ),
     labelMedium = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 13.sp,
         lineHeight = 16.sp,
     ),
     labelSmall = TextStyle(
+        fontFamily = interFontFamily,
         fontWeight = FontWeight.Medium,
         fontSize = 12.sp,
         lineHeight = 12.sp

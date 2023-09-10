@@ -77,6 +77,7 @@ class AddTransactionScreen : Screen, KoinComponent {
             onChangeWallet = { viewModel.onChangeWallet(it) },
             onChangeDescription = { viewModel.onChangeDescription(it) },
             onContinue = { viewModel.onContinue() },
+            onBack = { navigator.pop() }
         )
     }
 

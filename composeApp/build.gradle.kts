@@ -20,6 +20,24 @@ sqldelight {
     linkSqlite = true
 }
 
+val osName = System.getProperty("os.name")
+val targetOs = when {
+    osName == "Mac OS X" -> "macos"
+    osName.startsWith("Win") -> "windows"
+    osName.startsWith("Linux") -> "linux"
+    else -> error("Unsupported OS: $osName")
+}
+
+val osArch = System.getProperty("os.arch")
+var targetArch = when (osArch) {
+    "x86_64", "amd64" -> "x64"
+    "aarch64" -> "arm64"
+    else -> error("Unsupported arch: $osArch")
+}
+
+val version = "0.7.9" // or any more recent version
+val target = "${targetOs}-${targetArch}"
+
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     targetHierarchy.default()
@@ -77,6 +95,7 @@ kotlin {
                 implementation(libs.ktor.serialization.json)
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.sqldelight.coroutines)
+                implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$version")
             }
         }
 

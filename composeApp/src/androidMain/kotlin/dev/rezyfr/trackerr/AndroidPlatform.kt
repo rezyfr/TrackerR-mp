@@ -1,10 +1,11 @@
 package dev.rezyfr.trackerr
 
-import androidx.compose.ui.text.platform.Font
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+
 
 actual val ioDispatcher: CoroutineDispatcher
     get() = Dispatchers.IO
@@ -13,19 +14,19 @@ actual val interFontFamily: FontFamily
     get() = FontFamily(
         fonts = listOf(
             Font(
-                resource = "inter_regular.ttf",
+                resId = R.font.inter_regular,
                 weight = FontWeight.Normal,
             ),
             Font(
-                resource = "inter_medium.ttf",
+                resId = R.font.inter_medium,
                 weight = FontWeight.Medium
             ),
             Font(
-                resource = "inter_semibold.ttf",
+                resId = R.font.inter_semibold,
                 weight = FontWeight.SemiBold
             ),
             Font(
-                resource = "inter_bold.ttf",
+                resId = R.font.inter_bold,
                 weight = FontWeight.Bold
             )
         )
