@@ -17,8 +17,6 @@ data class TransactionResponse(
     val description: String,
     @SerialName("id")
     val id: Int,
-    @SerialName("type")
-    val type: CategoryType,
     @SerialName("wallet")
     val wallet: String,
     @SerialName("walletIcon")

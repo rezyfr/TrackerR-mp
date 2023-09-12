@@ -10,6 +10,7 @@ sealed class UiResult<out T> {
     data object Loading : UiResult<Nothing>()
     data object Uninitialized : UiResult<Nothing>()
 
+    fun isSuccess() = this is Success
 }
 
 suspend fun <R, T> handleResult(

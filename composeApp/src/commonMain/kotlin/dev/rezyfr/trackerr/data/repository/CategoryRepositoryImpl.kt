@@ -5,7 +5,9 @@ import dev.rezyfr.trackerr.data.remote.dto.handleResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.CategoryResponse
 import dev.rezyfr.trackerr.data.remote.service.CategoryService
 import dev.rezyfr.trackerr.domain.model.CategoryModel
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.repository.CategoryRepository
+import kotlinx.coroutines.flow.Flow
 import migrations.CategoryEntity
 
 class CategoryRepositoryImpl(
@@ -18,5 +20,9 @@ class CategoryRepositoryImpl(
 
     override suspend fun addCategories(categories: List<CategoryEntity>): Result<Unit> {
         return categoryDao.insertCategories(categories)
+    }
+
+    override fun getCategories(type: CategoryType): Flow<List<CategoryEntity>> {
+        return categoryDao.getCategories(type)
     }
 }

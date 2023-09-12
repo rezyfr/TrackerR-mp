@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.presentation.component.multiselector.MultiSelector
 import dev.rezyfr.trackerr.presentation.theme.typeIndicatorColor
 
@@ -14,16 +15,18 @@ import dev.rezyfr.trackerr.presentation.theme.typeIndicatorColor
 @Composable
 fun TypeSelector(
     modifier: Modifier = Modifier,
-    type: String,
-    onSelectType: (String) -> Unit = {},
+    type: CategoryType,
+    onSelectType: (CategoryType) -> Unit = {},
     useDefaultColor: Boolean = true,
     backgroundColor: Color? = null,
     selectedHighlightColor: Color? = null,
 ) {
     MultiSelector (
-        options = listOf("Expense", "Income"),
-        selectedOption = type,
-        onOptionSelect = onSelectType,
+        options = CategoryType.values().map { it.label },
+        selectedOption = type.label,
+        onOptionSelect = {
+            onSelectType.invoke(CategoryType.valueOf(it))
+        },
         backgroundColor = if(useDefaultColor) type.typeIndicatorColor() else backgroundColor!!,
         selectedHighlightColor = if(useDefaultColor) MaterialTheme.colorScheme.onPrimary else selectedHighlightColor!!,
         selectedColor = if(useDefaultColor) type.typeIndicatorColor() else backgroundColor!!,

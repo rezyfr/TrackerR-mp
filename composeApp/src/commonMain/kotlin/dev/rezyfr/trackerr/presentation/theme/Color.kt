@@ -1,6 +1,7 @@
 package dev.rezyfr.trackerr.presentation.theme
 
 import androidx.compose.ui.graphics.Color
+import dev.rezyfr.trackerr.domain.model.CategoryType
 
 val Dark100 = Color(0xff0D0E0F)
 val Dark75 = Color(0xff161719)
@@ -53,8 +54,8 @@ fun String.color(): Color {
     return Color(hex.toLong(radix = 16))
 }
 
-fun String.typeIndicatorColor() = when (this) {
-    "Expense"-> Red100
-    "Income" -> Green100
+fun CategoryType.typeIndicatorColor() = when (this) {
+    CategoryType.EXPENSE -> Red100
+    CategoryType.INCOME -> Green100
     else -> Green100
 }

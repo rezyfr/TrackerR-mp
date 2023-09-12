@@ -11,7 +11,7 @@ class CategoryMapper {
             id = response.id,
             name = response.name,
             icon = response.icon,
-            type = CategoryType.fromString(response.type),
+            type = response.type,
             color = response.color
         )
     }
@@ -31,8 +31,18 @@ class CategoryMapper {
             id = response.id.toLong(),
             name = response.name,
             icon = response.icon,
-            type = response.type,
+            type = response.type.name,
             color = response.color
+        )
+    }
+
+    fun mapEntityToDomain(entity: CategoryEntity) : CategoryModel {
+        return CategoryModel(
+            id = entity.id.toInt(),
+            name = entity.name,
+            icon = entity.icon,
+            type = CategoryType.fromString(entity.type),
+            color = entity.color
         )
     }
 }

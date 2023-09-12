@@ -16,5 +16,5 @@ fun getScreenModelModule() = module {
 
     single { RootViewModel(get()) }
     single { HomeViewModel(get(), get(), get())}
-    single { AddTransactionViewModel(get(), get()) }
+    single { AddTransactionViewModel(get(), get(), get()) }
 }

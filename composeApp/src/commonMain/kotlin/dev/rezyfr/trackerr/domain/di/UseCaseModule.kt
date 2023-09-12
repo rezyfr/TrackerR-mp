@@ -1,5 +1,6 @@
 package dev.rezyfr.trackerr.domain.di
 
+import dev.rezyfr.trackerr.domain.usecase.category.GetCategoriesUseCase
 import dev.rezyfr.trackerr.domain.usecase.category.SyncCategoryUseCase
 import dev.rezyfr.trackerr.domain.usecase.user.CheckTokenUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.CreateWalletUseCase
@@ -34,4 +35,5 @@ fun getUseCaseModule() = module {
 
     // Category
     single { SyncCategoryUseCase(get(), get()) }
+    single { GetCategoriesUseCase(get(), get()) }
 }

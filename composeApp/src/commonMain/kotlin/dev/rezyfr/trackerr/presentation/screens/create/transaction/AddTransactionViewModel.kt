@@ -1,8 +1,12 @@
 package dev.rezyfr.trackerr.presentation.screens.create.transaction
 
 import dev.rezyfr.trackerr.domain.UiResult
+import dev.rezyfr.trackerr.domain.handleResult
+import dev.rezyfr.trackerr.domain.model.CategoryModel
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.domain.model.WalletModel
+import dev.rezyfr.trackerr.domain.usecase.category.GetCategoriesUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.CreateTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletsUseCase
 import dev.rezyfr.trackerr.presentation.base.BaseScreenModel
@@ -26,6 +30,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -37,22 +42,26 @@ import kotlinx.datetime.number
 
 class AddTransactionViewModel(
     private val createTransactionUseCase: CreateTransactionUseCase,
-    private val getWalletsUseCase: GetWalletsUseCase
+    private val getWalletsUseCase: GetWalletsUseCase,
+    private val getCategoriesUseCase: GetCategoriesUseCase
 ) : BaseScreenModel() {
 
     private val _state = MutableStateFlow(AddTransactionState())
     private val _trxResult = MutableStateFlow(_state.value.transactionResult)
     private val _walletResult = MutableStateFlow(_state.value.walletResult)
+    private val _categoryResult = MutableStateFlow(_state.value.categoryResult)
 
     init {
         getWallet()
+        getCategories()
     }
 
     val state = combine(
         _state,
         _trxResult,
         _walletResult,
-    ) { state, trx, wallet ->
+        _categoryResult
+    ) { state, trx, wallet, category ->
         AddTransactionState(
             type = state.type,
             amount = state.amount,
@@ -67,7 +76,9 @@ class AddTransactionViewModel(
             walletResult = wallet,
             dateOptions = state.dateOptions,
             datePickerSheet = state.datePickerSheet,
-            walletBottomSheet = state.walletBottomSheet
+            walletBottomSheet = state.walletBottomSheet,
+            categoryResult = category,
+            selectedCategory = state.selectedCategory
         )
     }.flowOn(Dispatchers.Default)
         .stateIn(
@@ -77,7 +88,7 @@ class AddTransactionViewModel(
         )
 
 
-    fun onChangeType(type: String) {
+    fun onChangeType(type: CategoryType) {
         _state.update { it.copy(type = type) }
     }
 
@@ -86,7 +97,10 @@ class AddTransactionViewModel(
     }
 
     fun onChangeCategory(categoryId: Int) {
-        _state.update { it.copy(categoryId = categoryId) }
+        val selected = (_categoryResult.value as? UiResult.Success)?.data?.find { it.id == categoryId }
+        _state.update { it.copy(
+            selectedCategory = selected
+        ) }
     }
 
     fun onChangeDayOfMonth(dom: Int) {
@@ -110,7 +124,7 @@ class AddTransactionViewModel(
         _state.update { state ->
             state.dateOptions.third.find { it.value == year }?.let {
                 state.copy(selectedYear = it)
-            } ?:  state
+            } ?: state
         }
     }
 
@@ -121,18 +135,19 @@ class AddTransactionViewModel(
     fun onChangeWallet(walletId: Int) {
         _state.update {
             it.copy(
-                selectedWallet = (_walletResult.value as UiResult.Success).data.find { it.id == walletId }
+                selectedWallet = (_walletResult.value as? UiResult.Success)?.data?.find { it.id == walletId }
             )
         }
     }
 
     fun onContinue() {
+        val state = _state.value
+        if (state.selectedWallet == null && state.selectedCategory == null) return
         viewModelScope.launch {
-            val state = _state.value
             createTransactionUseCase.executeFlow(
                 CreateTransactionUseCase.Param(
                     amount = state.amount,
-                    categoryId = state.categoryId,
+                    categoryId = state.selectedCategory!!.id,
                     createdDate = "",
                     description = state.description,
                     walletId = state.selectedWallet!!.id
@@ -150,10 +165,26 @@ class AddTransactionViewModel(
             }
         }
     }
+
+    private fun getCategories() {
+        viewModelScope.launch {
+            getCategoriesUseCase.executeFlow(_state.value.type)
+                .collectLatest {
+                    it.handleResult(
+                        ifError = {
+                            Napier.e("getCategories: ${it.message}")
+                        },
+                        ifSuccess = { cat ->
+                            _categoryResult.value = UiResult.Success(cat)
+                        }
+                    )
+                }
+        }
+    }
 }
 
 data class AddTransactionState(
-    val type: String = "Expense",
+    val type: CategoryType = CategoryType.EXPENSE,
     val amount: Double = 0.0,
     val categoryId: Int = 0,
     val createdDate: LocalDateTime = getCurrentLdt(),
@@ -162,6 +193,7 @@ data class AddTransactionState(
     val selectedYear: DateProperty = createdDate.toYear(IntRange(2000, 2100)),
     val description: String = "",
     val selectedWallet: WalletModel? = null,
+    val selectedCategory: CategoryModel? = null,
     val transactionResult: UiResult<TransactionModel> = UiResult.Uninitialized,
     val walletResult: UiResult<List<WalletModel>> = UiResult.Uninitialized,
     val dateOptions: Triple<List<DateProperty>, List<DateProperty>, List<DateProperty>> = Triple(
@@ -169,6 +201,8 @@ data class AddTransactionState(
         calculateMonths(),
         calculateYears()
     ),
+    val categoryResult: UiResult<List<CategoryModel>> = UiResult.Uninitialized,
     val datePickerSheet: BottomSheet = BottomSheet(),
-    val walletBottomSheet: BottomSheet = BottomSheet()
+    val walletBottomSheet: BottomSheet = BottomSheet(),
+    val categoryBottomSheet: BottomSheet = BottomSheet(),
 )
