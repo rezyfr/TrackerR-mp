@@ -61,7 +61,7 @@ import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBarDefaults
 import dev.rezyfr.trackerr.presentation.component.griddropdown.GridDropdownMenu
-import dev.rezyfr.trackerr.presentation.screens.RootScreen
+import dev.rezyfr.trackerr.presentation.screens.main.MainScreen
 import io.github.skeptick.libres.compose.painterResource
 import kotlinx.coroutines.delay
 import org.koin.core.component.KoinComponent
@@ -82,7 +82,7 @@ class AddAccountScreen : Screen, KoinComponent {
             onChangeBalance = { viewModel.onChangeBalance(it) },
             onSelectIcon = { viewModel.onSelectIcon(it) },
             onBackPressed = { navigator.pop() },
-            onSuccess = { navigator.replaceAll(RootScreen()) },
+//            onSuccess = { navigator.replaceAll(MainScreen()) },
             state = uiState
         )
     }

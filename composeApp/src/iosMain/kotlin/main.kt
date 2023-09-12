@@ -3,7 +3,7 @@ import com.arkivanov.decompose.DefaultComponentContext
 import com.arkivanov.essenty.lifecycle.LifecycleRegistry
 import dev.rezyfr.trackerr.App
 import dev.rezyfr.trackerr.di.initKoin
-import dev.rezyfr.trackerr.presentation.screens.RootComponent
+import dev.rezyfr.trackerr.presentation.RootComponent
 import platform.UIKit.UIViewController
 
 fun MainViewController(

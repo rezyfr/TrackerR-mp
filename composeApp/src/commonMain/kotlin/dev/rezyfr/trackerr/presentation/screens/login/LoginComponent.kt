@@ -32,7 +32,6 @@ class LoginComponent(
 
     sealed class Action {
         object NavigateToRegister : Action()
-        object NavigateToHome : Action()
         object NavigateBack : Action()
     }
 }

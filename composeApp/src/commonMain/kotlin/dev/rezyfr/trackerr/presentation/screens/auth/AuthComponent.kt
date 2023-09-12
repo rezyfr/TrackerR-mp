@@ -6,6 +6,7 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
+import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
@@ -63,7 +64,6 @@ class AuthComponent(
     private fun onLoginAction(action: LoginComponent.Action) {
         when (action) {
             is LoginComponent.Action.NavigateToRegister -> navigation.push(Configuration.Register)
-            is LoginComponent.Action.NavigateToHome -> { } // TODO navigate to home
             is LoginComponent.Action.NavigateBack -> navigation.pop()
         }
     }
@@ -85,5 +85,9 @@ class AuthComponent(
     sealed class Child {
         data class Login(val loginComponent: LoginComponent) : Child()
         data class Register(val registerComponent: RegisterComponent) : Child()
+    }
+
+    sealed class Action {
+        object NavigateToMain: Action()
     }
 }

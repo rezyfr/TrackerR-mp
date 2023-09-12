@@ -1,6 +1,5 @@
 package dev.rezyfr.trackerr.presentation.screens.login
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.IconButton
@@ -11,7 +10,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -20,27 +18,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
-import dev.rezyfr.trackerr.presentation.screens.RootScreen
 import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStore
-import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
-import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
-import dev.rezyfr.trackerr.presentation.theme.Light20
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 @Composable
 fun LoginScreen(
-    loginComponent: LoginComponent
+    loginComponent: LoginComponent,
+    onSuccessLogin: () -> Unit = {},
 ) {
     val loginState by loginComponent.state.collectAsState()
 
@@ -49,7 +38,14 @@ fun LoginScreen(
         onEvent = loginComponent::onEvent,
         onAction = loginComponent::onAction,
     )
+
+    LaunchedEffect(loginState.loginResult) {
+        if (loginState.loginResult is UiResult.Success) {
+            onSuccessLogin()
+        }
+    }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

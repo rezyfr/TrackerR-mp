@@ -4,6 +4,6 @@ import com.arkivanov.mvikotlin.core.store.Store
 
 interface RootStore : Store<RootStore.Intent, Unit, Unit> {
     sealed class Intent {
-        object CheckUserToken : RootStore.Intent()
+        object CheckUserToken : Intent()
     }
 }

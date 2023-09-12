@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.arkivanov.decompose.defaultComponentContext
 import dev.rezyfr.trackerr.di.initKoin
-import dev.rezyfr.trackerr.presentation.screens.RootComponent
+import dev.rezyfr.trackerr.presentation.RootComponent
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext

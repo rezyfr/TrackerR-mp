@@ -2,15 +2,14 @@ package dev.rezyfr.trackerr.presentation.di
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.store.StoreFactory
-import com.arkivanov.mvikotlin.extensions.coroutines.bind
 import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import dev.rezyfr.trackerr.presentation.screens.RootViewModel
 import dev.rezyfr.trackerr.presentation.screens.create.account.AddAccountViewModel
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionViewModel
+import dev.rezyfr.trackerr.presentation.screens.home.HomeComponent
 import dev.rezyfr.trackerr.presentation.screens.home.HomeViewModel
 import dev.rezyfr.trackerr.presentation.screens.login.LoginComponent
 import dev.rezyfr.trackerr.presentation.screens.login.LoginViewModel
-import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStoreFactory
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterComponent
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterViewModel
 import org.koin.dsl.module
@@ -40,6 +39,13 @@ fun getScreenModelModule() = module {
             componentContext = componentContext,
             storeFactory = get(),
             action = action
+        )
+    }
+
+    factory { (componentContext: ComponentContext) ->
+        HomeComponent(
+            componentContext = componentContext,
+            storeFactory = get()
         )
     }
 }

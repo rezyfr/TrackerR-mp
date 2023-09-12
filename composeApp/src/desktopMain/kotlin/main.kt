@@ -8,8 +8,7 @@ import com.arkivanov.essenty.lifecycle.resume
 import com.arkivanov.mvikotlin.core.utils.setMainThreadId
 import dev.rezyfr.trackerr.App
 import dev.rezyfr.trackerr.di.initKoin
-import dev.rezyfr.trackerr.presentation.screens.RootComponent
-import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
+import dev.rezyfr.trackerr.presentation.RootComponent
 import javax.swing.SwingUtilities
 
 fun main() = application {

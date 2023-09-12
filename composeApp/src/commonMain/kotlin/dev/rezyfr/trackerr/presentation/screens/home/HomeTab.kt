@@ -54,6 +54,7 @@ import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.TrCapsuleButton
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.format
+import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import dev.rezyfr.trackerr.presentation.theme.HomeTopBackground
 import dev.rezyfr.trackerr.presentation.theme.Red100
@@ -61,262 +62,213 @@ import io.github.skeptick.libres.compose.painterResource
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-internal class HomeTab : Tab, KoinComponent {
-    override val options: TabOptions
-        @Composable get() {
-            val navigator = LocalTabNavigator.current
-            return TabOptions(
-                0u,
-                "Home",
-                painterResource(if (navigator.current == this) Res.image.ic_menu_home_active else Res.image.ic_menu_home_inactive),
-            )
+@Composable
+fun HomeTab(
+    homeComponent: HomeComponent
+) {
+    val state by homeComponent.state.collectAsState()
+
+    HomeScreen(
+        state = state,
+    )
+}
+
+@Composable
+fun HomeScreen(
+    state: HomeStore.State,
+) {
+    Scaffold(
+        topBar = {
+            HomeTopBar()
         }
-
-
-    @Composable
-    override fun Content() {
-        val viewModel: HomeViewModel by inject()
-
-        val state by viewModel.state.collectAsState()
-
-        HomeScreen(
+    ) {
+        HomeContent(
             state = state,
+            modifier = Modifier.padding(it)
         )
     }
+}
 
-    @Composable
-    fun HomeScreen(
-        state: HomeState,
-    ) {
-        Scaffold(
-            topBar = {
-                HomeTopBar()
-            }
-        ) {
-            HomeContent(
-                state = state,
-                modifier = Modifier.padding(it)
-            )
-        }
-    }
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeTopBar() {
+    CenterAlignedTopAppBar(
+        title = {
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    private fun HomeTopBar() {
-        CenterAlignedTopAppBar(
-            title = {
-
-            },
-            navigationIcon = {
-                Box(
-                    Modifier.padding(16.dp)
-                        .clip(CircleShape)
-                        .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                ) {
-                    Icon(
-                        Icons.Filled.Person,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
-                            .align(Alignment.Center)
-                            .size(32.dp)
-                    )
-                }
-            },
-            actions = {
+        },
+        navigationIcon = {
+            Box(
+                Modifier.padding(16.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
+            ) {
                 Icon(
-                    Icons.Filled.Notifications,
+                    Icons.Filled.Person,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(16.dp).size(32.dp)
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                        .align(Alignment.Center)
+                        .size(32.dp)
                 )
-            },
-            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = HomeTopBackground,
-                actionIconContentColor = MaterialTheme.colorScheme.primary
+            }
+        },
+        actions = {
+            Icon(
+                Icons.Filled.Notifications,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(16.dp).size(32.dp)
             )
+        },
+        colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+            containerColor = HomeTopBackground,
+            actionIconContentColor = MaterialTheme.colorScheme.primary
         )
-    }
+    )
+}
 
-    @Composable
-    private fun HomeContent(
-        modifier: Modifier = Modifier,
-        state: HomeState
-    ) {
-        LazyColumn(modifier) {
-            item {
-                SummarySection(
-                    state, Modifier.fillMaxWidth()
-                )
-            }
-            item() {
-                RecentTransaction(state.recentTransaction)
-            }
+@Composable
+private fun HomeContent(
+    modifier: Modifier = Modifier,
+    state: HomeStore.State
+) {
+    LazyColumn(modifier) {
+        item {
+            SummarySection(
+                state, Modifier.fillMaxWidth()
+            )
+        }
+        item() {
+            RecentTransaction(state.recentTransaction)
         }
     }
+}
 
-    @Composable
-    private fun SummarySection(
-        state: HomeState,
-        modifier: Modifier = Modifier
-    ) {
-        AccountBalance(
-            modifier.background(HomeTopBackground).padding(bottom = 16.dp), state.accBalance
-        )
-        TransactionSummary(
-            modifier
-                .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
-                .background(HomeTopBackground)
-                .padding(bottom = 24.dp), state.transactionSummary
-        )
-    }
+@Composable
+private fun SummarySection(
+    state: HomeStore.State,
+    modifier: Modifier = Modifier
+) {
+    AccountBalance(
+        modifier.background(HomeTopBackground).padding(bottom = 16.dp), state.accBalance
+    )
+    TransactionSummary(
+        modifier
+            .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
+            .background(HomeTopBackground)
+            .padding(bottom = 24.dp), state.transactionSummary
+    )
+}
 
-    @Composable
-    private fun TransactionSummary(
-        modifier: Modifier = Modifier,
-        summary: UiResult<TransactionSummaryModel>
+@Composable
+private fun TransactionSummary(
+    modifier: Modifier = Modifier,
+    summary: UiResult<TransactionSummaryModel>
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = modifier.padding(horizontal = 16.dp)
-        ) {
-            if (summary is UiResult.Success) {
-                Card(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(containerColor = Green100)
+        if (summary is UiResult.Success) {
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = Green100)
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    Box(
+                        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.onPrimary)
+                            .size(36.dp)
                     ) {
-                        Box(
-                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                                .background(MaterialTheme.colorScheme.onPrimary)
-                                .size(36.dp)
-                        ) {
-                            Image(
-                                Res.image.ic_income.painterResource(),
-                                null,
-                                Modifier.size(24.dp).align(Alignment.Center)
-                            )
-                        }
-                        HSpacer(10)
-                        Column(
-                            Modifier.wrapContentHeight(),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                "Income",
-                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary)
-                            )
-                            Text(
-                                "Rp${summary.data.totalIncome.format()}",
-                                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
-                            )
-                        }
+                        Image(
+                            Res.image.ic_income.painterResource(),
+                            null,
+                            Modifier.size(24.dp).align(Alignment.Center)
+                        )
                     }
-                }
-                Card(
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(28.dp),
-                    colors = CardDefaults.cardColors(containerColor = Red100)
-                ) {
-                    Row(
-                        Modifier.fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
+                    HSpacer(10)
+                    Column(
+                        Modifier.wrapContentHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Box(
-                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                                .background(MaterialTheme.colorScheme.onPrimary)
-                                .size(36.dp)
-                        ) {
-                            Image(
-                                Res.image.ic_expense.painterResource(),
-                                null,
-                                Modifier.size(24.dp).align(Alignment.Center)
-                            )
-                        }
-                        HSpacer(10)
-                        Column(
-                            Modifier.wrapContentHeight(),
-                            verticalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                "Expenses",
-                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary),
-                            )
-                            Text(
-                                "Rp${summary.data.totalExpense.format()}",
-                                style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun AccountBalance(
-        modifier: Modifier = Modifier,
-        balance: UiResult<Long>
-    ) {
-        Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                "Account Balance", style = MaterialTheme.typography.bodySmall.copy(
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-            )
-            VSpacer(4)
-            when (balance) {
-                is UiResult.Success -> {
-                    Text(
-                        text = "Rp${balance.data.format()}",
-                        style = MaterialTheme.typography.titleMedium.copy(fontSize = 40.sp)
-                    )
-                }
-
-                is UiResult.Error -> {
-
-                }
-
-                else -> {
-
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun RecentTransaction(
-        recent: UiResult<List<TransactionModel>>
-    ) {
-        Row(
-            Modifier.fillMaxWidth().padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Recent Transaction", style = MaterialTheme.typography.titleSmall)
-            TrCapsuleButton(
-                onClick = { /*TODO*/ },
-                text = "See All"
-            )
-        }
-        when (recent) {
-            is UiResult.Success -> {
-                recent.data.let {
-                    it.forEach { transaction ->
-                        TransactionItem(
-                            transaction = transaction
+                        Text(
+                            "Income",
+                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary)
+                        )
+                        Text(
+                            "Rp${summary.data.totalIncome.format()}",
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
                         )
                     }
                 }
+            }
+            Card(
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = Red100)
+            ) {
+                Row(
+                    Modifier.fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.onPrimary)
+                            .size(36.dp)
+                    ) {
+                        Image(
+                            Res.image.ic_expense.painterResource(),
+                            null,
+                            Modifier.size(24.dp).align(Alignment.Center)
+                        )
+                    }
+                    HSpacer(10)
+                    Column(
+                        Modifier.wrapContentHeight(),
+                        verticalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Expenses",
+                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary),
+                        )
+                        Text(
+                            "Rp${summary.data.totalExpense.format()}",
+                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountBalance(
+    modifier: Modifier = Modifier,
+    balance: UiResult<Long>
+) {
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            "Account Balance", style = MaterialTheme.typography.bodySmall.copy(
+                color = MaterialTheme.colorScheme.tertiary
+            )
+        )
+        VSpacer(4)
+        when (balance) {
+            is UiResult.Success -> {
+                Text(
+                    text = "Rp${balance.data.format()}",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 40.sp)
+                )
             }
 
             is UiResult.Error -> {
@@ -326,6 +278,42 @@ internal class HomeTab : Tab, KoinComponent {
             else -> {
 
             }
+        }
+    }
+}
+
+@Composable
+fun RecentTransaction(
+    recent: UiResult<List<TransactionModel>>
+) {
+    Row(
+        Modifier.fillMaxWidth().padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text("Recent Transaction", style = MaterialTheme.typography.titleSmall)
+        TrCapsuleButton(
+            onClick = { /*TODO*/ },
+            text = "See All"
+        )
+    }
+    when (recent) {
+        is UiResult.Success -> {
+            recent.data.let {
+                it.forEach { transaction ->
+                    TransactionItem(
+                        transaction = transaction
+                    )
+                }
+            }
+        }
+
+        is UiResult.Error -> {
+
+        }
+
+        else -> {
+
         }
     }
 }
