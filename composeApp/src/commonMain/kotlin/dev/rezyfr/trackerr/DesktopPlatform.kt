@@ -5,6 +5,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.jetbrains.skia.Typeface
 
 expect val ioDispatcher: CoroutineDispatcher
+expect val mainDispatcher: CoroutineDispatcher
 
 expect val interFontFamily: FontFamily
 

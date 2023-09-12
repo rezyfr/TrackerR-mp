@@ -9,6 +9,7 @@ compose-uitooling = "1.5.0"
 libres = "1.1.8"
 composeImageLoader = "1.6.3"
 napier = "2.6.1"
+voyager = "1.0.0-rc06"
 buildConfig = "4.1.1"
 kotlinx-coroutines = "1.7.3"
 insetsx = "0.1.0-alpha10"
@@ -19,6 +20,8 @@ koin = "3.4.3"
 koin-compose-jb = "1.0.3"
 ktor-version = "2.3.2"
 sqldelight = "2.0.0"
+decompose = "2.0.2-compose-experimental" # experimental for iOS project
+mvikotlin = "3.2.1"
 
 [libraries]
 
@@ -48,6 +51,16 @@ sqldelight-android-driver = {module = "app.cash.sqldelight:android-driver", vers
 sqldelight-native-driver = {module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight"}
 sqldelight-sqlite-driver = {module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight"}
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+decompose-jetbrains-experimental = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+decompose-experimental = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-tabnavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+mvikotlin-core = { module = "com.arkivanov.mvikotlin:mvikotlin", version.ref = "mvikotlin" }
+mvikotlin-main = { module = "com.arkivanov.mvikotlin:mvikotlin-main", version.ref = "mvikotlin" }
+mvikotlin-logging = { module = "com.arkivanov.mvikotlin:mvikotlin-logging", version.ref = "mvikotlin" }
+mvikotlin-coroutines = { module = "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines", version.ref = "mvikotlin" }
+
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

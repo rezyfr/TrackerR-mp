@@ -38,186 +38,172 @@ import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
+import dev.rezyfr.trackerr.presentation.screens.login.LoginComponent
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
+import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStore
+import dev.rezyfr.trackerr.presentation.screens.register.store.RegisterStore
 import dev.rezyfr.trackerr.presentation.theme.Light20
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class RegisterScreen() : Screen, KoinComponent {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel: RegisterViewModel by inject()
-        val registerState by viewModel.uiState.collectAsState()
+@Composable
+fun RegisterScreen(
+    registerComponent: RegisterComponent
+) {
+//    val navigator = LocalNavigator.currentOrThrow
+    val registerState by registerComponent.state.collectAsState()
 
-        LaunchedEffect(registerState.registerResult) {
-            if (registerState.registerResult is UiResult.Success) {
-                navigator.replaceAll(LoginScreen())
-            }
+//    LaunchedEffect(registerState.registerResult) {
+//        if (registerState.registerResult is UiResult.Success) {
+//            navigator.replaceAll(LoginScreen())
+//        }
+//    }
+
+    RegisterScreen(
+        state = registerState,
+        onEvent = registerComponent::onEvent,
+        onAction = registerComponent::onAction,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterScreen(
+    state: RegisterStore.State,
+    onEvent: (RegisterStore.Intent) -> Unit,
+    onAction: (RegisterComponent.Action) -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TrTopBar(text = "Sign Up", onBackPressed = { onAction(RegisterComponent.Action.NavigateBack) })
         }
-
-        RegisterScreen(
-            state = registerState,
-            onBackPressed = navigator::pop,
-            onRegister = viewModel::register,
-            onChangeEmail = viewModel::onEmailChange,
-            onChangePassword = viewModel::onPasswordChange,
-            onChangeName = viewModel::onNameChange,
-            goToLogin = {
-                navigator.push(LoginScreen())
-            }
+    ) {
+        RegisterContent(
+            state = state,
+            onEvent = onEvent,
+            onAction = onAction,
+            modifier = Modifier.padding(it),
         )
     }
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun RegisterScreen(
-        state: RegisterUiState,
-        onBackPressed: () -> Unit,
-        onRegister: () -> Unit,
-        onChangeEmail: (String) -> Unit = { },
-        onChangePassword: (String) -> Unit = { },
-        onChangeName: (String) -> Unit = { },
-        goToLogin: () -> Unit,
+@Composable
+fun RegisterContent(
+    state: RegisterStore.State,
+    onEvent: (RegisterStore.Intent) -> Unit,
+    onAction: (RegisterComponent.Action) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier.padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Scaffold(
-            topBar = {
-                TrTopBar(text = "Sign Up", onBackPressed = onBackPressed)
-            }
-        ) {
-            RegisterContent(
-                state = state,
-                onRegister = onRegister,
-                onChangeEmail = onChangeEmail,
-                onChangePassword = onChangePassword,
-                onChangeName = onChangeName,
-                modifier = Modifier.padding(it),
-                goToLogin = goToLogin
-            )
-        }
-    }
-
-    @Composable
-    fun RegisterContent(
-        state: RegisterUiState,
-        onRegister: () -> Unit,
-        onChangeEmail: (String) -> Unit = { },
-        onChangePassword: (String) -> Unit = { },
-        onChangeName: (String) -> Unit = { },
-        goToLogin: () -> Unit,
-        modifier: Modifier = Modifier
-    ) {
-        Column(
-            modifier.padding(horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            VSpacer(36)
-            TrTextField(
-                value = state.name,
-                onValueChange = onChangeName,
-                placeholder = "Name",
-            )
-            VSpacer(24)
-            TrTextField(
-                value = state.email,
-                onValueChange = onChangeEmail,
-                placeholder = "Email",
-            )
-            VSpacer(24)
-            PasswordField(
-                password = state.password,
-                onChangePassword = onChangePassword,
-            )
-            VSpacer(36)
-            SignUpButton(
-                registerResult = state.registerResult,
-                onClick = onRegister
-            )
-            VSpacer(32)
-            HaveAccountText(
-                goToLogin = goToLogin
-            )
-        }
-    }
-
-    @Composable
-    fun PasswordField(
-        password: String,
-        onChangePassword: (String) -> Unit = { },
-        modifier: Modifier = Modifier
-    ) {
-        var passwordVisibility: Boolean by remember { mutableStateOf(false) }
+        VSpacer(36)
         TrTextField(
-            value = password,
-            onValueChange = onChangePassword,
-            placeholder = "Password",
-            modifier = modifier.fillMaxWidth(),
-            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(
-                    onClick = {
-                        passwordVisibility = !passwordVisibility
-                    }) {
-                    Icon(
-                        imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                        null
-                    )
-                }
-            }
+            value = state.name,
+            onValueChange = { onEvent(RegisterStore.Intent.OnNameChange(it)) },
+            placeholder = "Name",
+        )
+        VSpacer(24)
+        TrTextField(
+            value = state.email,
+            onValueChange = { onEvent(RegisterStore.Intent.OnEmailChange(it)) },
+            placeholder = "Email",
+        )
+        VSpacer(24)
+        PasswordField(
+            password = state.password,
+            onChangePassword = { onEvent(RegisterStore.Intent.OnPasswordChange(it)) },
+        )
+        VSpacer(36)
+        SignUpButton(
+            registerResult = state.registerResult,
+            onClick = { onEvent(RegisterStore.Intent.Register) }
+        )
+        VSpacer(32)
+        HaveAccountText(
+            goToLogin = { onAction(RegisterComponent.Action.NavigateToLogin) }
         )
     }
+}
 
-    @Composable
-    fun SignUpButton(
-        registerResult: UiResult<Unit>,
-        onClick: () -> Unit = { },
-    ) {
-        TrPrimaryButton(
-            text = {
-                if (registerResult is UiResult.Loading) CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
-                else ButtonText("Sign Up")
-            },
-            modifier = Modifier
-                .fillMaxWidth(),
-            onClick = onClick
-        )
-    }
-
-    @Composable
-    fun HaveAccountText(
-        modifier: Modifier = Modifier,
-        goToLogin: () -> Unit = {}
-    ) {
-        val annotatedText = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
-                append("Already have an account? ")
-            }
-            pushStringAnnotation(
-                tag = "Login",
-                annotation = "Login"
-            )
-            withStyle(
-                style = SpanStyle(
-                    color = MaterialTheme.colorScheme.primary,
-                    textDecoration = TextDecoration.Underline
+@Composable
+fun PasswordField(
+    password: String,
+    onChangePassword: (String) -> Unit = { },
+    modifier: Modifier = Modifier
+) {
+    var passwordVisibility: Boolean by remember { mutableStateOf(false) }
+    TrTextField(
+        value = password,
+        onValueChange = onChangePassword,
+        placeholder = "Password",
+        modifier = modifier.fillMaxWidth(),
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            IconButton(
+                onClick = {
+                    passwordVisibility = !passwordVisibility
+                }) {
+                Icon(
+                    imageVector = if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                    null
                 )
-            ) {
-                append("Login")
             }
-            pop()
         }
-        ClickableText(
-            text = annotatedText,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = modifier,
-        ) { offset ->
-            annotatedText.getStringAnnotations(
-                tag = "Login",
-                start = offset,
-                end = offset
-            ).firstOrNull()?.let {
-                goToLogin()
-            }
+    )
+}
+
+@Composable
+fun SignUpButton(
+    registerResult: UiResult<Unit>,
+    onClick: () -> Unit = { },
+) {
+    TrPrimaryButton(
+        text = {
+            if (registerResult is UiResult.Loading) CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary)
+            else ButtonText("Sign Up")
+        },
+        modifier = Modifier
+            .fillMaxWidth(),
+        onClick = onClick
+    )
+}
+
+@Composable
+fun HaveAccountText(
+    modifier: Modifier = Modifier,
+    goToLogin: () -> Unit = {}
+) {
+    val annotatedText = buildAnnotatedString {
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
+            append("Already have an account? ")
+        }
+        pushStringAnnotation(
+            tag = "Login",
+            annotation = "Login"
+        )
+        withStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.primary,
+                textDecoration = TextDecoration.Underline
+            )
+        ) {
+            append("Login")
+        }
+        pop()
+    }
+    ClickableText(
+        text = annotatedText,
+        style = MaterialTheme.typography.bodyMedium,
+        modifier = modifier,
+    ) { offset ->
+        annotatedText.getStringAnnotations(
+            tag = "Login",
+            start = offset,
+            end = offset
+        ).firstOrNull()?.let {
+            goToLogin()
         }
     }
 }
