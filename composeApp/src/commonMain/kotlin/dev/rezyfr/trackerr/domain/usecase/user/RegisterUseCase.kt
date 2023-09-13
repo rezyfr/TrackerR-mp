@@ -17,7 +17,8 @@ class RegisterUseCase(
                 params.name
             )
         }, onSuccess = {
-            authRepository.saveToken(it)
+            authRepository.saveAccessToken(it.accessToken.orEmpty())
+            authRepository.saveRefreshToken(it.refreshToken.orEmpty())
         })
     }
 

@@ -23,7 +23,7 @@ class CategoryServiceImpl(
     override suspend fun syncUserCategories(type: String) : NetworkResponse<BaseDto<List<CategoryResponse>>> {
         return execute {
             httpClient.get {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(getCategory)
                 parameter("type", type)
             }.body()

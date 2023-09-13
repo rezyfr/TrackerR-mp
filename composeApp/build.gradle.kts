@@ -189,9 +189,8 @@ tasks.getByPath("desktopSourcesJar").dependsOn("libresGenerateResources")
 
 buildConfig {
     buildConfigField("String", "BASE_URL", "\"https://trackerr-ktor.fly.dev/v1\"")
-//    buildConfigField("String", "BASE_URL", "\"http://localhost:8080/v1\"")
+//    buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/v1\"")}
 }
-
 compose {
     kotlinCompilerPlugin.set("org.jetbrains.compose.compiler:compiler:1.5.1")
 }

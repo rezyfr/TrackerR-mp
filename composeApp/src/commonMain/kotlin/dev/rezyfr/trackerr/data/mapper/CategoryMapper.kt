@@ -11,7 +11,7 @@ class CategoryMapper {
             id = response.id,
             name = response.name,
             icon = response.icon,
-            type = response.type,
+            type = CategoryType.valueOf(response.type) ?: CategoryType.EXPENSE,
             color = response.color
         )
     }
@@ -31,7 +31,7 @@ class CategoryMapper {
             id = response.id.toLong(),
             name = response.name,
             icon = response.icon,
-            type = response.type.name,
+            type = response.type ?: CategoryType.EXPENSE.name,
             color = response.color
         )
     }

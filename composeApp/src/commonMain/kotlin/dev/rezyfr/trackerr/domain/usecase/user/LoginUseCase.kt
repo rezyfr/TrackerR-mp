@@ -13,7 +13,9 @@ class LoginUseCase(
         return handleResult(
             execute = { authRepository.login(params.email, params.password) },
             onSuccess = {
-                authRepository.saveToken(it)
+                authRepository.saveAccessToken(it.accessToken.orEmpty())
+                authRepository.saveRefreshToken(it.refreshToken.orEmpty())
+                authRepository.saveEmail(params.email)
             }
         )
     }

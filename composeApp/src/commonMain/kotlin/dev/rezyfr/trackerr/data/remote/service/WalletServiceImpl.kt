@@ -30,7 +30,7 @@ class WalletServiceImpl(
         return execute {
             httpClient.post {
                 url(create)
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 setJsonBody(request)
             }.body()
         }
@@ -39,7 +39,7 @@ class WalletServiceImpl(
     override suspend fun getWalletBalance(): NetworkResponse<BaseDto<Long>> {
         return execute {
             httpClient.get {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(getBalance)
             }.body()
         }
@@ -48,7 +48,7 @@ class WalletServiceImpl(
     override suspend fun getWallets(): NetworkResponse<BaseDto<List<WalletResponse>>> {
         return execute {
             httpClient.get {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(getWallet)
             }.body()
         }

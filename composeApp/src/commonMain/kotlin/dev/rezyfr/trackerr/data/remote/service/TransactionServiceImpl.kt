@@ -29,7 +29,7 @@ class TransactionServiceImpl(
     override suspend fun getRecentTransaction(): NetworkResponse<BaseDto<List<TransactionResponse>>> {
         return execute {
             httpClient.get {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(recent)
             }.body()
         }
@@ -38,7 +38,7 @@ class TransactionServiceImpl(
     override suspend fun getTransactionSummary(month: Int): NetworkResponse<BaseDto<TransactionSummaryResponse>> {
         return execute {
             httpClient.post {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(summary)
                 parameter("month", month)
             }.body()
@@ -54,7 +54,7 @@ class TransactionServiceImpl(
     ): NetworkResponse<BaseDto<TransactionResponse>> {
         return execute {
             httpClient.post {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(create)
                 setJsonBody(
                     CreateTransactionRequest(

@@ -1,7 +1,6 @@
 package dev.rezyfr.trackerr.data.remote.dto.response
 
 
-import dev.rezyfr.trackerr.domain.model.CategoryType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -16,5 +15,5 @@ data class CategoryResponse(
     @SerialName("name")
     val name: String,
     @SerialName("type")
-    val type: CategoryType
+    val type: String
 )

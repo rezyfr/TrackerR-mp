@@ -5,7 +5,9 @@ import com.russhwolf.settings.get
 import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.request.LoginRequest
+import dev.rezyfr.trackerr.data.remote.dto.request.RefreshTokenRequest
 import dev.rezyfr.trackerr.data.remote.dto.request.RegisterRequest
+import dev.rezyfr.trackerr.data.remote.dto.response.TokenResponse
 import dev.rezyfr.trackerr.data.util.SettingsConstant
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setAuthHeader
@@ -25,12 +27,13 @@ class AuthServiceImpl(
     private val register = "$baseUrl/user/register"
     private val login = "$baseUrl/user/login"
     private val checkToken = "$baseUrl/user/check-token"
+    private val refreshToken = "$baseUrl/user/refresh-token"
 
     override suspend fun register(
         email: String,
         password: String,
         name: String
-    ): NetworkResponse<BaseDto<String>> {
+    ): NetworkResponse<BaseDto<TokenResponse>> {
         return execute {
             httpClient.post {
                 url(register)
@@ -46,7 +49,7 @@ class AuthServiceImpl(
         }
     }
 
-    override suspend fun login(email: String, password: String): NetworkResponse<BaseDto<String>> {
+    override suspend fun login(email: String, password: String): NetworkResponse<BaseDto<TokenResponse>> {
         return execute {
             httpClient.post {
                 url(login)
@@ -64,8 +67,23 @@ class AuthServiceImpl(
     override suspend fun checkToken(): NetworkResponse<BaseDto<Unit>> {
         return execute {
             httpClient.get {
-                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(checkToken)
+            }.body()
+        }
+    }
+
+    override suspend fun refreshToken(): NetworkResponse<BaseDto<TokenResponse>> {
+        return execute {
+            httpClient.post {
+                url(refreshToken)
+                setNoAuthHeader()
+                setJsonBody(
+                    RefreshTokenRequest(
+                        email = settings[SettingsConstant.KEY_EMAIL, ""],
+                        refreshToken = settings[SettingsConstant.KEY_REFRESH_TOKEN, ""]
+                    )
+                )
             }.body()
         }
     }
