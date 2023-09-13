@@ -13,20 +13,12 @@ import javax.swing.SwingUtilities
 
 fun main() = application {
     initKoin(enableNetworkLogs = true)
-    val rootComponent = invokeOnAwtSync {
-        setMainThreadId(Thread.currentThread().id)
 
-        val lifecycle = LifecycleRegistry()
+    val lifecycle = LifecycleRegistry()
 
-        val rootComponent = RootComponent(
-            componentContext = DefaultComponentContext(lifecycle = lifecycle),
-        )
-
-        lifecycle.resume()
-
-        rootComponent
-    }
-
+    val rootComponent = RootComponent(
+        componentContext = DefaultComponentContext(lifecycle = lifecycle),
+    )
     Window(
         title = "TrackerR Multiplatform",
         state = rememberWindowState(width = 800.dp, height = 600.dp),

@@ -7,7 +7,7 @@ struct iosApp: App {
     private var lifecycleHolder: LifecycleHolder { LifecycleHolder() }
     var body: some Scene {
         WindowGroup {
-            ContentView(lifecycleHolder.lifecycle)
+            ContentView(lifecycle: lifecycleHolder.lifecycle)
         }
     }
 }
@@ -19,7 +19,7 @@ struct ContentView: View {
         self.lifecycle = lifecycle
     }
     var body: some View {
-        ComposeView(lifecycle).ignoresSafeArea(.keyboard)
+        ComposeView(lifecycle: lifecycle).ignoresSafeArea(.keyboard)
     }
 }
 
@@ -32,7 +32,7 @@ struct ComposeView: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIViewController {
         MainKt.MainViewController(
-            lifecycle: lifecycle,
+            lifecycle: lifecycle
         )
     }
 

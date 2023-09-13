@@ -66,6 +66,10 @@ kotlin {
         framework {
             baseName = "ComposeApp"
             isStatic = true
+
+            export(libs.decompose.experimental)
+            export(libs.essenty)
+            export(libs.mvikotlin.main)
         }
     }
 
@@ -135,6 +139,9 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation(libs.sqldelight.native.driver)
+                api(libs.decompose.experimental)
+                api(libs.essenty)
+                api(libs.mvikotlin.main)
             }
         }
     }
