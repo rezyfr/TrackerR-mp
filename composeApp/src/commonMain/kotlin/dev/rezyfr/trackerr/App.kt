@@ -1,23 +1,16 @@
 package dev.rezyfr.trackerr
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.runtime.Composable
-import cafe.adriel.voyager.navigator.Navigator
-import dev.rezyfr.trackerr.presentation.screens.RootScreen
-import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
-import dev.rezyfr.trackerr.presentation.theme.AppTheme
-import dev.rezyfr.trackerr.utils.SlideTransition
 
-@OptIn(ExperimentalAnimationApi::class)
+import androidx.compose.runtime.Composable
+import dev.rezyfr.trackerr.presentation.screens.root.RootComponent
+import dev.rezyfr.trackerr.presentation.screens.root.RootScreen
+import dev.rezyfr.trackerr.presentation.theme.AppTheme
+
 @Composable
-fun App() {
+fun App(
+    component: RootComponent,
+) {
     AppTheme {
-        Navigator(
-            screen = LoginScreen(),
-        ) {
-            SlideTransition(it) { screen ->
-                screen.Content()
-            }
-        }
+        RootScreen(component)
     }
 }

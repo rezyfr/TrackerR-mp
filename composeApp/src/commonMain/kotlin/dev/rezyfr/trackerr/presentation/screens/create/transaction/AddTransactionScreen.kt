@@ -27,9 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.presentation.component.AmountTextField
 import dev.rezyfr.trackerr.presentation.component.base.ButtonText
@@ -41,199 +38,181 @@ import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.Cat
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.DatePickerSheet
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.WalletPickerSheet
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.store.AddTransactionStore
 import dev.rezyfr.trackerr.presentation.theme.typeIndicatorColor
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class AddTransactionScreen() : Screen, KoinComponent {
-    @Composable
-    override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        val viewModel by inject<AddTransactionViewModel>()
-        val state by viewModel.state.collectAsState()
+@Composable
+fun AddTransactionScreen(
+    addTransactionComponent: AddTransactionComponent,
+) {
+    val state by addTransactionComponent.state.collectAsState()
 
-        AddTransactionScreen(
-            state,
-            onChangeType = { viewModel.onChangeType(it) },
-            onChangeAmount = { viewModel.onChangeAmount(it.text) },
-            onChangeDate = { viewModel.onChangeDayOfMonth(it) },
-            onChangeMonth = { viewModel.onChangeMonth(it) },
-            onChangeYear = { viewModel.onChangeYear(it) },
-            onChangeWallet = { viewModel.onChangeWallet(it) },
-            onChangeDescription = { viewModel.onChangeDescription(it) },
-            onChangeCategory = { viewModel.onChangeCategory(it) },
-            onContinue = { viewModel.onContinue() },
-            onBack = { navigator.pop() }
-        )
+    AddTransactionScreen(
+        state,
+        onEvent = addTransactionComponent::onEvent,
+        onAction = addTransactionComponent::onAction,
+    )
 
-        LaunchedEffect(state.transactionResult) {
-            if (state.transactionResult.isSuccess()) {
-                navigator.pop()
-            }
+    LaunchedEffect(state.transactionResult) {
+        if (state.transactionResult.isSuccess()) {
+            addTransactionComponent.onAction(AddTransactionComponent.Action.Finish)
         }
     }
+}
 
-    @Composable
-    private fun AddTransactionScreen(
-        state: AddTransactionState,
-        onContinue: () -> Unit = {},
-        onBack: () -> Unit = {},
-        onChangeWallet: (Int) -> Unit = {},
-        onChangeDate: (Int) -> Unit = {},
-        onChangeMonth: (Int) -> Unit = {},
-        onChangeYear: (Int) -> Unit = {},
-        onChangeAmount: (TextFieldValue) -> Unit = {},
-        onChangeDescription: (String) -> Unit = {},
-        onChangeType: (CategoryType) -> Unit = {},
-        onChangeCategory: (Int) -> Unit = {},
-    ) {
-        Box(Modifier.fillMaxSize()) {
-            Scaffold(
-                topBar = {
-                    TransactionAppBar(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.TopCenter),
-                        type = state.type,
-                        onBack = onBack,
-                        onSelectType = onChangeType,
-                    )
-                },
-                containerColor = state.type.typeIndicatorColor()
+@Composable
+private fun AddTransactionScreen(
+    state: AddTransactionStore.State,
+    onEvent: (AddTransactionStore.Intent) -> Unit,
+    onAction: (AddTransactionComponent.Action) -> Unit,
+) {
+    Box(Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                TransactionAppBar(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.TopCenter),
+                    type = state.type,
+                    onBack = { onAction(AddTransactionComponent.Action.NavigateBack) },
+                    onEvent = onEvent,
+                )
+            },
+            containerColor = state.type.typeIndicatorColor()
+        ) {
+            Box(
+                Modifier.fillMaxSize()
+                    .background(state.type.typeIndicatorColor()),
+                contentAlignment = Alignment.BottomCenter
             ) {
-                Box(
-                    Modifier.fillMaxSize()
-                        .background(state.type.typeIndicatorColor()),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    AddTransactionDialog(
-                        state = state,
-                        onContinue = onContinue,
-                        onChangeAmount = onChangeAmount,
-                        onChangeDescription = onChangeDescription,
-                    )
-                }
-            }
-            RevealingSheet(state.datePickerSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
-                DatePickerSheet(
-                    Modifier.fillMaxWidth(),
+                AddTransactionDialog(
                     state = state,
-                    onChangeDay = { onChangeDate(it) },
-                    onChangeMonth = { onChangeMonth(it) },
-                    onChangeYear = { onChangeYear(it) },
-                )
-            }
-            RevealingSheet(state.walletBottomSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
-                WalletPickerSheet(
-                    Modifier.fillMaxWidth(),
-                    wallets = state.walletResult,
-                    onContinue = {
-                        onChangeWallet(it)
-                        state.walletBottomSheet.collapse()
-                    },
-                    currentWallet = state.selectedWallet
-                )
-            }
-            RevealingSheet(state.categoryBottomSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
-                CategoryPickerSheet(
-                    Modifier.fillMaxWidth(),
-                    categories = state.categoryResult,
-                    onContinue = {
-                        onChangeCategory(it)
-                        state.categoryBottomSheet.collapse()
-                    },
-                    currentCategory = state.selectedCategory
+                    onEvent = onEvent,
                 )
             }
         }
-    }
-
-    @Composable
-    fun AddTransactionDialog(
-        modifier: Modifier = Modifier,
-        state: AddTransactionState,
-        onContinue: () -> Unit,
-        onChangeAmount: (TextFieldValue) -> Unit,
-        onChangeDescription: (String) -> Unit,
-    ) {
-        Column(modifier = modifier.fillMaxWidth()) {
-            val formattedAmount = state.amount.format()
-            AmountTextField(
-                modifier = Modifier.padding(16.dp),
-                label = "How much?",
-                onValueChange = onChangeAmount,
-                value = TextFieldValue(formattedAmount, TextRange(formattedAmount.length)),
+        RevealingSheet(state.datePickerSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
+            DatePickerSheet(
+                Modifier.fillMaxWidth(),
+                state = state,
+                onChangeDay = { onEvent(AddTransactionStore.Intent.OnChangeDayOfMonth(it)) },
+                onChangeMonth = { onEvent(AddTransactionStore.Intent.OnChangeMonth(it)) },
+                onChangeYear = { onEvent(AddTransactionStore.Intent.OnChangeYear(it)) },
             )
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(
-                            topStart = 32.dp, topEnd = 32.dp
-                        )
-                    )
-                    .padding(horizontal = 16.dp, vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                TrTextField(
-                    placeholder = "Wallet",
-                    value = state.selectedWallet?.name.orEmpty(),
-                    onClick = { state.walletBottomSheet.expand() }
-                )
-                TrTextField(
-                    placeholder = "Description",
-                    value = state.description,
-                    onValueChange = onChangeDescription
-                )
-                TrTextField(
-                    placeholder = "Date",
-                    value = "${state.selectedDay.value} ${state.selectedMonth.text} ${state.selectedYear.value}",
-                    onClick = { state.datePickerSheet.expand() }
-                )
-                TrTextField(
-                    placeholder = "Category",
-                    value = state.selectedCategory?.name.orEmpty(),
-                    onClick = { state.categoryBottomSheet.expand() }
-                )
-                TrPrimaryButton(
-                    Modifier.fillMaxWidth(),
-                    text = { ButtonText("Continue") },
-                    onClick = onContinue
-                )
-            }
+        }
+        RevealingSheet(state.walletBottomSheet, modifier = Modifier.align(Alignment.BottomCenter)) {
+            WalletPickerSheet(
+                Modifier.fillMaxWidth(),
+                wallets = state.walletResult,
+                onContinue = {
+                    onEvent(AddTransactionStore.Intent.OnWalletChange(it))
+                    state.walletBottomSheet.collapse()
+                },
+                currentWallet = state.selectedWallet
+            )
+        }
+        RevealingSheet(
+            state.categoryBottomSheet,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            CategoryPickerSheet(
+                Modifier.fillMaxWidth(),
+                categories = state.categoryResult,
+                onContinue = {
+                    onEvent(AddTransactionStore.Intent.OnCategoryChange(it))
+                    state.categoryBottomSheet.collapse()
+                },
+                currentCategory = state.selectedCategory
+            )
         }
     }
+}
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun TransactionAppBar(
-        modifier: Modifier = Modifier,
-        onBack: () -> Unit = {},
-        type: CategoryType,
-        onSelectType: (CategoryType) -> Unit = {},
-    ) {
-        CenterAlignedTopAppBar(
-            title = {
-                TypeSelector(
-                    type = type,
-                    onSelectType = onSelectType,
-                )
-            },
-            colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent),
-            navigationIcon = {
-                IconButton(
-                    onClick = onBack
-                ) {
-                    Icon(
-                        Icons.Default.ArrowBack,
-                        null,
-                        modifier = Modifier.padding(start = 16.dp),
-                        tint = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            },
-            modifier = modifier
+@Composable
+fun AddTransactionDialog(
+    modifier: Modifier = Modifier,
+    state: AddTransactionStore.State,
+    onEvent: (AddTransactionStore.Intent) -> Unit
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        val formattedAmount = state.amount.format()
+        AmountTextField(
+            modifier = Modifier.padding(16.dp),
+            label = "How much?",
+            onValueChange = { onEvent(AddTransactionStore.Intent.OnAmountChange(it.text)) },
+            value = TextFieldValue(formattedAmount, TextRange(formattedAmount.length)),
         )
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.background,
+                    shape = RoundedCornerShape(
+                        topStart = 32.dp, topEnd = 32.dp
+                    )
+                )
+                .padding(horizontal = 16.dp, vertical = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            TrTextField(
+                placeholder = "Wallet",
+                value = state.selectedWallet?.name.orEmpty(),
+                onClick = { state.walletBottomSheet.expand() }
+            )
+            TrTextField(
+                placeholder = "Description",
+                value = state.description,
+                onValueChange = { onEvent(AddTransactionStore.Intent.OnDescriptionChange(it))}
+            )
+            TrTextField(
+                placeholder = "Date",
+                value = "${state.selectedDay.value} ${state.selectedMonth.text} ${state.selectedYear.value}",
+                onClick = { state.datePickerSheet.expand() }
+            )
+            TrTextField(
+                placeholder = "Category",
+                value = state.selectedCategory?.name.orEmpty(),
+                onClick = {
+                    state.categoryBottomSheet.expand()
+                }
+            )
+            TrPrimaryButton(
+                Modifier.fillMaxWidth(),
+                text = { ButtonText("Continue") },
+                onClick = { onEvent(AddTransactionStore.Intent.CreateTransaction) }
+            )
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TransactionAppBar(
+    modifier: Modifier = Modifier,
+    onBack: () -> Unit = {},
+    type: CategoryType,
+    onEvent: (AddTransactionStore.Intent) -> Unit,
+) {
+    CenterAlignedTopAppBar(
+        title = {
+            TypeSelector(
+                type = type,
+                onSelectType = { onEvent(AddTransactionStore.Intent.OnTypeChange(it)) },
+            )
+        },
+        colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent),
+        navigationIcon = {
+            IconButton(
+                onClick = onBack
+            ) {
+                Icon(
+                    Icons.Default.ArrowBack,
+                    null,
+                    modifier = Modifier.padding(start = 16.dp),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
+        },
+        modifier = modifier
+    )
 }

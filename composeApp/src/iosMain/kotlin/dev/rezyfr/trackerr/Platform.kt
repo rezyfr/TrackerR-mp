@@ -9,6 +9,8 @@ import kotlinx.coroutines.IO
 
 actual val ioDispatcher: CoroutineDispatcher
     get() = Dispatchers.IO
+actual val mainDispatcher: CoroutineDispatcher
+    get() = Dispatchers.Main
 
 actual val interFontFamily: FontFamily = FontFamily(
     Typeface(loadCustomFont("inter"))

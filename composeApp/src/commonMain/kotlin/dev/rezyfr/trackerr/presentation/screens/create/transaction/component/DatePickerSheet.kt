@@ -9,12 +9,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.DefaultWheelDatePicker
-import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionState
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.store.AddTransactionStore
 
 @Composable
 fun DatePickerSheet(
     modifier: Modifier,
-    state: AddTransactionState,
+    state: AddTransactionStore.State,
     onChangeDay: (Int) -> Unit = {},
     onChangeMonth: (Int) -> Unit = {},
     onChangeYear: (Int) -> Unit = {},

@@ -1,19 +1,25 @@
 package dev.rezyfr.trackerr.data.remote.service
 
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.request.CreateWalletRequest
 import dev.rezyfr.trackerr.data.remote.dto.response.WalletResponse
+import dev.rezyfr.trackerr.data.util.SettingsConstant
 import dev.rezyfr.trackerr.data.util.execute
+import dev.rezyfr.trackerr.data.util.setAuthHeader
 import dev.rezyfr.trackerr.data.util.setJsonBody
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.url
 
 class WalletServiceImpl(
     private val httpClient: HttpClient,
+    private val settings: Settings,
     baseUrl: String
 ) : WalletService {
 
@@ -24,6 +30,7 @@ class WalletServiceImpl(
         return execute {
             httpClient.post {
                 url(create)
+                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
                 setJsonBody(request)
             }.body()
         }
@@ -32,6 +39,7 @@ class WalletServiceImpl(
     override suspend fun getWalletBalance(): NetworkResponse<BaseDto<Long>> {
         return execute {
             httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
                 url(getBalance)
             }.body()
         }
@@ -40,6 +48,7 @@ class WalletServiceImpl(
     override suspend fun getWallets(): NetworkResponse<BaseDto<List<WalletResponse>>> {
         return execute {
             httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
                 url(getWallet)
             }.body()
         }

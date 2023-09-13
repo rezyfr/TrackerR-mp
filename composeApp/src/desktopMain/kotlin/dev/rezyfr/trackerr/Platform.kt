@@ -8,7 +8,8 @@ import kotlinx.coroutines.Dispatchers
 
 actual val ioDispatcher: CoroutineDispatcher
     get() = Dispatchers.IO
-
+actual val mainDispatcher: CoroutineDispatcher
+    get() = Dispatchers.Main
 actual val interFontFamily: FontFamily
     get() = FontFamily(
         fonts = listOf(

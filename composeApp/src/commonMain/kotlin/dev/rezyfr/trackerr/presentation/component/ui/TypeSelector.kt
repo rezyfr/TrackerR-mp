@@ -25,7 +25,7 @@ fun TypeSelector(
         options = CategoryType.values().map { it.label },
         selectedOption = type.label,
         onOptionSelect = {
-            onSelectType.invoke(CategoryType.valueOf(it))
+            onSelectType.invoke(CategoryType.fromString(it))
         },
         backgroundColor = if(useDefaultColor) type.typeIndicatorColor() else backgroundColor!!,
         selectedHighlightColor = if(useDefaultColor) MaterialTheme.colorScheme.onPrimary else selectedHighlightColor!!,

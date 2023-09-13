@@ -7,7 +7,6 @@ androidx-appcompat = "1.6.1"
 androidx-activityCompose = "1.7.2"
 compose-uitooling = "1.5.0"
 libres = "1.1.8"
-voyager = "1.0.0-rc06"
 composeImageLoader = "1.6.3"
 napier = "2.6.1"
 buildConfig = "4.1.1"
@@ -20,6 +19,9 @@ koin = "3.4.3"
 koin-compose-jb = "1.0.3"
 ktor-version = "2.3.2"
 sqldelight = "2.0.0"
+decompose = "2.0.2-compose-experimental" # experimental for iOS project
+mvikotlin = "3.2.1"
+essenty = "1.1.0"
 
 [libraries]
 
@@ -28,9 +30,6 @@ androidx-activityCompose = { module = "androidx.activity:activity-compose", vers
 compose-uitooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose-uitooling" }
 androidx-compose-iconsExtended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 libres = { module = "io.github.skeptick.libres:libres-compose", version.ref = "libres" }
-voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
-voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-tabnavigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 composeImageLoader = { module = "io.github.qdsfdhvh:image-loader", version.ref = "composeImageLoader" }
 napier = { module = "io.github.aakira:napier", version.ref = "napier" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
@@ -52,6 +51,14 @@ sqldelight-android-driver = {module = "app.cash.sqldelight:android-driver", vers
 sqldelight-native-driver = {module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight"}
 sqldelight-sqlite-driver = {module = "app.cash.sqldelight:sqlite-driver", version.ref = "sqldelight"}
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
+decompose-jetbrains-experimental = { module = "com.arkivanov.decompose:extensions-compose-jetbrains", version.ref = "decompose" }
+decompose-experimental = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+mvikotlin-core = { module = "com.arkivanov.mvikotlin:mvikotlin", version.ref = "mvikotlin" }
+mvikotlin-main = { module = "com.arkivanov.mvikotlin:mvikotlin-main", version.ref = "mvikotlin" }
+mvikotlin-logging = { module = "com.arkivanov.mvikotlin:mvikotlin-logging", version.ref = "mvikotlin" }
+mvikotlin-coroutines = { module = "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines", version.ref = "mvikotlin" }
+essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
+
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

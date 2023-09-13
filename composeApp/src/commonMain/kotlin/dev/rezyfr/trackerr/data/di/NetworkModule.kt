@@ -17,6 +17,7 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
+import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import org.koin.core.qualifier.named
@@ -26,11 +27,11 @@ import org.koin.dsl.module
 fun getNetworkModule(enableNetworkLogs: Boolean) = module {
     factory<Settings> { createSettings() }
     single(named("baseUrl")) { BuildConfig.BASE_URL }
-    single { createHttpClient(get(), enableNetworkLogs, get()) }
+    single { createHttpClient(get(), enableNetworkLogs) }
     single { createJson() }
 }
 
-fun createHttpClient(json: Json, enableNetworkLogs: Boolean, settings: Settings) =
+fun createHttpClient(json: Json, enableNetworkLogs: Boolean) =
     HttpClient {
         install(HttpTimeout) {
             requestTimeoutMillis = 30000
@@ -49,16 +50,6 @@ fun createHttpClient(json: Json, enableNetworkLogs: Boolean, settings: Settings)
         install(Logging) {
             logger = Logger.SIMPLE
             level = if (enableNetworkLogs) LogLevel.ALL else LogLevel.NONE
-        }
-        install(Auth) {
-            bearer {
-                loadTokens {
-                    BearerTokens(
-                        settings[SettingsConstant.KEY_TOKEN, ""],
-                        ""
-                    )
-                }
-            }
         }
     }
 

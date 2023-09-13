@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.buildConfig)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.sqldelight)
+    id("kotlin-parcelize")
 }
 
 sqldelight {
@@ -65,6 +66,10 @@ kotlin {
         framework {
             baseName = "ComposeApp"
             isStatic = true
+
+            export(libs.decompose.experimental)
+            export(libs.essenty)
+            export(libs.mvikotlin.main)
         }
     }
 
@@ -77,9 +82,8 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.materialIconsExtended)
                 implementation(libs.libres)
-                implementation(libs.voyager.navigator)
-                implementation(libs.voyager.transitions)
-                implementation(libs.voyager.tabnavigator)
+                implementation(libs.decompose.experimental)
+                implementation(libs.decompose.jetbrains.experimental)
                 implementation(libs.composeImageLoader)
                 implementation(libs.napier)
                 implementation(libs.kotlinx.coroutines.core)
@@ -97,6 +101,10 @@ kotlin {
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.sqldelight.coroutines)
                 implementation("org.jetbrains.skiko:skiko-awt-runtime-$target:$version")
+                implementation(libs.mvikotlin.core)
+                implementation(libs.mvikotlin.main)
+                implementation(libs.mvikotlin.logging)
+                implementation(libs.mvikotlin.coroutines)
             }
         }
 
@@ -128,6 +136,9 @@ kotlin {
         val iosMain by getting {
             dependencies {
                 implementation(libs.sqldelight.native.driver)
+                api(libs.decompose.experimental)
+                api(libs.essenty)
+                api(libs.mvikotlin.main)
             }
         }
     }

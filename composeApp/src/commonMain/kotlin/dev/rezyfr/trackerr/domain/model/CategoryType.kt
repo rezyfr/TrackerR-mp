@@ -11,8 +11,8 @@ enum class CategoryType(val label: String) {
     companion object {
         fun fromString(value: String): CategoryType {
             return when (value) {
-                "INCOME",  "income"-> INCOME
-                "EXPENSE", "expense" -> EXPENSE
+                "INCOME",  "income", "Income"-> INCOME
+                "EXPENSE", "expense", "Expense" -> EXPENSE
                 else -> throw IllegalArgumentException()
             }
         }

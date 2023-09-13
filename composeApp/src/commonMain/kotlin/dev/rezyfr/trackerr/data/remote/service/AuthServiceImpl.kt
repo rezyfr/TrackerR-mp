@@ -1,10 +1,14 @@
 package dev.rezyfr.trackerr.data.remote.service
 
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.request.LoginRequest
 import dev.rezyfr.trackerr.data.remote.dto.request.RegisterRequest
+import dev.rezyfr.trackerr.data.util.SettingsConstant
 import dev.rezyfr.trackerr.data.util.execute
+import dev.rezyfr.trackerr.data.util.setAuthHeader
 import dev.rezyfr.trackerr.data.util.setJsonBody
 import dev.rezyfr.trackerr.data.util.setNoAuthHeader
 import io.ktor.client.*
@@ -14,6 +18,7 @@ import io.ktor.http.isSuccess
 
 class AuthServiceImpl(
     private val httpClient: HttpClient,
+    private val settings: Settings,
     baseUrl: String
 ) : AuthService {
 
@@ -57,6 +62,11 @@ class AuthServiceImpl(
     }
 
     override suspend fun checkToken(): NetworkResponse<BaseDto<Unit>> {
-        return execute { httpClient.get { url(checkToken) }.body() }
+        return execute {
+            httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_TOKEN, ""])
+                url(checkToken)
+            }.body()
+        }
     }
 }

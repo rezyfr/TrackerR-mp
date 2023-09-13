@@ -2,7 +2,7 @@ package dev.rezyfr.trackerr.data.mapper
 
 import dev.rezyfr.trackerr.data.remote.dto.response.IconResponse
 import dev.rezyfr.trackerr.domain.model.IconModel
-import devrezyfrtrackerrdata.IconEntity
+import migrations.IconEntity
 
 class IconMapper {
 

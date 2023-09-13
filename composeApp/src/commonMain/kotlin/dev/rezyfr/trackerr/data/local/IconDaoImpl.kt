@@ -4,7 +4,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import dev.rezyfr.trackerr.data.local.entity.Database
 import dev.rezyfr.trackerr.domain.model.IconType
-import devrezyfrtrackerrdata.IconEntity
+import migrations.IconEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 
