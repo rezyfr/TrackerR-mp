@@ -1,10 +1,12 @@
-package dev.rezyfr.trackerr.presentation.screens.root
+package dev.rezyfr.trackerr.presentation.screens.root.store
 
+import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.SimpleBootstrapper
 import com.arkivanov.mvikotlin.core.store.Store
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import dev.rezyfr.trackerr.domain.usecase.user.CheckTokenUseCase
+import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStore
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -17,30 +19,32 @@ class RootStoreFactory(
     private val checkTokenUseCase: CheckTokenUseCase by inject()
     fun create(): RootStore =
         object : RootStore,
-            Store<RootStore.Intent, Unit, Unit> by storeFactory.create(
+            Store<Unit, RootStore.State, Unit> by storeFactory.create(
                 name = RootStore::class.simpleName,
-                initialState = Unit,
+                initialState = RootStore.State(),
                 bootstrapper = SimpleBootstrapper(Unit),
                 executorFactory = ::ExecutorImpl,
+                reducer = ReducerImpl
             ) {}
 
-    private inner class ExecutorImpl : CoroutineExecutor<RootStore.Intent, Unit, Unit, Unit, Unit>() {
+    private inner class ExecutorImpl : CoroutineExecutor<Unit, Unit, RootStore.State, RootStore.Result, Unit>() {
         init {
             checkToken()
-        }
-
-        override fun executeIntent(intent: RootStore.Intent, getState: () -> Unit) {
-            when (intent) {
-                RootStore.Intent.CheckUserToken -> checkToken()
-            }
         }
 
         private fun checkToken() {
             scope.launch {
                 checkTokenUseCase.executeFlow(Unit).collectLatest { result ->
-                    onTokenValid(result.isSuccess() && (result.asSuccess()?.data == true))
+                    dispatch(RootStore.Result.TokenResult(result))
                 }
             }
         }
+    }
+
+    private object ReducerImpl : Reducer<RootStore.State, RootStore.Result> {
+        override fun RootStore.State.reduce(msg: RootStore.Result): RootStore.State =
+            when (msg) {
+                is RootStore.Result.TokenResult -> copy(tokenResult = msg.result)
+            }
     }
 }

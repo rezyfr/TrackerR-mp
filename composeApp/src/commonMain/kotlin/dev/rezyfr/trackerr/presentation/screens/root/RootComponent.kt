@@ -1,9 +1,10 @@
-package dev.rezyfr.trackerr.presentation
+package dev.rezyfr.trackerr.presentation.screens.root
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.childStack
+import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.replaceAll
 import com.arkivanov.decompose.router.stack.replaceCurrent
 import com.arkivanov.decompose.value.Value
@@ -11,33 +12,39 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.instancekeeper.getStore
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dev.rezyfr.trackerr.presentation.screens.auth.AuthComponent
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
-import dev.rezyfr.trackerr.presentation.screens.root.RootStore
-import dev.rezyfr.trackerr.presentation.screens.root.RootStoreFactory
+import dev.rezyfr.trackerr.presentation.screens.root.store.RootStore
+import dev.rezyfr.trackerr.presentation.screens.root.store.RootStoreFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 class RootComponent(
     componentContext: ComponentContext,
-    private val auth: (ComponentContext, StoreFactory) -> AuthComponent,
-    private val main: (ComponentContext, StoreFactory) -> MainComponent,
+    storeFactory: StoreFactory,
+    private val auth: (ComponentContext) -> AuthComponent,
+    private val main: (ComponentContext) -> MainComponent,
 ) : KoinComponent, ComponentContext by componentContext {
 
     constructor(
         componentContext: ComponentContext,
+        storeFactory: StoreFactory
     ) : this(
         componentContext = componentContext,
-        auth = { context, factory ->
+        storeFactory = storeFactory,
+        auth = { context ->
             AuthComponent(
                 componentContext = context,
-                storeFactory = factory
+                storeFactory = storeFactory
             )
         },
-        main = { context, factory ->
+        main = { context ->
             MainComponent(
                 componentContext = context,
-                storeFactory = factory
+                storeFactory = storeFactory,
             )
         }
     )
@@ -53,16 +60,16 @@ class RootComponent(
 
     private val store = instanceKeeper.getStore {
         RootStoreFactory(
-            storeFactory = get(),
+            storeFactory = storeFactory,
             onTokenValid = { isValid ->
                 if (isValid) {
                     navigation.replaceAll(Configuration.Main)
-                } else {
-                    navigation.replaceAll(Configuration.Auth)
                 }
             }
         ).create()
     }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val state = store.stateFlow
 
     private fun createChild(
         configuration: Configuration,
@@ -70,20 +77,18 @@ class RootComponent(
     ): Child =
         when (configuration) {
             is Configuration.Auth -> Child.Auth(
-                authComponent = auth(componentContext, get())
+                authComponent = auth(componentContext)
             )
 
             is Configuration.Main -> Child.Main(
-                mainComponent = main(componentContext, get())
+                mainComponent = main(componentContext)
             )
         }
 
-    fun onEvent(event: RootStore.Intent) {
-        store.accept(event)
-    }
-
-    fun goToMain() {
-        navigation.replaceAll(Configuration.Main)
+    fun onAction(action: Action) {
+        when (action) {
+            is Action.NavigateToMain -> navigation.replaceAll(Configuration.Main)
+        }
     }
 
     private sealed class Configuration : Parcelable {
@@ -100,6 +105,6 @@ class RootComponent(
     }
 
     sealed class Action {
-        object NavigateToMain: Action()
+        object NavigateToMain : Action()
     }
 }

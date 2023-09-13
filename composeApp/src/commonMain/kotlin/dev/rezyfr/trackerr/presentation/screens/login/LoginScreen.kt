@@ -27,10 +27,7 @@ import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
 import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStore
 
 @Composable
-fun LoginScreen(
-    loginComponent: LoginComponent,
-    onSuccessLogin: () -> Unit = {},
-) {
+fun LoginScreen(loginComponent: LoginComponent) {
     val loginState by loginComponent.state.collectAsState()
 
     LoginScreen(
@@ -41,7 +38,7 @@ fun LoginScreen(
 
     LaunchedEffect(loginState.loginResult) {
         if (loginState.loginResult is UiResult.Success) {
-            onSuccessLogin()
+            loginComponent.onAction(LoginComponent.Action.NavigateToOnboarding)
         }
     }
 }

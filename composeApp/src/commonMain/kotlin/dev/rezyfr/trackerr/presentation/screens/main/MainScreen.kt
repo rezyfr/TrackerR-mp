@@ -26,7 +26,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,37 +40,25 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.rezyfr.trackerr.Res
-import dev.rezyfr.trackerr.presentation.screens.RootViewModel
-import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionScreen
 import dev.rezyfr.trackerr.presentation.screens.home.HomeTab
-import dev.rezyfr.trackerr.presentation.screens.transaction.TransactionTab
 import dev.rezyfr.trackerr.presentation.theme.Disabled
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import io.github.skeptick.libres.compose.painterResource
 import io.github.skeptick.libres.images.Image
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 @Composable
-fun MainScreen(
-    mainComponent: MainComponent
-) {
+fun MainMenu(mainComponent: MainComponent) {
     var isFabFocused by remember { mutableStateOf(false) }
     val rotation = remember { Animatable(0f) }
     val bgTranslation = remember { Animatable(0f) }
     val transactionTranslation = remember { Animatable(0f) }
     val snackbarHostState = remember { SnackbarHostState() }
-    val activeIndex by mainComponent.activeChildIndex.subscribeAsState()
+    val activeIndex by mainComponent.activeTabIndex.subscribeAsState()
 
     Scaffold(
         bottomBar = {
@@ -88,7 +75,7 @@ fun MainScreen(
                     isFabFocused = !isFabFocused
                 },
                 onExpenseClick = {
-//                        navigator.push(AddTransactionScreen())
+                    mainComponent.onAction(MainComponent.Action.NavigateToAddTransaction)
                 },
             )
         },
@@ -99,7 +86,7 @@ fun MainScreen(
         }
     ) {
         Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
-            MainContent(mainComponent)
+            MainTabContent(mainComponent)
             TransparentPrimaryBackground(
                 height = bgTranslation.value, modifier = Modifier.align(
                     Alignment.BottomCenter
@@ -118,13 +105,14 @@ fun MainScreen(
 }
 
 @Composable
-fun MainContent(
+fun MainTabContent(
     component: MainComponent
 ) {
-    Children(component.childStack) {
-        it.instance.let { child ->
+    Children(component.child) {
+        (it.instance as MainComponent.Tab).let { child ->
             when (child) {
-                is MainComponent.Child.Home -> HomeTab(child.homeComponent)
+                is MainComponent.Tab.Home -> HomeTab(child.homeComponent)
+                is MainComponent.Tab.Transaction -> Text("Transaction")
             }
         }
     }
@@ -260,7 +248,7 @@ fun RootNavBar(
                     },
                     icon = {
                         Image(
-                            painter = if(isSelected) tab.activeIcon.painterResource() else tab.inactiveIcon.painterResource(),
+                            painter = if (isSelected) tab.activeIcon.painterResource() else tab.inactiveIcon.painterResource(),
                             contentDescription = null,
                         )
                     },
@@ -284,5 +272,9 @@ sealed class MainTab(
     val inactiveIcon: Image
 ) {
     object Home : MainTab("Home", Res.image.ic_menu_home_active, Res.image.ic_menu_home_inactive)
-    object Transaction : MainTab("Transaction", Res.image.ic_menu_transaction_active, Res.image.ic_menu_transaction_inactive)
+    object Transaction : MainTab(
+        "Transaction",
+        Res.image.ic_menu_transaction_active,
+        Res.image.ic_menu_transaction_inactive
+    )
 }

@@ -5,8 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.arkivanov.decompose.defaultComponentContext
+import com.arkivanov.mvikotlin.main.store.DefaultStoreFactory
 import dev.rezyfr.trackerr.di.initKoin
-import dev.rezyfr.trackerr.presentation.RootComponent
+import dev.rezyfr.trackerr.presentation.screens.root.RootComponent
 import io.github.aakira.napier.DebugAntilog
 import io.github.aakira.napier.Napier
 import org.koin.android.ext.koin.androidContext
@@ -36,6 +37,7 @@ class AppActivity : ComponentActivity() {
         val rootComponent =
             RootComponent(
                 componentContext = defaultComponentContext(),
+                storeFactory = DefaultStoreFactory()
             )
         setContent { App(rootComponent) }
     }

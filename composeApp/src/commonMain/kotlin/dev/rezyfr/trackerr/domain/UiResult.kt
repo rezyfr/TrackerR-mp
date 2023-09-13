@@ -11,8 +11,7 @@ sealed class UiResult<out T> {
     data object Uninitialized : UiResult<Nothing>()
 
     fun isSuccess() = this is Success
-
-    fun asSuccess(): Success<*>? = this as? Success
+    fun asSuccess(): T? = (this as? Success<T>)?.data
 }
 
 suspend fun <R, T> handleResult(

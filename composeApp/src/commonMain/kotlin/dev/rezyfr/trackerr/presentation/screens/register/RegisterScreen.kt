@@ -14,7 +14,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,22 +28,13 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
-import dev.rezyfr.trackerr.presentation.screens.login.LoginComponent
-import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
-import dev.rezyfr.trackerr.presentation.screens.login.store.LoginStore
 import dev.rezyfr.trackerr.presentation.screens.register.store.RegisterStore
-import dev.rezyfr.trackerr.presentation.theme.Light20
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 @Composable
 fun RegisterScreen(

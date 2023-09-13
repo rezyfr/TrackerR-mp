@@ -6,7 +6,6 @@ import dev.rezyfr.trackerr.data.di.getPersistenceModule
 import dev.rezyfr.trackerr.data.di.getRepositoryModule
 import dev.rezyfr.trackerr.data.di.getServiceModule
 import dev.rezyfr.trackerr.domain.di.getUseCaseModule
-import dev.rezyfr.trackerr.presentation.di.getScreenModelModule
 import org.koin.core.context.startKoin
 import org.koin.dsl.KoinAppDeclaration
 
@@ -20,7 +19,6 @@ fun initKoin(
         getRepositoryModule(),
         getServiceModule(),
         getUseCaseModule(),
-        getScreenModelModule(),
         getMapperModule(),
         getPersistenceModule()
     ))

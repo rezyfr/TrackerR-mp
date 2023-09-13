@@ -32,3 +32,7 @@ inline fun <reified T> HttpRequestBuilder.setJsonBody(body: T) {
 fun HttpRequestBuilder.setNoAuthHeader() {
     header("No-Authentication", true)
 }
+
+fun HttpRequestBuilder.setAuthHeader(token: String) {
+    header("Authorization", "Bearer $token")
+}

@@ -1,7 +1,7 @@
 package dev.rezyfr.trackerr.data.local
 
 import dev.rezyfr.trackerr.domain.model.IconType
-import devrezyfrtrackerrdata.IconEntity
+import migrations.IconEntity
 import kotlinx.coroutines.flow.Flow
 
 interface IconDao {

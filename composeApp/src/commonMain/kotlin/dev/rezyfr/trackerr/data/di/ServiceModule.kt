@@ -14,9 +14,9 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 fun getServiceModule() = module {
-    single<AuthService> { AuthServiceImpl(get(), get(named("baseUrl"))) }
+    single<AuthService> { AuthServiceImpl(get(),get(),  get(named("baseUrl"))) }
     single<IconService> { IconServiceImpl(get(), get(named("baseUrl"))) }
-    single<WalletService> { WalletServiceImpl(get(), get(named("baseUrl"))) }
-    single<TransactionService> { TransactionServiceImpl(get(), get(named("baseUrl"))) }
-    single<CategoryService> { CategoryServiceImpl(get(), get(named("baseUrl"))) }
+    single<WalletService> { WalletServiceImpl(get(), get(), get(named("baseUrl"))) }
+    single<TransactionService> { TransactionServiceImpl(get(),get(),  get(named("baseUrl"))) }
+    single<CategoryService> { CategoryServiceImpl(get(),get(),  get(named("baseUrl"))) }
 }
