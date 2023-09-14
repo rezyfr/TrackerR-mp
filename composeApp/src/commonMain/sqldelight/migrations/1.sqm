@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS CategoryEntity (
     icon TEXT NOT NULL,
     type TEXT NOT NULL,
     name TEXT NOT NULL,
-    color TEXT NOT NULL
+    color INTEGER NOT NULL
 );

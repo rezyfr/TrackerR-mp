@@ -26,6 +26,18 @@ class CategoryDaoImpl(
         }
     }
 
+    override fun insertCategory(category: CategoryEntity): Result<Unit> {
+        return database.categoryQueries.safeTransaction {
+            database.categoryQueries.insertCategory(
+                category.id,
+                category.icon,
+                category.type,
+                category.name,
+                category.color
+            )
+        }
+    }
+
     override fun getCategories(type: CategoryType): Flow<List<CategoryEntity>> {
         return database.categoryQueries.getCategories(type.name).asFlow()
             .mapToList(Dispatchers.Default)

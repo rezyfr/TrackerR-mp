@@ -1,28 +1,28 @@
-package dev.rezyfr.trackerr.presentation.screens.create.transaction
+package dev.rezyfr.trackerr.presentation.screens.create.category
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import dev.rezyfr.trackerr.presentation.screens.create.transaction.store.AddTransactionStore
-import dev.rezyfr.trackerr.presentation.screens.create.transaction.store.AddTransactionStoreFactory
+import dev.rezyfr.trackerr.presentation.screens.create.category.store.AddCategoryStore
+import dev.rezyfr.trackerr.presentation.screens.create.category.store.AddCategoryStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
-class AddTransactionComponent(
+class AddCategoryComponent(
     componentContext: ComponentContext,
     storeFactory: StoreFactory,
     private val action: (Action) -> Unit
 ) : ComponentContext by componentContext {
 
-    private val addTransactionStore = AddTransactionStoreFactory(
+    private val addCategoryStore = AddCategoryStoreFactory(
         storeFactory
     ).create()
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val state: StateFlow<AddTransactionStore.State> = addTransactionStore.stateFlow
+    val state: StateFlow<AddCategoryStore.State> = addCategoryStore.stateFlow
 
-    fun onEvent(event: AddTransactionStore.Intent) {
-        addTransactionStore.accept(event)
+    fun onEvent(event: AddCategoryStore.Intent) {
+        addCategoryStore.accept(event)
     }
 
     fun onAction(action: Action) {
@@ -31,7 +31,5 @@ class AddTransactionComponent(
 
     sealed class Action {
         object NavigateBack : Action()
-        object Finish : Action()
-        object NavigateToAddCategory : Action()
     }
 }

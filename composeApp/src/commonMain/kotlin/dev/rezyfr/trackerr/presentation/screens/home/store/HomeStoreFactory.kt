@@ -6,6 +6,7 @@ import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
+import dev.rezyfr.trackerr.domain.usecase.category.SyncCategoryUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetRecentTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
@@ -20,6 +21,9 @@ class HomeStoreFactory(
     private val getRecentTransactionUseCase by inject<GetRecentTransactionUseCase>()
     private val getTransactionSummaryUseCase by inject<GetTransactionSummaryUseCase>()
     private val getWalletBalanceUseCase by inject<GetWalletBalanceUseCase>()
+    private val syncCategoryUseCase by inject<SyncCategoryUseCase>()
+
+    var hasSyncCategory = false
 
     fun create(): HomeStore = object : HomeStore,
         Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> by storeFactory.create(
@@ -39,6 +43,21 @@ class HomeStoreFactory(
             getRecentTransaction()
             getTransactionSummary()
             getWalletBalance()
+            syncCategory()
+        }
+
+        private fun syncCategory() {
+            if (hasSyncCategory) return
+            scope.launch {
+                syncCategoryUseCase.execute(null).handleResult(
+                    ifError = { ex ->
+                        publish(HomeStore.Label.MessageReceived(ex.message))
+                    },
+                    ifSuccess = { res ->
+                        hasSyncCategory = true
+                    }
+                )
+            }
         }
 
         private fun getRecentTransaction() {

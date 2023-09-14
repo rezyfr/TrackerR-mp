@@ -13,7 +13,7 @@ class TransactionMapper {
             amount = response.amount.toLong(),
             date = response.createdDate,
             desc = response.description,
-            type = CategoryType.valueOf(response.category.type) ?: CategoryType.EXPENSE,
+            type = CategoryType.valueOf(response.category.type),
             categoryIcon = response.category.icon,
             categoryName = response.categoryName,
             categoryColor = response.category.color,

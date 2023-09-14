@@ -1,6 +1,7 @@
 package dev.rezyfr.trackerr.presentation.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import dev.rezyfr.trackerr.domain.model.CategoryType
 
 val Dark100 = Color(0xff0D0E0F)
@@ -39,7 +40,9 @@ val Disabled = Color(0xffC6C6C6)
 
 val HomeTopBackground = Color(0xFFFFF6E5)
 
-val IconColors = listOf(BlueIcon, RedIcon, VioletIcon, YellowIcon, GreenIcon, TealIcon, OrangeIcon, CyanIcon)
+val IconColors =
+    listOf(BlueIcon, RedIcon, VioletIcon, YellowIcon, GreenIcon, TealIcon, OrangeIcon, CyanIcon)
+
 fun String.color(): Color {
     var hex = this.removePrefix("#")
     if (hex.length == 6) {

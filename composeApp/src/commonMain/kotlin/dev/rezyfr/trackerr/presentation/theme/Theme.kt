@@ -33,7 +33,8 @@ private val LightDefaultColorScheme = lightColorScheme(
     surface = Light100,
     onSurface = Dark50,
     outline = Light60,
-    tertiary = Light20
+    tertiary = Light20,
+    onTertiary = Light80
 )
 
 val MainTypography = Typography(

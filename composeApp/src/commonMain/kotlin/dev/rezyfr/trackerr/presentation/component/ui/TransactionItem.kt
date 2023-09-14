@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberImagePainter
@@ -49,7 +50,7 @@ fun TransactionItem(
                     .clip(RoundedCornerShape(16.dp))
                     .background(MaterialTheme.colorScheme.primaryContainer)
                     .padding(16.dp),
-                colorFilter = ColorFilter.tint(transaction.categoryColor.color())
+                colorFilter = ColorFilter.tint(Color(transaction.categoryColor))
             )
             HSpacer(8)
             Column(

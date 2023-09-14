@@ -13,7 +13,7 @@ data class TransactionModel(
     val date: String,
     val categoryName: String,
     val categoryIcon: String,
-    val categoryColor: String
+    val categoryColor: Long
 ) {
     private val isIncome: Boolean
         get() = type == CategoryType.INCOME

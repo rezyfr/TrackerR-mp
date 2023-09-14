@@ -14,7 +14,9 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stac
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.screens.auth.AuthComponent
 import dev.rezyfr.trackerr.presentation.screens.create.account.AddAccountScreen
+import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryScreen
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionScreen
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.AddCategory
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
 import dev.rezyfr.trackerr.presentation.screens.main.MainMenu
@@ -54,6 +56,7 @@ fun RootScreen(
                                 is MainComponent.Tab.Home,
                                 is MainComponent.Tab.Transaction -> MainMenu(child.mainComponent)
                                 is MainComponent.Screen.AddTransaction -> AddTransactionScreen(mainComponentInstance.addTransactionComponent)
+                                is MainComponent.Screen.AddCategory -> AddCategoryScreen(mainComponentInstance.addCategoryComponent)
                             }
                         }
                     }

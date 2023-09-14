@@ -25,7 +25,7 @@ fun TransactionItemPreview() {
                 amount = 100000,
                 date = "07.30 PM",
                 type = CategoryType.EXPENSE,
-                categoryColor = "#FF0000"
+                categoryColor = 0xffffffff
             )
         )
     }

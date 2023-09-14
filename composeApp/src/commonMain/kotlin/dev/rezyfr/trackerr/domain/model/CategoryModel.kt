@@ -5,5 +5,5 @@ data class CategoryModel(
     val name: String,
     val icon: String,
     val type: CategoryType,
-    val color: String
+    val color: Long
 )

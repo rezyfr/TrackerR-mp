@@ -22,7 +22,20 @@ class CategoryRepositoryImpl(
         return categoryDao.insertCategories(categories)
     }
 
+    override fun addCategory(category: CategoryEntity): Result<Unit> {
+        return categoryDao.insertCategory(category)
+    }
+
     override fun getCategories(type: CategoryType): Flow<List<CategoryEntity>> {
         return categoryDao.getCategories(type)
+    }
+
+    override suspend fun createCategory(
+        type: CategoryType,
+        name: String,
+        color: Long,
+        iconId: Int
+    ): Result<CategoryResponse> {
+        return categoryService.createCategory(type, name, color, iconId).handleResponse()
     }
 }

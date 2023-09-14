@@ -75,7 +75,7 @@ private fun AddTransactionScreen(
                         .align(Alignment.TopCenter),
                     type = state.type,
                     onBack = { onAction(AddTransactionComponent.Action.NavigateBack) },
-                    onEvent = onEvent,
+                    onSelectType = { onEvent(AddTransactionStore.Intent.OnTypeChange(it)) },
                 )
             },
             containerColor = state.type.typeIndicatorColor()
@@ -122,7 +122,8 @@ private fun AddTransactionScreen(
                     onEvent(AddTransactionStore.Intent.OnCategoryChange(it))
                     state.categoryBottomSheet.collapse()
                 },
-                currentCategory = state.selectedCategory
+                currentCategory = state.selectedCategory,
+                onAddClick = { onAction(AddTransactionComponent.Action.NavigateToAddCategory) }
             )
         }
     }
@@ -191,13 +192,13 @@ fun TransactionAppBar(
     modifier: Modifier = Modifier,
     onBack: () -> Unit = {},
     type: CategoryType,
-    onEvent: (AddTransactionStore.Intent) -> Unit,
+    onSelectType: (CategoryType) -> Unit,
 ) {
     CenterAlignedTopAppBar(
         title = {
             TypeSelector(
                 type = type,
-                onSelectType = { onEvent(AddTransactionStore.Intent.OnTypeChange(it)) },
+                onSelectType = onSelectType,
             )
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = Color.Transparent),

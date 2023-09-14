@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryComponent
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.home.HomeComponent
 import org.koin.core.component.KoinComponent
@@ -20,6 +21,7 @@ class MainComponent(
     componentContext: ComponentContext,
     private val home: (ComponentContext) -> HomeComponent,
     private val addTransaction: (ComponentContext, (AddTransactionComponent.Action) -> Unit) -> AddTransactionComponent,
+    private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent
 ) : ComponentContext by componentContext, KoinComponent {
 
     constructor(
@@ -35,6 +37,13 @@ class MainComponent(
         },
         addTransaction = { context, action ->
             AddTransactionComponent(
+                componentContext = context,
+                storeFactory = storeFactory,
+                action = action
+            )
+        },
+        addCategory = { context, action ->
+            AddCategoryComponent(
                 componentContext = context,
                 storeFactory = storeFactory,
                 action = action
@@ -68,6 +77,9 @@ class MainComponent(
             Configuration.AddTransaction -> Screen.AddTransaction(
                 addTransactionComponent = addTransaction(componentContext, ::onAddTransactionAction)
             )
+            Configuration.AddCategory -> Screen.AddCategory(
+                addCategoryComponent = addCategory(componentContext, ::onAddCategoryAction)
+            )
         }
 
     fun onTabSelected(index: Int) {
@@ -96,6 +108,17 @@ class MainComponent(
             AddTransactionComponent.Action.Finish -> {
                 navigation.pop()
             }
+            AddTransactionComponent.Action.NavigateToAddCategory -> {
+                navigation.push(Configuration.AddCategory)
+            }
+        }
+    }
+
+    private fun onAddCategoryAction(action: AddCategoryComponent.Action) {
+        when (action) {
+            AddCategoryComponent.Action.NavigateBack -> {
+                navigation.pop()
+            }
         }
     }
 
@@ -106,6 +129,8 @@ class MainComponent(
         object Transaction : Configuration()
         @Parcelize
         object AddTransaction : Configuration()
+        @Parcelize
+        object AddCategory : Configuration()
     }
 
     sealed class Tab(val index: Int): Child {
@@ -115,6 +140,7 @@ class MainComponent(
 
     sealed class Screen : Child {
         data class AddTransaction(val addTransactionComponent: AddTransactionComponent) : Child
+        data class AddCategory(val addCategoryComponent: AddCategoryComponent) : Child
     }
 
     sealed interface Child

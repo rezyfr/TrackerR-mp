@@ -14,6 +14,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -39,6 +43,7 @@ fun CategoryPickerSheet(
     currentCategory: CategoryModel? = null,
     categories: UiResult<List<CategoryModel>>,
     onContinue: (Int) -> Unit = {},
+    onAddClick : () -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf(currentCategory) }
 
@@ -65,8 +70,39 @@ fun CategoryPickerSheet(
                         onClick = { selectedCategory = category }
                     )
                 }
+                item {
+                    AddCategory {
+                        onAddClick.invoke()
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+fun AddCategory(
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = Modifier.aspectRatio(1f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.tertiary)
+            .clickable {
+                onClick()
+            },
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(Icons.Rounded.Add, null, modifier = Modifier.size(28.dp), tint = MaterialTheme.colorScheme.onTertiary)
+        Text(
+            "Add Category",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.labelMedium.copy(
+                color = MaterialTheme.colorScheme.onTertiary
+            ),
+        )
+        VSpacer(2)
     }
 }
 
@@ -76,10 +112,11 @@ fun CategoryItem(
     isSelected: Boolean,
     onClick: (Int) -> Unit,
 ) {
+    val color = Color(category.color)
     Column(
         modifier = Modifier.aspectRatio(1f)
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.primaryContainer)
+            .background(color.copy(alpha = 0.2f))
             .run {
                 if (isSelected) {
                     border(
@@ -102,14 +139,14 @@ fun CategoryItem(
             null,
             modifier = Modifier.size(28.dp)
                 .clip(RoundedCornerShape(16.dp)),
-            colorFilter = ColorFilter.tint(category.color.color())
+            colorFilter = ColorFilter.tint(Color(category.color))
         )
         VSpacer(4)
         Text(
             category.name,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelMedium.copy(
-                color = category.color.color()
+                color = Color(category.color)
             ),
         )
         VSpacer(2)
