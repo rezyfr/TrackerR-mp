@@ -1,9 +1,12 @@
 package dev.rezyfr.trackerr.presentation.screens.create.transaction.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,7 +33,8 @@ fun FormTransactionSheet(
                     topStart = 32.dp, topEnd = 32.dp
                 )
             )
-            .padding(horizontal = 16.dp, vertical = 24.dp),
+            .padding(horizontal = 16.dp, vertical = 24.dp)
+            .scrollable(rememberScrollState(), Orientation.Vertical),
     ) {
         Text(
             label,

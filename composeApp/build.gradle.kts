@@ -105,6 +105,7 @@ kotlin {
                 implementation(libs.mvikotlin.main)
                 implementation(libs.mvikotlin.logging)
                 implementation(libs.mvikotlin.coroutines)
+                implementation(libs.chart)
             }
         }
 

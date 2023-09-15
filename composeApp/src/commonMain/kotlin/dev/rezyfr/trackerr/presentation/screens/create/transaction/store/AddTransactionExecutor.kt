@@ -3,6 +3,7 @@ package dev.rezyfr.trackerr.presentation.screens.create.transaction.store
 import com.arkivanov.mvikotlin.extensions.coroutines.CoroutineExecutor
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.handleResult
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.usecase.category.GetCategoriesUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.CreateTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletsUseCase
@@ -10,6 +11,8 @@ import dev.rezyfr.trackerr.mainDispatcher
 import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -23,13 +26,13 @@ class AddTransactionExecutor :
     private val getCategoriesUseCase by inject<GetCategoriesUseCase>()
 
     init {
-        getCategories(AddTransactionStore.State())
+        getCategories(CategoryType.EXPENSE)
         getWallet()
     }
 
-    private fun getCategories(state: AddTransactionStore.State) {
+    private fun getCategories(type: CategoryType) {
         scope.launch {
-            getCategoriesUseCase.executeFlow(state.type)
+            getCategoriesUseCase.executeFlow(type)
                 .collectLatest {
                     it.handleResult(
                         ifError = {
@@ -65,7 +68,9 @@ class AddTransactionExecutor :
                 CreateTransactionUseCase.Param(
                     state.amount,
                     state.selectedCategory!!.id,
-                    "",
+                    state.selectedMonth.value,
+                    state.selectedDay.value,
+                    state.selectedYear.value,
                     state.description,
                     state.selectedWallet!!.id,
                 )
@@ -88,7 +93,7 @@ class AddTransactionExecutor :
     ) {
         when (intent) {
             AddTransactionStore.Intent.CreateTransaction -> createTransaction(getState())
-            AddTransactionStore.Intent.GetCategories -> getCategories(getState())
+            is AddTransactionStore.Intent.GetCategories -> getCategories(intent.type)
             AddTransactionStore.Intent.GetWallets -> getWallet()
             is AddTransactionStore.Intent.OnAmountChange -> {
                 dispatch(AddTransactionStore.Result.OnAmountChange(intent.amount))

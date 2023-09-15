@@ -31,7 +31,7 @@ interface AddTransactionStore : Store<AddTransactionStore.Intent, AddTransaction
         data class OnChangeYear(val year: Int) : Intent()
         object CreateTransaction : Intent()
         object GetWallets : Intent()
-        object GetCategories : Intent()
+        data class GetCategories(val type: CategoryType) : Intent()
     }
 
     sealed class Result {

@@ -22,6 +22,7 @@ sqldelight = "2.0.0"
 decompose = "2.0.2-compose-experimental" # experimental for iOS project
 mvikotlin = "3.2.1"
 essenty = "1.1.0"
+chart = "Beta-0.0.5"
 
 [libraries]
 
@@ -58,7 +59,7 @@ mvikotlin-main = { module = "com.arkivanov.mvikotlin:mvikotlin-main", version.re
 mvikotlin-logging = { module = "com.arkivanov.mvikotlin:mvikotlin-logging", version.ref = "mvikotlin" }
 mvikotlin-coroutines = { module = "com.arkivanov.mvikotlin:mvikotlin-extensions-coroutines", version.ref = "mvikotlin" }
 essenty = { module = "com.arkivanov.essenty:lifecycle", version.ref = "essenty" }
-
+chart = { module = "io.github.thechance101:chart", version.ref = "chart" }
 [plugins]
 
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

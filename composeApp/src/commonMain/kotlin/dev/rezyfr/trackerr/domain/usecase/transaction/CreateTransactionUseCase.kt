@@ -7,6 +7,8 @@ import dev.rezyfr.trackerr.domain.handleFlowResult
 import dev.rezyfr.trackerr.domain.model.TransactionModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
 
 class CreateTransactionUseCase(
     private val repository: TransactionRepository,
@@ -20,7 +22,7 @@ class CreateTransactionUseCase(
                 repository.createTransaction(
                     amount = params.amount,
                     categoryId = params.categoryId,
-                    createdDate = params.createdDate,
+                    createdDate = LocalDateTime(params.selectedYear, params.selectedMonth, params.selectedDay, 0, 0, 1,1).toString(),
                     description = params.description,
                     walletId = params.walletId
                 )
@@ -34,7 +36,9 @@ class CreateTransactionUseCase(
     data class Param(
         val amount: Double,
         val categoryId: Int,
-        val createdDate: String,
+        val selectedMonth: Int,
+        val selectedDay: Int,
+        val selectedYear: Int,
         val description: String,
         val walletId: Int
     )

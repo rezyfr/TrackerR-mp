@@ -75,7 +75,10 @@ private fun AddTransactionScreen(
                         .align(Alignment.TopCenter),
                     type = state.type,
                     onBack = { onAction(AddTransactionComponent.Action.NavigateBack) },
-                    onSelectType = { onEvent(AddTransactionStore.Intent.OnTypeChange(it)) },
+                    onSelectType = {
+                        onEvent(AddTransactionStore.Intent.OnTypeChange(it))
+                        onEvent(AddTransactionStore.Intent.GetCategories(it))
+                    },
                 )
             },
             containerColor = state.type.typeIndicatorColor()
@@ -163,7 +166,7 @@ fun AddTransactionDialog(
             TrTextField(
                 placeholder = "Description",
                 value = state.description,
-                onValueChange = { onEvent(AddTransactionStore.Intent.OnDescriptionChange(it))}
+                onValueChange = { onEvent(AddTransactionStore.Intent.OnDescriptionChange(it)) }
             )
             TrTextField(
                 placeholder = "Date",
