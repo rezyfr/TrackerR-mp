@@ -1,13 +1,16 @@
 package dev.rezyfr.trackerr.data.mapper
 
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.domain.model.CategoryType
-import dev.rezyfr.trackerr.domain.model.TransactionModel
-import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
+import dev.rezyfr.trackerr.domain.model.Granularity
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionFrequencyModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
 
 class TransactionMapper {
-    fun mapResponseToDomain(response: TransactionResponse) : TransactionModel {
+    fun mapResponseToDomain(response: TransactionResponse): TransactionModel {
         return TransactionModel(
             id = response.id,
             amount = response.amount.toLong(),
@@ -20,10 +23,34 @@ class TransactionMapper {
         )
     }
 
-    fun mapSummaryResponseToDomain(response: TransactionSummaryResponse) : TransactionSummaryModel {
+    fun mapSummaryResponseToDomain(response: TransactionSummaryResponse): TransactionSummaryModel {
         return TransactionSummaryModel(
             totalIncome = response.totalIncome,
             totalExpense = response.totalExpense,
+        )
+    }
+
+    fun mapFrequencyResponseToDomain(response: List<TransactionFrequencyResponse>, params: Granularity): TransactionFrequencyModel {
+        val freqList = mutableListOf<Triple<String, Double, Double>>()
+
+        val intRange = when (params) {
+            Granularity.WEEK -> 1..7
+            Granularity.MONTH -> 1..30
+            Granularity.YEAR -> 1..12
+        }
+
+        intRange.forEach { index ->
+            response.find { it.index == index }?.let {
+                freqList.add(Triple(it.index.toString(), it.expenseAmount.toDouble(), it.incomeAmount.toDouble()))
+            } ?: run {
+                freqList.add(Triple(index.toString(), 0.0, 0.0))
+            }
+        }
+
+        return TransactionFrequencyModel(
+            xAxisData = freqList.map { it.first },
+            expenseData = freqList.map { it.second },
+            incomeData = freqList.map { it.third },
         )
     }
 }

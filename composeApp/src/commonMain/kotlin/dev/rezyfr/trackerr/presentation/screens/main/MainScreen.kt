@@ -98,7 +98,7 @@ fun MainMenu(mainComponent: MainComponent) {
     LaunchedEffect(isFabFocused) {
         awaitAll(
             async { transactionTranslation.animateTo(targetValue = if (isFabFocused) -57f else 0f) },
-            async { bgTranslation.animateTo(targetValue = if (isFabFocused) 100f else 0f) },
+            async { bgTranslation.animateTo(targetValue = if (isFabFocused) 250f else 0f) },
             async { rotation.animateTo(targetValue = if (isFabFocused) 45f else 0f) }
         )
     }
@@ -211,13 +211,11 @@ fun TransparentPrimaryBackground(modifier: Modifier = Modifier, height: Float) {
             .fillMaxWidth()
             .height(height.dp)
             .background(
-                brush = Brush.linearGradient(
+                brush = Brush.verticalGradient(
                     colors = listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0f),
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0f)
-                    ),
-                    start = Offset(0f, 200f),
-                    end = Offset(0f, 0f)
+                    )
                 )
             )
     )

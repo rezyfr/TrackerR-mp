@@ -5,12 +5,14 @@ import com.russhwolf.settings.get
 import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.request.CreateTransactionRequest
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.data.util.SettingsConstant
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setAuthHeader
 import dev.rezyfr.trackerr.data.util.setJsonBody
+import dev.rezyfr.trackerr.domain.model.Granularity
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -26,6 +28,7 @@ class TransactionServiceImpl(
     private val recent = "$baseUrl/transaction/recent"
     private val summary = "$baseUrl/transaction/summary"
     private val create = "$baseUrl/transaction"
+    private val frequency = "$baseUrl/transaction/frequency"
     override suspend fun getRecentTransaction(): NetworkResponse<BaseDto<List<TransactionResponse>>> {
         return execute {
             httpClient.get {
@@ -65,6 +68,16 @@ class TransactionServiceImpl(
                         walletId = walletId
                     )
                 )
+            }.body()
+        }
+    }
+
+    override suspend fun getTransactionFrequency(granularity: Granularity): NetworkResponse<BaseDto<List<TransactionFrequencyResponse>>> {
+        return execute {
+            httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
+                url(frequency)
+                parameter("granularity", granularity.name)
             }.body()
         }
     }

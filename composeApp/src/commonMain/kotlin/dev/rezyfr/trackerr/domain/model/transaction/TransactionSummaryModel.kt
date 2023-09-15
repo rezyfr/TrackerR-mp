@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.domain.model
+package dev.rezyfr.trackerr.domain.model.transaction
 
 
 data class TransactionSummaryModel(

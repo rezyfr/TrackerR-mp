@@ -4,7 +4,7 @@ import com.arkivanov.mvikotlin.core.store.Store
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.CategoryModel
 import dev.rezyfr.trackerr.domain.model.CategoryType
-import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.domain.model.WalletModel
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.DateProperty
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateDayOfMonths

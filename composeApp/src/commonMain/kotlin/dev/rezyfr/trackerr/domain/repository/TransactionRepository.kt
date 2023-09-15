@@ -1,7 +1,9 @@
 package dev.rezyfr.trackerr.domain.repository
 
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
+import dev.rezyfr.trackerr.domain.model.Granularity
 
 interface TransactionRepository {
     suspend fun fetchRecentTransaction(): Result<List<TransactionResponse>>
@@ -13,4 +15,7 @@ interface TransactionRepository {
         description: String,
         walletId: Int
     ): Result<TransactionResponse>
+    suspend fun getTransactionFrequency(
+        granularity: Granularity
+    ) : Result<List<TransactionFrequencyResponse>>
 }

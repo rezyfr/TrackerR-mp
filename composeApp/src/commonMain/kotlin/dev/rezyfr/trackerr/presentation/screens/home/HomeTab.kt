@@ -3,11 +3,14 @@ package dev.rezyfr.trackerr.presentation.screens.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -32,21 +35,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.aay.compose.baseComponents.model.LegendPosition
+import com.aay.compose.lineChart.LineChart
+import com.aay.compose.lineChart.model.LineParameters
+import com.aay.compose.lineChart.model.LineType
 import dev.rezyfr.trackerr.Res
 import dev.rezyfr.trackerr.domain.UiResult
-import dev.rezyfr.trackerr.domain.model.TransactionModel
-import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
+import dev.rezyfr.trackerr.domain.model.Granularity
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
 import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.TrCapsuleButton
+import dev.rezyfr.trackerr.presentation.component.multiselector.MultiSelector
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import dev.rezyfr.trackerr.presentation.theme.HomeTopBackground
 import dev.rezyfr.trackerr.presentation.theme.Red100
+import dev.rezyfr.trackerr.presentation.theme.Yellow100
+import dev.rezyfr.trackerr.presentation.theme.Yellow20
 import io.github.skeptick.libres.compose.painterResource
 
 @Composable
@@ -57,12 +71,14 @@ fun HomeTab(
 
     HomeScreen(
         state = state,
+        onEvent = homeComponent::onEvent
     )
 }
 
 @Composable
 fun HomeScreen(
     state: HomeStore.State,
+    onEvent: (HomeStore.Intent) -> Unit = {}
 ) {
     Scaffold(
         topBar = {
@@ -71,7 +87,8 @@ fun HomeScreen(
     ) {
         HomeContent(
             state = state,
-            modifier = Modifier.padding(it)
+            modifier = Modifier.padding(it),
+            onEvent = onEvent
         )
     }
 }
@@ -119,12 +136,18 @@ private fun HomeTopBar() {
 @Composable
 private fun HomeContent(
     modifier: Modifier = Modifier,
-    state: HomeStore.State
+    state: HomeStore.State,
+    onEvent: (HomeStore.Intent) -> Unit
 ) {
     LazyColumn(modifier) {
         item {
             SummarySection(
                 state, Modifier.fillMaxWidth()
+            )
+        }
+        item {
+            FrequencySection(
+                state, Modifier.fillParentMaxWidth(1.9f), onEvent
             )
         }
         item() {
@@ -134,19 +157,116 @@ private fun HomeContent(
 }
 
 @Composable
+private fun FrequencySection(
+    state: HomeStore.State,
+    modifier: Modifier = Modifier,
+    onEvent: (HomeStore.Intent) -> Unit = {}
+) {
+    Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+        Text(
+            "Spend Frequency",
+            style = MaterialTheme.typography.titleSmall,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        VSpacer(12)
+        if (state.transactionFrequency is UiResult.Success) {
+            val freqData = state.transactionFrequency.data
+            val expenseParam = LineParameters(
+                label = "",
+                data = freqData.expenseData,
+                lineColor = MaterialTheme.colorScheme.error,
+                lineType = LineType.CURVED_LINE,
+                lineShadow = true,
+            )
+            LineChart(
+                modifier.height(185.dp),
+                animateChart = true,
+                linesParameters = listOf(expenseParam),
+                xAxisData = freqData.xAxisData,
+                isGrid = false,
+                showXAxis = false,
+                showYAxis = false,
+                legendPosition = LegendPosition.DISAPPEAR,
+                barWidthPx = 6.dp,
+            )
+        } else if (state.transactionFrequency is UiResult.Loading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(185.dp)
+                    .background(MaterialTheme.colorScheme.background)
+            )
+        }
+        VSpacer(8)
+        GranularitySection(
+            Modifier.fillMaxWidth(),
+            state.selectedGranularity,
+            onClick = {
+                onEvent.invoke(HomeStore.Intent.OnChangeGranularity(it))
+            }
+        )
+    }
+}
+
+@Composable
+fun GranularitySection(
+    modifier: Modifier = Modifier,
+    selectedGranularity: Granularity = Granularity.WEEK,
+    onClick: (Granularity) -> Unit = {}
+) {
+    Row(
+        modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        GranularityButton(Granularity.WEEK, selectedGranularity, onClick)
+        GranularityButton(Granularity.MONTH, selectedGranularity, onClick)
+        GranularityButton(Granularity.YEAR, selectedGranularity, onClick)
+    }
+}
+
+@Composable
+fun GranularityButton(
+    granularity: Granularity,
+    selectedGranularity: Granularity,
+    onClick: (Granularity) -> Unit,
+) {
+    val isActive = granularity == selectedGranularity
+    Box(Modifier
+        .background(if (isActive) Yellow20 else Color.Transparent, CircleShape)
+        .padding(vertical = 8.dp, horizontal = 24.dp)
+        .clickable { onClick.invoke(granularity) }
+    ) {
+        Text(
+            granularity.label, style = MaterialTheme.typography.bodySmall.copy(
+                color = if (isActive) Yellow100 else MaterialTheme.colorScheme.tertiary,
+                fontWeight = if (isActive) FontWeight.Bold else FontWeight.Medium
+            )
+        )
+    }
+}
+
+@Composable
 private fun SummarySection(
     state: HomeStore.State,
     modifier: Modifier = Modifier
 ) {
-    AccountBalance(
-        modifier.background(HomeTopBackground).padding(bottom = 16.dp), state.accBalance
-    )
-    TransactionSummary(
+    Column(
         modifier
             .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
-            .background(HomeTopBackground)
-            .padding(bottom = 24.dp), state.transactionSummary
-    )
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        HomeTopBackground,
+                        HomeTopBackground.copy(alpha = 0.15f)
+                    ),
+                )
+            )
+    ) {
+        AccountBalance(modifier, state.accBalance)
+        VSpacer(16)
+        TransactionSummary(modifier.padding(bottom = 24.dp), state.transactionSummary)
+    }
 }
 
 @Composable
@@ -190,9 +310,14 @@ private fun TransactionSummary(
                             "Income",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary)
                         )
+                        val totalIncome = summary.data.totalIncome.format()
                         Text(
-                            "Rp${summary.data.totalIncome.format()}",
-                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary),
+                            "Rp$totalIncome",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = if (totalIncome.length > 6) 14.sp else 16.sp
+                            ),
+                            maxLines = 1
                         )
                     }
                 }
@@ -227,9 +352,14 @@ private fun TransactionSummary(
                             "Expenses",
                             style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary),
                         )
+                        val totalExpense = summary.data.totalExpense.format()
                         Text(
-                            "Rp${summary.data.totalExpense.format()}",
-                            style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onPrimary)
+                            "Rp$totalExpense",
+                            style = MaterialTheme.typography.bodyLarge.copy(
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontSize = if (totalExpense.length > 6) 14.sp else 16.sp
+                            ),
+                            maxLines = 1
                         )
                     }
                 }

@@ -4,7 +4,7 @@ import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.model.TransactionSummaryModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
 class GetTransactionSummaryUseCase(

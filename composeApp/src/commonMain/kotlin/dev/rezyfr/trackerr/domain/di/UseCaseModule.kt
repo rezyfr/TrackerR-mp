@@ -8,6 +8,7 @@ import dev.rezyfr.trackerr.domain.usecase.wallet.CreateWalletUseCase
 import dev.rezyfr.trackerr.domain.usecase.icon.GetIconUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.CreateTransactionUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetRecentTransactionUseCase
+import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionFrequencyUseCase
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
 import dev.rezyfr.trackerr.domain.usecase.user.LoginUseCase
 import dev.rezyfr.trackerr.domain.usecase.user.RegisterUseCase
@@ -33,6 +34,7 @@ fun getUseCaseModule() = module {
     single { GetRecentTransactionUseCase(get(), get()) }
     single { GetTransactionSummaryUseCase(get(), get()) }
     single { CreateTransactionUseCase(get(), get()) }
+    single { GetTransactionFrequencyUseCase(get(), get())}
 
     // Category
     single { SyncCategoryUseCase(get(), get()) }

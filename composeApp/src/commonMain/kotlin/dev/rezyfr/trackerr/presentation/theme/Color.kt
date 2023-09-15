@@ -27,6 +27,8 @@ val Yellow20 = Color(0xFFFCEED4)
 
 val Green100 = Color(0xff00A86B)
 
+val Yellow100 = Color(0xffFCAC12)
+
 // Icon color
 val BlueIcon = Color(0xff0077FF)
 val RedIcon = Color(0xffFD3C4A)

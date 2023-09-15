@@ -22,11 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.rememberImagePainter
-import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.presentation.HSpacer
-import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.component.util.toDateFormat
-import dev.rezyfr.trackerr.presentation.theme.color
 
 @Composable
 fun TransactionItem(

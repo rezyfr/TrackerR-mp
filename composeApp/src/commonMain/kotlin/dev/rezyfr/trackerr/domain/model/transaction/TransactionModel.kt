@@ -1,6 +1,7 @@
-package dev.rezyfr.trackerr.domain.model
+package dev.rezyfr.trackerr.domain.model.transaction
 
 import androidx.compose.ui.graphics.Color
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.theme.GreenIcon
 import dev.rezyfr.trackerr.presentation.theme.RedIcon

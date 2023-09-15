@@ -1,9 +1,11 @@
 package dev.rezyfr.trackerr.data.repository
 
 import dev.rezyfr.trackerr.data.remote.dto.handleResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.data.remote.service.TransactionService
+import dev.rezyfr.trackerr.domain.model.Granularity
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
 class TransactionRepositoryImpl(
@@ -31,5 +33,9 @@ class TransactionRepositoryImpl(
             description = description,
             walletId = walletId
         ).handleResponse()
+    }
+
+    override suspend fun getTransactionFrequency(granularity: Granularity): Result<List<TransactionFrequencyResponse>> {
+        return transactionService.getTransactionFrequency(granularity).handleResponse()
     }
 }

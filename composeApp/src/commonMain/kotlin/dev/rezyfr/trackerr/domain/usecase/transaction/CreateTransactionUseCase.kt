@@ -4,11 +4,10 @@ import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleFlowResult
-import dev.rezyfr.trackerr.domain.model.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
 
 class CreateTransactionUseCase(
     private val repository: TransactionRepository,

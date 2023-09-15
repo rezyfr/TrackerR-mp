@@ -4,20 +4,21 @@ import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleResult
-import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
+import dev.rezyfr.trackerr.domain.model.Granularity
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionFrequencyModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
-class GetRecentTransactionUseCase(
+class GetTransactionFrequencyUseCase(
     private val transactionRepository: TransactionRepository,
     private val mapper: TransactionMapper
-) : UseCase<UiResult<List<TransactionModel>>, Nothing?> {
-    override suspend fun execute(params: Nothing?): UiResult<List<TransactionModel>> {
+) : UseCase<UiResult<TransactionFrequencyModel>, Granularity> {
+    override suspend fun execute(params: Granularity): UiResult<TransactionFrequencyModel> {
         return handleResult(
             execute = {
-                transactionRepository.fetchRecentTransaction()
+                 transactionRepository.getTransactionFrequency(params)
             },
             onSuccess = { data ->
-                data.map { mapper.mapResponseToDomain(it) }
+                mapper.mapFrequencyResponseToDomain(data, params)
             }
         )
     }
