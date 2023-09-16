@@ -1,10 +1,10 @@
-package dev.rezyfr.trackerr.presentation.screens.home
+package dev.rezyfr.trackerr.presentation.screens.main.home
 
 import com.arkivanov.decompose.ComponentContext
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
-import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
-import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStoreFactory
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStoreFactory
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 

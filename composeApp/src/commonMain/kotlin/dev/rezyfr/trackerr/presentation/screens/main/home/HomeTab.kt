@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.screens.home
+package dev.rezyfr.trackerr.presentation.screens.main.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,6 +50,7 @@ import com.aay.compose.lineChart.model.LineType
 import dev.rezyfr.trackerr.Res
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.Granularity
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionFrequencyModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
 import dev.rezyfr.trackerr.presentation.HSpacer
@@ -60,44 +61,50 @@ import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.format
-import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
 import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import dev.rezyfr.trackerr.presentation.theme.HomeTopBackground
 import dev.rezyfr.trackerr.presentation.theme.Red100
 import dev.rezyfr.trackerr.presentation.theme.Yellow100
 import dev.rezyfr.trackerr.presentation.theme.Yellow20
+import io.github.aakira.napier.Napier
 import io.github.skeptick.libres.compose.painterResource
 
 @Composable
 fun HomeTab(
     homeComponent: HomeComponent,
-    monthState: MainComponent.MonthPickerState
+    selectedMonth: Month,
+    onMonthClick: () -> Unit = {},
 ) {
     val state by homeComponent.state.collectAsState()
 
-    LaunchedEffect(monthState.selectedMonth) {
-        homeComponent.onEvent(HomeStore.Intent.Init)
+    LaunchedEffect(true) {
+        homeComponent.onEvent(HomeStore.Intent.Init(selectedMonth))
+    }
+
+    LaunchedEffect(selectedMonth) {
+        homeComponent.onEvent(HomeStore.Intent.GetTransactionSummary(selectedMonth.value))
     }
 
     HomeScreen(
         state = state,
         onEvent = homeComponent::onEvent,
-        monthState = monthState,
-        onMonthClick = { monthState.monthPickerSheet.expand() }
+        selectedMonth = selectedMonth.text,
+        onMonthClick = onMonthClick
     )
 }
 
 @Composable
 fun HomeScreen(
     state: HomeStore.State,
-    monthState: MainComponent.MonthPickerState,
+    selectedMonth: String,
     onEvent: (HomeStore.Intent) -> Unit = {},
     onMonthClick: () -> Unit = {},
 ) {
     Box(Modifier.fillMaxSize()) {
         Scaffold(
-            topBar = { HomeTopBar(monthState, onMonthClick) }
+            topBar = { HomeTopBar(selectedMonth, onMonthClick) }
         ) {
             HomeContent(
                 state = state,
@@ -111,7 +118,7 @@ fun HomeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeTopBar(
-    monthState: MainComponent.MonthPickerState,
+    selectedMonth: String,
     onMonthClick: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
@@ -119,7 +126,7 @@ private fun HomeTopBar(
             TrOutlinedButton(
                 text = {
                     Text(
-                        monthState.selectedMonth.text,
+                        selectedMonth,
                         style = MaterialTheme.typography.bodySmall
                     )
                 },
@@ -170,12 +177,17 @@ private fun HomeContent(
     LazyColumn(modifier) {
         item {
             SummarySection(
-                state, Modifier.fillMaxWidth()
+                state.accBalance,
+                state.transactionSummary,
+                Modifier.fillMaxWidth()
             )
         }
         item {
             FrequencySection(
-                state, Modifier.fillParentMaxWidth(1.9f), onEvent
+                state.transactionFrequency,
+                state.selectedGranularity,
+                Modifier.fillParentMaxWidth(1.9f),
+                onEvent
             )
         }
         item() {
@@ -186,10 +198,12 @@ private fun HomeContent(
 
 @Composable
 private fun FrequencySection(
-    state: HomeStore.State,
-    modifier: Modifier = Modifier,
-    onEvent: (HomeStore.Intent) -> Unit = {}
+    transactionFrequency: UiResult<TransactionFrequencyModel>,
+    selectedGranularity: Granularity,
+    modifier: Modifier,
+    onEvent: (HomeStore.Intent) -> Unit
 ) {
+    Napier.d("Recompose FrequencySection: $transactionFrequency, $selectedGranularity, $modifier, ")
     Column(Modifier.fillMaxWidth().padding(top = 12.dp)) {
         Text(
             "Spend Frequency",
@@ -197,8 +211,8 @@ private fun FrequencySection(
             modifier = Modifier.padding(horizontal = 16.dp)
         )
         VSpacer(12)
-        if (state.transactionFrequency is UiResult.Success) {
-            val freqData = state.transactionFrequency.data
+        if (transactionFrequency is UiResult.Success) {
+            val freqData = transactionFrequency.data
             val expenseParam = LineParameters(
                 label = "",
                 data = freqData.expenseData,
@@ -217,7 +231,7 @@ private fun FrequencySection(
                 legendPosition = LegendPosition.DISAPPEAR,
                 barWidthPx = 6.dp,
             )
-        } else if (state.transactionFrequency is UiResult.Loading) {
+        } else if (transactionFrequency is UiResult.Loading) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -228,7 +242,7 @@ private fun FrequencySection(
         VSpacer(8)
         GranularitySection(
             Modifier.fillMaxWidth(),
-            state.selectedGranularity,
+            selectedGranularity,
             onClick = {
                 onEvent.invoke(HomeStore.Intent.OnChangeGranularity(it))
             }
@@ -276,9 +290,11 @@ fun GranularityButton(
 
 @Composable
 private fun SummarySection(
-    state: HomeStore.State,
+    accBalance: UiResult<Long>,
+    transactionSummary: UiResult<TransactionSummaryModel>,
     modifier: Modifier = Modifier
 ) {
+    Napier.d("Recompose SummarySection: $accBalance, $transactionSummary")
     Column(
         modifier
             .clip(RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp))
@@ -291,9 +307,9 @@ private fun SummarySection(
                 )
             )
     ) {
-        AccountBalance(modifier, state.accBalance)
+        AccountBalance(modifier, accBalance)
         VSpacer(16)
-        TransactionSummary(modifier.padding(bottom = 24.dp), state.transactionSummary)
+        TransactionSummary(modifier.padding(bottom = 24.dp), transactionSummary)
     }
 }
 
@@ -302,6 +318,7 @@ private fun TransactionSummary(
     modifier: Modifier = Modifier,
     summary: UiResult<TransactionSummaryModel>
 ) {
+    Napier.d("Recompose TransactionSummary: $summary")
     Row(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.padding(horizontal = 16.dp)
@@ -401,6 +418,7 @@ private fun AccountBalance(
     modifier: Modifier = Modifier,
     balance: UiResult<Long>
 ) {
+    Napier.d("Recompose AccountBalance: $balance")
     Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             "Account Balance", style = MaterialTheme.typography.bodySmall.copy(
@@ -431,6 +449,7 @@ private fun AccountBalance(
 fun RecentTransaction(
     recent: UiResult<List<TransactionModel>>
 ) {
+    Napier.d("Recompose RecentTransaction: $recent")
     Row(
         Modifier.fillMaxWidth().padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,

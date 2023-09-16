@@ -44,9 +44,11 @@ import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.rezyfr.trackerr.Res
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
-import dev.rezyfr.trackerr.presentation.screens.home.HomeTab
-import dev.rezyfr.trackerr.presentation.screens.home.components.MonthPickerSheet
+import dev.rezyfr.trackerr.presentation.screens.main.home.HomeTab
+import dev.rezyfr.trackerr.presentation.screens.main.home.components.MonthPickerSheet
+import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionTab
 import dev.rezyfr.trackerr.presentation.theme.Disabled
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import io.github.skeptick.libres.compose.painterResource
@@ -91,7 +93,13 @@ fun MainMenu(mainComponent: MainComponent) {
             }
         ) {
             Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
-                MainTabContent(mainComponent, monthPickerState)
+                MainTabContent(
+                    component = mainComponent,
+                    selectedMonth = monthPickerState.selectedMonth,
+                    onMonthClick = {
+                        monthPickerState.monthPickerSheet.expand()
+                    }
+                )
                 TransparentPrimaryBackground(
                     height = bgTranslation.value, modifier = Modifier.align(
                         Alignment.BottomCenter
@@ -128,16 +136,23 @@ fun MainMenu(mainComponent: MainComponent) {
 @Composable
 fun MainTabContent(
     component: MainComponent,
-    monthPickerState: MainComponent.MonthPickerState
+    selectedMonth: Month,
+    onMonthClick: () -> Unit = {},
 ) {
     Children(component.child) {
         (it.instance as MainComponent.Tab).let { child ->
             when (child) {
                 is MainComponent.Tab.Home -> HomeTab(
                     child.homeComponent,
-                    monthPickerState
+                    onMonthClick = onMonthClick,
+                    selectedMonth = selectedMonth
                 )
-                is MainComponent.Tab.Transaction -> Text("Transaction")
+
+                is MainComponent.Tab.Transaction -> TransactionTab(
+                    child.transactionComponent,
+                    onMonthClick = onMonthClick,
+                    selectedMonth = selectedMonth
+                )
             }
         }
     }

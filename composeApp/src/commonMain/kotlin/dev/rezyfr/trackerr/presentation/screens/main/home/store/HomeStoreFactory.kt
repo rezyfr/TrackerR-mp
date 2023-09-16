@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.screens.home.store
+package dev.rezyfr.trackerr.presentation.screens.main.home.store
 
 import com.arkivanov.mvikotlin.core.store.Reducer
 import com.arkivanov.mvikotlin.core.store.Store
@@ -13,6 +13,7 @@ import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionFrequencyUse
 import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCase
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
 import dev.rezyfr.trackerr.mainDispatcher
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -42,12 +43,12 @@ class HomeStoreFactory(
             mainDispatcher
         ) {
 
-        private fun syncData(state: HomeStore.State) {
+        private fun syncData(state: HomeStore.State, month: Month) {
             getRecentTransaction()
-            getTransactionSummary(state.selectedMonth.value)
+            getTransactionSummary(month.value)
             getWalletBalance()
             syncCategory()
-            getTransactionFrequency(Granularity.WEEK)
+            getTransactionFrequency(state.selectedGranularity)
         }
 
         private fun syncCategory() {
@@ -130,12 +131,8 @@ class HomeStoreFactory(
                     dispatch(HomeStore.Result.OnChangeGranularity(intent.granularity))
                     getTransactionFrequency(intent.granularity)
                 }
-                is HomeStore.Intent.OnChangeMonth -> {
-                    dispatch(HomeStore.Result.OnChangeMonth(intent.month))
-                    getTransactionFrequency(getState().selectedGranularity)
-                }
 
-                is HomeStore.Intent.Init -> syncData(getState())
+                is HomeStore.Intent.Init -> syncData(getState(), intent.month)
             }
     }
 
@@ -147,7 +144,6 @@ class HomeStoreFactory(
                 is HomeStore.Result.GetWalletBalance -> copy(accBalance = msg.result)
                 is HomeStore.Result.GetTransactionFrequency -> copy(transactionFrequency = msg.result)
                 is HomeStore.Result.OnChangeGranularity -> copy(selectedGranularity = msg.granularity)
-                is HomeStore.Result.OnChangeMonth -> copy(selectedMonth = msg.month)
             }
     }
 

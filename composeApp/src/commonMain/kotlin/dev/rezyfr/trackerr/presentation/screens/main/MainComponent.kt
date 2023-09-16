@@ -19,8 +19,9 @@ import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
 import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryComponent
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
-import dev.rezyfr.trackerr.presentation.screens.home.HomeComponent
-import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.home.HomeComponent
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionComponent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -29,6 +30,7 @@ import org.koin.core.component.KoinComponent
 class MainComponent(
     componentContext: ComponentContext,
     private val home: (ComponentContext) -> HomeComponent,
+    private val transaction: (ComponentContext) -> TransactionComponent,
     private val addTransaction: (ComponentContext, (AddTransactionComponent.Action) -> Unit) -> AddTransactionComponent,
     private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent
 ) : ComponentContext by componentContext, KoinComponent {
@@ -40,6 +42,12 @@ class MainComponent(
         componentContext = componentContext,
         home = { context: ComponentContext ->
             HomeComponent(
+                componentContext = context,
+                storeFactory = storeFactory
+            )
+        },
+        transaction = { context: ComponentContext ->
+            TransactionComponent(
                 componentContext = context,
                 storeFactory = storeFactory
             )
@@ -57,7 +65,7 @@ class MainComponent(
                 storeFactory = storeFactory,
                 action = action
             )
-        }
+        },
     )
 
     private val navigation = StackNavigation<Configuration>()
@@ -84,7 +92,9 @@ class MainComponent(
                 homeComponent = home(componentContext)
             )
 
-            Configuration.Transaction -> Tab.Transaction
+            Configuration.Transaction -> Tab.Transaction(
+                transactionComponent = transaction(componentContext)
+            )
             Configuration.AddTransaction -> Screen.AddTransaction(
                 addTransactionComponent = addTransaction(componentContext, ::onAddTransactionAction)
             )
@@ -119,6 +129,10 @@ class MainComponent(
                         selectedMonth = intent.month
                     )
                 }
+            }
+
+            is Intent.OnClickMonthPicker -> {
+                monthPickerState.value.monthPickerSheet.expand()
             }
         }
     }
@@ -158,7 +172,7 @@ class MainComponent(
 
     sealed class Tab(val index: Int): Child {
         data class Home(val homeComponent: HomeComponent) : Tab(0)
-        object Transaction : Tab(1)
+        data class Transaction(val transactionComponent: TransactionComponent) : Tab(1)
     }
 
     sealed class Screen : Child {
@@ -174,6 +188,7 @@ class MainComponent(
 
     sealed class Intent {
         data class OnChangeMonth(val month: Month) : Intent()
+        object OnClickMonthPicker : Intent()
     }
 
     data class MonthPickerState(

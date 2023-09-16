@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.screens.home.components
+package dev.rezyfr.trackerr.presentation.screens.main.home.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +12,7 @@ import dev.rezyfr.trackerr.presentation.component.base.datepicker.DateProperty
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.DefaultWheelDatePicker
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.FormTransactionSheet
-import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
 
 @Composable
 fun MonthPickerSheet(

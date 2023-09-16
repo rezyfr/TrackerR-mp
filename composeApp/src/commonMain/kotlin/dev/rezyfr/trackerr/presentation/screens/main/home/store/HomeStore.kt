@@ -1,4 +1,4 @@
-package dev.rezyfr.trackerr.presentation.screens.home.store
+package dev.rezyfr.trackerr.presentation.screens.main.home.store
 
 import com.arkivanov.mvikotlin.core.store.Store
 import dev.rezyfr.trackerr.domain.UiResult
@@ -15,13 +15,12 @@ import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 
 interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
     sealed class Intent {
-        object Init : Intent()
+        data class Init(val month: Month) : Intent()
         object GetRecentTransaction : Intent()
         object GetWalletBalance : Intent()
         data class GetTransactionSummary(val month: Int) : Intent()
         data class GetTransactionFrequency(val granularity: Granularity) : Intent()
         data class OnChangeGranularity(val granularity: Granularity) : Intent()
-        data class OnChangeMonth(val month: Month) : Intent()
     }
 
     sealed class Result {
@@ -30,7 +29,6 @@ interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
         data class GetTransactionSummary(val result: UiResult<TransactionSummaryModel>) : Result()
         data class GetTransactionFrequency(val result: UiResult<TransactionFrequencyModel>) : Result()
         data class OnChangeGranularity(val granularity: Granularity) : Result()
-        data class OnChangeMonth(val month: Month) : Result()
     }
 
     data class State(
@@ -39,9 +37,6 @@ interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
         val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized,
         val transactionFrequency : UiResult<TransactionFrequencyModel> = UiResult.Uninitialized,
         val selectedGranularity: Granularity = Granularity.WEEK,
-        val selectedMonth: Month = getCurrentLdt().toMonth(),
-        val monthPickerSheet: BottomSheet = BottomSheet(),
-        val monthOptions: List<Month> = calculateMonths()
     )
 
     sealed class Label {
