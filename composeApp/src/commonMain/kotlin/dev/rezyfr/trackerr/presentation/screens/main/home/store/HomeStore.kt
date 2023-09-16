@@ -15,7 +15,7 @@ import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 
 interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
     sealed class Intent {
-        data class Init(val month: Month) : Intent()
+        data class Init(val month: Month, val forceSync: Boolean = false) : Intent()
         object GetRecentTransaction : Intent()
         object GetWalletBalance : Intent()
         data class GetTransactionSummary(val month: Int) : Intent()
@@ -37,6 +37,7 @@ interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
         val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized,
         val transactionFrequency : UiResult<TransactionFrequencyModel> = UiResult.Uninitialized,
         val selectedGranularity: Granularity = Granularity.WEEK,
+        val hasSync: Boolean = false
     )
 
     sealed class Label {

@@ -43,12 +43,16 @@ class HomeStoreFactory(
             mainDispatcher
         ) {
 
-        private fun syncData(state: HomeStore.State, month: Month) {
+        var hasSync: Boolean = false
+
+        private fun syncData(state: HomeStore.State, month: Month, forceSync: Boolean) {
+            if (hasSync && !forceSync) return
             getRecentTransaction()
             getTransactionSummary(month.value)
             getWalletBalance()
             syncCategory()
             getTransactionFrequency(state.selectedGranularity)
+            hasSync = true
         }
 
         private fun syncCategory() {
@@ -132,7 +136,7 @@ class HomeStoreFactory(
                     getTransactionFrequency(intent.granularity)
                 }
 
-                is HomeStore.Intent.Init -> syncData(getState(), intent.month)
+                is HomeStore.Intent.Init -> syncData(getState(), intent.month, intent.forceSync)
             }
     }
 

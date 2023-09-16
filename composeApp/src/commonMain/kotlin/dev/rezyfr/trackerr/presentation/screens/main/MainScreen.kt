@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
+import com.arkivanov.decompose.router.stack.ChildStack
+import com.arkivanov.decompose.value.Value
 import dev.rezyfr.trackerr.Res
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
@@ -94,7 +96,7 @@ fun MainMenu(mainComponent: MainComponent) {
         ) {
             Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
                 MainTabContent(
-                    component = mainComponent,
+                    child = mainComponent.child,
                     selectedMonth = monthPickerState.selectedMonth,
                     onMonthClick = {
                         monthPickerState.monthPickerSheet.expand()
@@ -135,11 +137,11 @@ fun MainMenu(mainComponent: MainComponent) {
 
 @Composable
 fun MainTabContent(
-    component: MainComponent,
+    child: Value<ChildStack<*, MainComponent.Child>>,
     selectedMonth: Month,
     onMonthClick: () -> Unit = {},
 ) {
-    Children(component.child) {
+    Children(child) {
         (it.instance as MainComponent.Tab).let { child ->
             when (child) {
                 is MainComponent.Tab.Home -> HomeTab(

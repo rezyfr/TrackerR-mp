@@ -14,7 +14,7 @@ class GetTransactionSummaryUseCase(
     override suspend fun execute(params: Int): UiResult<TransactionSummaryModel> {
         return handleResult(
             execute = {
-                 transactionRepository.fetchTransactionSummary(params)
+                 transactionRepository.fetchTransactionSummary(params - 1)
             },
             onSuccess = { data ->
                 mapper.mapSummaryResponseToDomain(data)
