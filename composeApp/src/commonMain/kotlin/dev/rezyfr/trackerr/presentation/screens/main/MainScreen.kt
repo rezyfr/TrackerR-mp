@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +27,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -43,7 +44,9 @@ import androidx.compose.ui.unit.sp
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
 import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import dev.rezyfr.trackerr.Res
+import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
 import dev.rezyfr.trackerr.presentation.screens.home.HomeTab
+import dev.rezyfr.trackerr.presentation.screens.home.components.MonthPickerSheet
 import dev.rezyfr.trackerr.presentation.theme.Disabled
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import io.github.skeptick.libres.compose.painterResource
@@ -59,38 +62,56 @@ fun MainMenu(mainComponent: MainComponent) {
     val transactionTranslation = remember { Animatable(0f) }
     val snackbarHostState = remember { SnackbarHostState() }
     val activeIndex by mainComponent.activeTabIndex.subscribeAsState()
+    val monthPickerState by mainComponent.monthPickerState.collectAsState()
 
-    Scaffold(
-        bottomBar = {
-            RootNavBar(
-                onTabSelected = mainComponent::onTabSelected,
-                selectedTabIndex = activeIndex,
-            )
-        },
-        floatingActionButton = {
-            MainFab(
-                rotation = rotation.value,
-                translation = transactionTranslation.value,
-                onClick = {
-                    isFabFocused = !isFabFocused
-                },
-                onExpenseClick = {
-                    mainComponent.onAction(MainComponent.Action.NavigateToAddTransaction)
-                },
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        isFloatingActionButtonDocked = true,
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        }
-    ) {
-        Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
-            MainTabContent(mainComponent)
-            TransparentPrimaryBackground(
-                height = bgTranslation.value, modifier = Modifier.align(
-                    Alignment.BottomCenter
+    Box(Modifier.fillMaxSize()) {
+        Scaffold(
+            bottomBar = {
+                RootNavBar(
+                    onTabSelected = mainComponent::onTabSelected,
+                    selectedTabIndex = activeIndex,
                 )
+            },
+            floatingActionButton = {
+                MainFab(
+                    rotation = rotation.value,
+                    translation = transactionTranslation.value,
+                    onClick = {
+                        isFabFocused = !isFabFocused
+                    },
+                    onExpenseClick = {
+                        mainComponent.onAction(MainComponent.Action.NavigateToAddTransaction)
+                    },
+                )
+            },
+            floatingActionButtonPosition = FabPosition.Center,
+            isFloatingActionButtonDocked = true,
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            }
+        ) {
+            Box(Modifier.padding(bottom = it.calculateBottomPadding())) {
+                MainTabContent(mainComponent, monthPickerState)
+                TransparentPrimaryBackground(
+                    height = bgTranslation.value, modifier = Modifier.align(
+                        Alignment.BottomCenter
+                    )
+                )
+            }
+        }
+
+        RevealingSheet(
+            monthPickerState.monthPickerSheet,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            MonthPickerSheet(
+                modifier = Modifier.fillMaxWidth(),
+                month = monthPickerState.selectedMonth,
+                monthOptions = monthPickerState.monthOptions,
+                onChangeMonth = {
+                    monthPickerState.monthPickerSheet.collapse()
+                    mainComponent.onEvent(MainComponent.Intent.OnChangeMonth(it))
+                }
             )
         }
     }
@@ -106,12 +127,16 @@ fun MainMenu(mainComponent: MainComponent) {
 
 @Composable
 fun MainTabContent(
-    component: MainComponent
+    component: MainComponent,
+    monthPickerState: MainComponent.MonthPickerState
 ) {
     Children(component.child) {
         (it.instance as MainComponent.Tab).let { child ->
             when (child) {
-                is MainComponent.Tab.Home -> HomeTab(child.homeComponent)
+                is MainComponent.Tab.Home -> HomeTab(
+                    child.homeComponent,
+                    monthPickerState
+                )
                 is MainComponent.Tab.Transaction -> Text("Transaction")
             }
         }

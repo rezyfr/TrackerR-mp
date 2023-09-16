@@ -12,9 +12,18 @@ import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateMonths
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.toMonth
+import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
+import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryComponent
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.home.HomeComponent
+import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.KoinComponent
 
 class MainComponent(
@@ -64,6 +73,8 @@ class MainComponent(
         else -1
     }
 
+    val monthPickerState: MutableStateFlow<MonthPickerState> = MutableStateFlow(MonthPickerState())
+
     private fun createChild(
         configuration: Configuration,
         componentContext: ComponentContext
@@ -96,6 +107,18 @@ class MainComponent(
         when (action) {
             Action.NavigateToAddTransaction -> {
                 navigation.push(Configuration.AddTransaction)
+            }
+        }
+    }
+
+    fun onEvent(intent: Intent) {
+        when (intent) {
+            is Intent.OnChangeMonth -> {
+                monthPickerState.update {
+                    it.copy(
+                        selectedMonth = intent.month
+                    )
+                }
             }
         }
     }
@@ -148,4 +171,14 @@ class MainComponent(
     sealed class Action {
         object NavigateToAddTransaction : Action()
     }
+
+    sealed class Intent {
+        data class OnChangeMonth(val month: Month) : Intent()
+    }
+
+    data class MonthPickerState(
+        val monthPickerSheet: BottomSheet = BottomSheet(),
+        val monthOptions: List<Month> = calculateMonths(),
+        val selectedMonth: Month = getCurrentLdt().toMonth()
+    )
 }

@@ -25,11 +25,12 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun TrOutlinedButton(
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = TrButtonDefaults.padding(),
     enabled: Boolean = true,
-    text: String,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    text: @Composable (() -> Unit),
+    onClick: () -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -40,7 +41,8 @@ fun TrOutlinedButton(
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
     ) {
         TrButtonContent(
-            text = { OutlinedButtonText(text) },
+            text = text,
+            leadingIcon = { leadingIcon?.invoke() }
         )
     }
 }

@@ -125,12 +125,12 @@ internal fun calculateDayOfMonths(
     }
 }
 
-internal fun calculateMonths(useShortDate: Boolean = false): List<DateProperty> {
+internal fun calculateMonths(useShortDate: Boolean = false): List<Month> {
     return (0..11).map {
         Month(
             text = if (useShortDate) it.getShortMonths()
             else it.getFullMonths(),
-            value = it,
+            value = it + 1,
             index = it
         )
     }
@@ -159,8 +159,8 @@ fun LocalDateTime.toDayOfMonth() : DayOfMonth {
 fun LocalDateTime.toMonth() : Month {
     return Month(
         text = monthNumber.getFullMonths(),
-        value = monthNumber,
-        index = monthNumber - 1
+        value = monthNumber + 1,
+        index = monthNumber
     )
 }
 

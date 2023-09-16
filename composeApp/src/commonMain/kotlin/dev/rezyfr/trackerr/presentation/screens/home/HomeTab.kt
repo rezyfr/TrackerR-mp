@@ -7,10 +7,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.rounded.ExpandCircleDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -30,6 +32,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -52,10 +55,13 @@ import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
 import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.TrCapsuleButton
-import dev.rezyfr.trackerr.presentation.component.multiselector.MultiSelector
+import dev.rezyfr.trackerr.presentation.component.base.TrOutlinedButton
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
+import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.screens.home.store.HomeStore
+import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import dev.rezyfr.trackerr.presentation.theme.HomeTopBackground
 import dev.rezyfr.trackerr.presentation.theme.Red100
@@ -65,40 +71,62 @@ import io.github.skeptick.libres.compose.painterResource
 
 @Composable
 fun HomeTab(
-    homeComponent: HomeComponent
+    homeComponent: HomeComponent,
+    monthState: MainComponent.MonthPickerState
 ) {
     val state by homeComponent.state.collectAsState()
 
+    LaunchedEffect(monthState.selectedMonth) {
+        homeComponent.onEvent(HomeStore.Intent.Init)
+    }
+
     HomeScreen(
         state = state,
-        onEvent = homeComponent::onEvent
+        onEvent = homeComponent::onEvent,
+        monthState = monthState,
+        onMonthClick = { monthState.monthPickerSheet.expand() }
     )
 }
 
 @Composable
 fun HomeScreen(
     state: HomeStore.State,
-    onEvent: (HomeStore.Intent) -> Unit = {}
+    monthState: MainComponent.MonthPickerState,
+    onEvent: (HomeStore.Intent) -> Unit = {},
+    onMonthClick: () -> Unit = {},
 ) {
-    Scaffold(
-        topBar = {
-            HomeTopBar()
+    Box(Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = { HomeTopBar(monthState, onMonthClick) }
+        ) {
+            HomeContent(
+                state = state,
+                modifier = Modifier.padding(it),
+                onEvent = onEvent,
+            )
         }
-    ) {
-        HomeContent(
-            state = state,
-            modifier = Modifier.padding(it),
-            onEvent = onEvent
-        )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeTopBar() {
+private fun HomeTopBar(
+    monthState: MainComponent.MonthPickerState,
+    onMonthClick: () -> Unit = {}
+) {
     CenterAlignedTopAppBar(
         title = {
-
+            TrOutlinedButton(
+                text = {
+                    Text(
+                        monthState.selectedMonth.text,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                },
+                onClick = onMonthClick,
+                leadingIcon = { Icon(Icons.Rounded.ExpandCircleDown, null) },
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            )
         },
         navigationIcon = {
             Box(

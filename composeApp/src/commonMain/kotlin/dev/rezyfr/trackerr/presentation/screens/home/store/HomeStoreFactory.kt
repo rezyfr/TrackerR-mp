@@ -42,9 +42,9 @@ class HomeStoreFactory(
             mainDispatcher
         ) {
 
-        init {
+        private fun syncData(state: HomeStore.State) {
             getRecentTransaction()
-            getTransactionSummary()
+            getTransactionSummary(state.selectedMonth.value)
             getWalletBalance()
             syncCategory()
             getTransactionFrequency(Granularity.WEEK)
@@ -78,10 +78,10 @@ class HomeStoreFactory(
             }
         }
 
-        private fun getTransactionSummary() {
+        private fun getTransactionSummary(month: Int) {
             scope.launch {
                 dispatch(HomeStore.Result.GetTransactionSummary(UiResult.Loading))
-                getTransactionSummaryUseCase.execute(8).handleResult(
+                getTransactionSummaryUseCase.execute(month).handleResult(
                     ifError = { ex ->
                         publish(HomeStore.Label.MessageReceived(ex.message))
                     },
@@ -123,13 +123,19 @@ class HomeStoreFactory(
         override fun executeIntent(intent: HomeStore.Intent, getState: () -> HomeStore.State) =
             when (intent) {
                 is HomeStore.Intent.GetRecentTransaction -> getRecentTransaction()
-                is HomeStore.Intent.GetTransactionSummary -> getTransactionSummary()
+                is HomeStore.Intent.GetTransactionSummary -> getTransactionSummary(intent.month)
                 is HomeStore.Intent.GetWalletBalance -> getWalletBalance()
                 is HomeStore.Intent.GetTransactionFrequency -> getTransactionFrequency(intent.granularity)
                 is HomeStore.Intent.OnChangeGranularity -> {
                     dispatch(HomeStore.Result.OnChangeGranularity(intent.granularity))
                     getTransactionFrequency(intent.granularity)
                 }
+                is HomeStore.Intent.OnChangeMonth -> {
+                    dispatch(HomeStore.Result.OnChangeMonth(intent.month))
+                    getTransactionFrequency(getState().selectedGranularity)
+                }
+
+                is HomeStore.Intent.Init -> syncData(getState())
             }
     }
 
@@ -141,6 +147,7 @@ class HomeStoreFactory(
                 is HomeStore.Result.GetWalletBalance -> copy(accBalance = msg.result)
                 is HomeStore.Result.GetTransactionFrequency -> copy(transactionFrequency = msg.result)
                 is HomeStore.Result.OnChangeGranularity -> copy(selectedGranularity = msg.granularity)
+                is HomeStore.Result.OnChangeMonth -> copy(selectedMonth = msg.month)
             }
     }
 
