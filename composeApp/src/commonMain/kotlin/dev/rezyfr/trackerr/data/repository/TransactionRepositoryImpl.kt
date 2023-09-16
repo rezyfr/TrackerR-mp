@@ -4,7 +4,9 @@ import dev.rezyfr.trackerr.data.remote.dto.handleResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
 import dev.rezyfr.trackerr.data.remote.service.TransactionService
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.Granularity
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 
@@ -37,5 +39,13 @@ class TransactionRepositoryImpl(
 
     override suspend fun getTransactionFrequency(granularity: Granularity): Result<List<TransactionFrequencyResponse>> {
         return transactionService.getTransactionFrequency(granularity).handleResponse()
+    }
+
+    override suspend fun getTransactionWithDate(
+        sortOrder: String?,
+        type: CategoryType?,
+        categoryId: Int?,
+    ): Result<List<TransactionWithDateResponse>> {
+        return transactionService.getTransactionWithDate(sortOrder, type, categoryId).handleResponse()
     }
 }

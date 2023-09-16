@@ -8,10 +8,12 @@ import dev.rezyfr.trackerr.data.remote.dto.request.CreateTransactionRequest
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
 import dev.rezyfr.trackerr.data.util.SettingsConstant
 import dev.rezyfr.trackerr.data.util.execute
 import dev.rezyfr.trackerr.data.util.setAuthHeader
 import dev.rezyfr.trackerr.data.util.setJsonBody
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.Granularity
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -29,6 +31,7 @@ class TransactionServiceImpl(
     private val summary = "$baseUrl/transaction/summary"
     private val create = "$baseUrl/transaction"
     private val frequency = "$baseUrl/transaction/frequency"
+    private val withDate = "$baseUrl/transaction/with-date"
     override suspend fun getRecentTransaction(): NetworkResponse<BaseDto<List<TransactionResponse>>> {
         return execute {
             httpClient.get {
@@ -78,6 +81,22 @@ class TransactionServiceImpl(
                 setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
                 url(frequency)
                 parameter("granularity", granularity.name)
+            }.body()
+        }
+    }
+
+    override suspend fun getTransactionWithDate(
+        sortOrder: String?,
+        type: CategoryType?,
+        categoryId: Int?
+    ): NetworkResponse<BaseDto<List<TransactionWithDateResponse>>> {
+        return execute {
+            httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
+                url(withDate)
+                type?.let { parameter("type", it.name) }
+                sortOrder?.let { parameter("sortOrder", it) }
+                categoryId?.let { parameter("categoryId", it) }
             }.body()
         }
     }

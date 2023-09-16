@@ -3,11 +3,13 @@ package dev.rezyfr.trackerr.data.mapper
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
 import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.Granularity
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionFrequencyModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionSummaryModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionWithDateModel
 
 class TransactionMapper {
     fun mapResponseToDomain(response: TransactionResponse): TransactionModel {
@@ -51,6 +53,13 @@ class TransactionMapper {
             xAxisData = freqList.map { it.first },
             expenseData = freqList.map { it.second },
             incomeData = freqList.map { it.third },
+        )
+    }
+
+    fun mapTrxWithDateResponseToDomain(response: TransactionWithDateResponse) : TransactionWithDateModel {
+        return TransactionWithDateModel(
+            response.date,
+            response.transactions.map { mapResponseToDomain(it) }
         )
     }
 }

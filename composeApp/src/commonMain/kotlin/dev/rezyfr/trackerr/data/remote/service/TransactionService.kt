@@ -5,6 +5,8 @@ import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.Granularity
 
 interface TransactionService {
@@ -20,4 +22,9 @@ interface TransactionService {
     suspend fun getTransactionFrequency(
         granularity: Granularity
     ) : NetworkResponse<BaseDto<List<TransactionFrequencyResponse>>>
+    suspend fun getTransactionWithDate(
+        sortOrder: String? = null,
+        type: CategoryType? = null,
+        categoryId: Int? = null,
+    ) : NetworkResponse<BaseDto<List<TransactionWithDateResponse>>>
 }

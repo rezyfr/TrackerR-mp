@@ -3,6 +3,7 @@ package dev.rezyfr.trackerr.presentation.screens.main.transaction.store
 import com.arkivanov.mvikotlin.core.store.Store
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
+import dev.rezyfr.trackerr.domain.model.transaction.TransactionWithDateModel
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 
 interface TransactionStore : Store<TransactionStore.Intent, TransactionStore.State, TransactionStore.Label> {
@@ -11,11 +12,11 @@ interface TransactionStore : Store<TransactionStore.Intent, TransactionStore.Sta
     }
 
     sealed class Result {
-        object GetTransaction : Result()
+        data class GetTransaction(val result: UiResult<List<TransactionWithDateModel>>) : Result()
     }
 
     data class State(
-        val transaction: UiResult<List<TransactionModel>> = UiResult.Uninitialized,
+        val transaction: UiResult<List<TransactionWithDateModel>> = UiResult.Uninitialized,
     )
 
     sealed class Label {
