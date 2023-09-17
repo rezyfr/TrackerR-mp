@@ -22,16 +22,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
 import dev.rezyfr.trackerr.domain.UiResult
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionWithDateModel
 import dev.rezyfr.trackerr.presentation.component.base.TrOutlinedButton
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.toDateFormat
 import dev.rezyfr.trackerr.presentation.screens.main.transaction.store.TransactionStore
+import dev.rezyfr.trackerr.utils.toDateRelatives
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 
@@ -39,12 +44,31 @@ import kotlinx.datetime.LocalDate
 fun TransactionTab(
     transactionComponent: TransactionComponent,
     selectedMonth: Month,
+    selectedSort: String? = null,
+    selectedType: CategoryType? = null,
+    categoryIds: List<Int>? = null,
+    appliedFilter: Boolean = false,
     onMonthClick: () -> Unit = {},
+    onFilterClick: () -> Unit = {},
+    onAppliedFilter: () -> Unit = {}
 ) {
     val state by transactionComponent.state.collectAsState()
 
-    LaunchedEffect(selectedMonth) {
+    LaunchedEffect(true) {
         transactionComponent.onEvent(TransactionStore.Intent.Init(selectedMonth))
+    }
+
+    LaunchedEffect(appliedFilter) {
+        if (!appliedFilter) return@LaunchedEffect
+        transactionComponent.onEvent(
+            TransactionStore.Intent.ApplyFilter(
+                month = selectedMonth,
+                categoryId = categoryIds,
+                type = selectedType,
+                sort = selectedSort
+            )
+        )
+        onAppliedFilter.invoke()
     }
 
     TransactionScreen(
@@ -52,6 +76,7 @@ fun TransactionTab(
         onEvent = transactionComponent::onEvent,
         selectedMonth = selectedMonth.text,
         onMonthClick = onMonthClick,
+        onFilterClick = onFilterClick
     )
 }
 
@@ -60,13 +85,15 @@ fun TransactionScreen(
     state: TransactionStore.State,
     onEvent: (TransactionStore.Intent) -> Unit,
     selectedMonth: String,
-    onMonthClick: () -> Unit
+    onMonthClick: () -> Unit,
+    onFilterClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             TransactionTopBar(
                 selectedMonth = selectedMonth,
-                onMonthClick = onMonthClick
+                onMonthClick = onMonthClick,
+                onFilterClick = onFilterClick
             )
         },
     ) {
@@ -109,7 +136,7 @@ fun TransactionList(
         transactions.forEach {
             item {
                 Text(
-                    text = it.date.toDateFormat(newFormat = "dd MMMM yyyy"),
+                    text = it.date.toDateRelatives(newFormat = "dd MMMM yyyy"),
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -126,13 +153,14 @@ fun TransactionList(
 @Composable
 private fun TransactionTopBar(
     selectedMonth: String,
-    onMonthClick: () -> Unit
+    onMonthClick: () -> Unit,
+    onFilterClick: () -> Unit = {},
 ) {
     CenterAlignedTopAppBar(
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
         title = {},
         navigationIcon = {
             TrOutlinedButton(
+                modifier = Modifier.padding(start = 16.dp, top = 8.dp),
                 text = {
                     Text(
                         selectedMonth,
@@ -147,10 +175,9 @@ private fun TransactionTopBar(
         actions = {
             IconButton(
                 modifier = Modifier
+                    .padding(end = 16.dp, top = 8.dp)
                     .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
-                onClick = {
-
-                }
+                onClick = onFilterClick
             ) {
                 Icon(Icons.Rounded.FilterList, null)
             }

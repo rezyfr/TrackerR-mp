@@ -44,8 +44,8 @@ class TransactionRepositoryImpl(
     override suspend fun getTransactionWithDate(
         sortOrder: String?,
         type: CategoryType?,
-        categoryId: Int?,
+        categoryIds: List<Int>?,
     ): Result<List<TransactionWithDateResponse>> {
-        return transactionService.getTransactionWithDate(sortOrder, type, categoryId).handleResponse()
+        return transactionService.getTransactionWithDate(sortOrder, type, categoryIds).handleResponse()
     }
 }

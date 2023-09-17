@@ -1,20 +1,16 @@
 package dev.rezyfr.trackerr.presentation.component.base
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -106,15 +102,17 @@ fun TrCapsuleButton(
     text: String,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.primary,
+    border: BorderStroke? = null,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
         modifier = modifier.semantics { role = Role.Button },
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(50),
         color = containerColor,
         contentColor = contentColor,
+        border = border
     ) {
         CompositionLocalProvider(LocalContentColor provides contentColor) {
             ProvideTextStyle(value = MaterialTheme.typography.labelLarge) {
@@ -126,9 +124,7 @@ fun TrCapsuleButton(
                         TrButtonContent(
                             text = {
                                 Text(
-                                    text = text, style = MaterialTheme.typography.bodySmall.copy(
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
+                                    text = text, style = MaterialTheme.typography.bodySmall
                                 )
                             },
                         )

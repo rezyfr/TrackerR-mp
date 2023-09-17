@@ -25,6 +25,6 @@ interface TransactionService {
     suspend fun getTransactionWithDate(
         sortOrder: String? = null,
         type: CategoryType? = null,
-        categoryId: Int? = null,
+        categoryIds: List<Int>? = null,
     ) : NetworkResponse<BaseDto<List<TransactionWithDateResponse>>>
 }

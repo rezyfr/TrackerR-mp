@@ -88,7 +88,7 @@ class TransactionServiceImpl(
     override suspend fun getTransactionWithDate(
         sortOrder: String?,
         type: CategoryType?,
-        categoryId: Int?
+        categoryIds: List<Int>?
     ): NetworkResponse<BaseDto<List<TransactionWithDateResponse>>> {
         return execute {
             httpClient.get {
@@ -96,7 +96,9 @@ class TransactionServiceImpl(
                 url(withDate)
                 type?.let { parameter("type", it.name) }
                 sortOrder?.let { parameter("sortOrder", it) }
-                categoryId?.let { parameter("categoryId", it) }
+                if(categoryIds?.isNotEmpty() == true){
+                    parameter("categoryId", categoryIds)
+                }
             }.body()
         }
     }

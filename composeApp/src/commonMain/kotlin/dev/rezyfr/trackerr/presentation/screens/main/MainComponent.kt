@@ -12,6 +12,7 @@ import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateMonths
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.toMonth
@@ -82,6 +83,7 @@ class MainComponent(
     }
 
     val monthPickerState: MutableStateFlow<MonthPickerState> = MutableStateFlow(MonthPickerState())
+    val filterPickerState: MutableStateFlow<FilterPickerState> = MutableStateFlow(FilterPickerState())
 
     private fun createChild(
         configuration: Configuration,
@@ -133,6 +135,37 @@ class MainComponent(
 
             is Intent.OnClickMonthPicker -> {
                 monthPickerState.value.monthPickerSheet.expand()
+            }
+
+            is Intent.OnSelectType -> {
+                filterPickerState.update {
+                    it.copy(
+                        selectedType = intent.type
+                    )
+                }
+            }
+
+            is Intent.OnApplyFilter -> {
+                filterPickerState.value.filterPickerSheet.collapse()
+                filterPickerState.update { it.copy(appliedFilter = !it.appliedFilter) }
+            }
+
+            is Intent.OnResetFilter -> {
+                filterPickerState.update {
+                    it.copy(
+                        selectedType = null,
+                        selectedSortOrder = null,
+                        selectedCategory = emptyList()
+                    )
+                }
+            }
+
+            is Intent.OnSelectSort -> {
+                filterPickerState.update {
+                    it.copy(
+                        selectedSortOrder = intent.sortOrder
+                    )
+                }
             }
         }
     }
@@ -189,11 +222,25 @@ class MainComponent(
     sealed class Intent {
         data class OnChangeMonth(val month: Month) : Intent()
         object OnClickMonthPicker : Intent()
+        data class OnSelectType(val type: CategoryType) : Intent()
+        object OnResetFilter : Intent()
+        data class OnSelectSort(val sortOrder: String) : Intent()
+        object OnApplyFilter : Intent()
     }
 
     data class MonthPickerState(
         val monthPickerSheet: BottomSheet = BottomSheet(),
         val monthOptions: List<Month> = calculateMonths(),
         val selectedMonth: Month = getCurrentLdt().toMonth()
+    )
+
+    data class FilterPickerState(
+        val filterPickerSheet: BottomSheet = BottomSheet(),
+        val selectedType: CategoryType? = null,
+        val appliedFilter: Boolean = false,
+        val sortOrders: List<String> = listOf("Newest", "Oldest"),
+        val selectedSortOrder: String? = null,
+        val selectedCategory: List<Int> = emptyList(),
+        val categoryIds: List<Int> = emptyList()
     )
 }

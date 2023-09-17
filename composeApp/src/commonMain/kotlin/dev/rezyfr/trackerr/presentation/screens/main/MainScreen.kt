@@ -46,11 +46,13 @@ import com.arkivanov.decompose.extensions.compose.jetbrains.subscribeAsState
 import com.arkivanov.decompose.router.stack.ChildStack
 import com.arkivanov.decompose.value.Value
 import dev.rezyfr.trackerr.Res
+import dev.rezyfr.trackerr.domain.model.CategoryType
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.RevealingSheet
 import dev.rezyfr.trackerr.presentation.screens.main.home.HomeTab
 import dev.rezyfr.trackerr.presentation.screens.main.home.components.MonthPickerSheet
 import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionTab
+import dev.rezyfr.trackerr.presentation.screens.main.transaction.components.FilterPickerSheet
 import dev.rezyfr.trackerr.presentation.theme.Disabled
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import io.github.skeptick.libres.compose.painterResource
@@ -67,6 +69,7 @@ fun MainMenu(mainComponent: MainComponent) {
     val snackbarHostState = remember { SnackbarHostState() }
     val activeIndex by mainComponent.activeTabIndex.subscribeAsState()
     val monthPickerState by mainComponent.monthPickerState.collectAsState()
+    val filterPickerState by mainComponent.filterPickerState.collectAsState()
 
     Box(Modifier.fillMaxSize()) {
         Scaffold(
@@ -98,8 +101,18 @@ fun MainMenu(mainComponent: MainComponent) {
                 MainTabContent(
                     child = mainComponent.child,
                     selectedMonth = monthPickerState.selectedMonth,
+                    selectedSort = filterPickerState.selectedSortOrder,
+                    selectedType = filterPickerState.selectedType,
+                    categoryIds = filterPickerState.selectedCategory,
+                    appliedFilter = filterPickerState.appliedFilter,
                     onMonthClick = {
                         monthPickerState.monthPickerSheet.expand()
+                    },
+                    onFilterClick = {
+                        filterPickerState.filterPickerSheet.expand()
+                    },
+                    onAppliedFilter = {
+                        mainComponent.onEvent(MainComponent.Intent.OnApplyFilter)
                     }
                 )
                 TransparentPrimaryBackground(
@@ -124,6 +137,29 @@ fun MainMenu(mainComponent: MainComponent) {
                 }
             )
         }
+
+        RevealingSheet(filterPickerState.filterPickerSheet,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            FilterPickerSheet(
+                modifier = Modifier.fillMaxWidth(),
+                sortOrders = filterPickerState.sortOrders,
+                sortOrder = filterPickerState.selectedSortOrder.orEmpty(),
+                type = filterPickerState.selectedType,
+                onTypeSelect = {
+                    mainComponent.onEvent(MainComponent.Intent.OnSelectType(it))
+                },
+                onResetClick = {
+                    mainComponent.onEvent(MainComponent.Intent.OnResetFilter)
+                },
+                onSortSelect = {
+                    mainComponent.onEvent(MainComponent.Intent.OnSelectSort(it))
+                },
+                onContinue = {
+                    mainComponent.onEvent(MainComponent.Intent.OnApplyFilter)
+                }
+            )
+        }
     }
 
     LaunchedEffect(isFabFocused) {
@@ -139,7 +175,13 @@ fun MainMenu(mainComponent: MainComponent) {
 fun MainTabContent(
     child: Value<ChildStack<*, MainComponent.Child>>,
     selectedMonth: Month,
+    selectedSort: String? = null,
+    selectedType: CategoryType? = null,
+    categoryIds: List<Int>? = null,
+    appliedFilter: Boolean = false,
     onMonthClick: () -> Unit = {},
+    onFilterClick: () -> Unit = {},
+    onAppliedFilter: () -> Unit = {}
 ) {
     Children(child) {
         (it.instance as MainComponent.Tab).let { child ->
@@ -150,11 +192,19 @@ fun MainTabContent(
                     selectedMonth = selectedMonth
                 )
 
-                is MainComponent.Tab.Transaction -> TransactionTab(
-                    child.transactionComponent,
-                    onMonthClick = onMonthClick,
-                    selectedMonth = selectedMonth
-                )
+                is MainComponent.Tab.Transaction -> {
+                    TransactionTab(
+                        child.transactionComponent,
+                        selectedMonth = selectedMonth,
+                        selectedSort = selectedSort,
+                        selectedType = selectedType,
+                        categoryIds = categoryIds,
+                        onMonthClick = onMonthClick,
+                        onFilterClick = onFilterClick,
+                        appliedFilter = appliedFilter,
+                        onAppliedFilter = onAppliedFilter
+                    )
+                }
             }
         }
     }

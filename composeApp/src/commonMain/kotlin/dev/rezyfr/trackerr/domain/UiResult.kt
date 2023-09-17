@@ -19,9 +19,6 @@ suspend fun <R, T> handleResult(
     onSuccess: (T) -> R,
 ): UiResult<R> {
     execute().onSuccess {
-        if (it is Collection<*> && it.isEmpty()) {
-            return UiResult.SuccessEmpty
-        }
         return UiResult.Success(onSuccess(it))
     }.onFailure {
         return UiResult.Error(Exception(it.message))

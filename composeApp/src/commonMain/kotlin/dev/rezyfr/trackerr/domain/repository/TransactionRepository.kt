@@ -25,6 +25,6 @@ interface TransactionRepository {
     suspend fun getTransactionWithDate(
         sortOrder: String? = null,
         type: CategoryType? = null,
-        categoryId: Int? = null,
+        categoryIds: List<Int>? = null,
     ) : Result<List<TransactionWithDateResponse>>
 }

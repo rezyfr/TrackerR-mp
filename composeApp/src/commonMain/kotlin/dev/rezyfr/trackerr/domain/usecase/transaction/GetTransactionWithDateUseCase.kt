@@ -15,12 +15,14 @@ class GetTransactionWithDateUseCase(
     private val transactionRepository: TransactionRepository,
     private val mapper: TransactionMapper
 ) : UseCase<UiResult<List<TransactionWithDateModel>>, GetTransactionWithDateUseCase.Params?> {
-    override  fun executeFlow(params: Params?): Flow<UiResult<List<TransactionWithDateModel>>> {
+    override fun executeFlow(params: Params?): Flow<UiResult<List<TransactionWithDateModel>>> {
         return handleFlowResult(
             execute = {
+                val sortOrder = if (params?.sortOrder == "Oldest") "ASC"
+                else "DESC"
                 transactionRepository.getTransactionWithDate(
-                    sortOrder = params?.sortOrder,
-                    categoryId = params?.categoryId,
+                    sortOrder = sortOrder,
+                    categoryIds = params?.categoryIds,
                     type = params?.type
                 )
             },
@@ -34,7 +36,7 @@ class GetTransactionWithDateUseCase(
 
     data class Params(
         val sortOrder: String? = null,
-        val categoryId: Int? = null,
+        val categoryIds: List<Int>? = null,
         val type: CategoryType? = null
     )
 }
