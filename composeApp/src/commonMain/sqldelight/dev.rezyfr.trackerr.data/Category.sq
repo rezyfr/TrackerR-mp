@@ -3,3 +3,6 @@ INSERT OR REPLACE INTO CategoryEntity (id, icon, type, name, color) VALUES (:id,
 
 getCategories:
 SELECT * FROM CategoryEntity WHERE type = :type;
+
+getAllCategories:
+SELECT * FROM CategoryEntity;

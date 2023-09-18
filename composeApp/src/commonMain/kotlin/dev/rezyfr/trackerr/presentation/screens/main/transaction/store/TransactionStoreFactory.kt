@@ -57,13 +57,18 @@ class TransactionStoreFactory(
                         intent.sort,
                         true
                     )
+                    dispatch(TransactionStore.Result.ApplyFilter(
+                        intent.categoryId,
+                        intent.type,
+                        intent.sort
+                    ))
                 }
             }
         }
 
         private fun getTransaction(
             month: Month,
-            categoryIds: List<Int>?,
+            categoryIds: Sequence<Int>?,
             type: CategoryType?,
             sort: String?,
             forceLoad: Boolean = false,
@@ -89,6 +94,14 @@ class TransactionStoreFactory(
             return when (msg) {
                 is TransactionStore.Result.GetTransaction -> {
                     copy(transaction = msg.result)
+                }
+
+                is TransactionStore.Result.ApplyFilter -> {
+                    copy(
+                        isSortActive = msg.sort != null,
+                        isTypeActive = msg.type != null,
+                        isCategoryActive = msg.categoryId != null
+                    )
                 }
             }
         }

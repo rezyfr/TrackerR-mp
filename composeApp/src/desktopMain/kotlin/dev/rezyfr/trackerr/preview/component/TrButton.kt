@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import dev.rezyfr.trackerr.presentation.component.base.ButtonText
+import dev.rezyfr.trackerr.presentation.component.base.OutlinedButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrDangerButton
 import dev.rezyfr.trackerr.presentation.component.base.TrOutlinedButton
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
@@ -26,7 +27,7 @@ private fun PreviewButton() {
                 onClick = {}
             )
             TrOutlinedButton(
-                text = "Outlined Button",
+                text = { OutlinedButtonText("Outlined Button") },
                 onClick = {}
             )
         }

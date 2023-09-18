@@ -26,7 +26,7 @@ class CategoryRepositoryImpl(
         return categoryDao.insertCategory(category)
     }
 
-    override fun getCategories(type: CategoryType): Flow<List<CategoryEntity>> {
+    override fun getCategories(type: CategoryType?): Flow<List<CategoryEntity>> {
         return categoryDao.getCategories(type)
     }
 

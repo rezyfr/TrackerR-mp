@@ -12,7 +12,10 @@ import com.arkivanov.decompose.value.operator.map
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
+import dev.rezyfr.trackerr.domain.UiResult
+import dev.rezyfr.trackerr.domain.model.CategoryModel
 import dev.rezyfr.trackerr.domain.model.CategoryType
+import dev.rezyfr.trackerr.domain.usecase.category.GetCategoriesUseCase
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.calculateMonths
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.toMonth
@@ -21,12 +24,15 @@ import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryComponent
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.main.home.HomeComponent
-import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
 import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class MainComponent(
     componentContext: ComponentContext,
@@ -35,6 +41,25 @@ class MainComponent(
     private val addTransaction: (ComponentContext, (AddTransactionComponent.Action) -> Unit) -> AddTransactionComponent,
     private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent
 ) : ComponentContext by componentContext, KoinComponent {
+
+    private val getCategoriesUseCase: GetCategoriesUseCase by inject()
+
+    init {
+        CoroutineScope(Dispatchers.Main).launch {
+            getCategoriesUseCase.executeFlow(null).collectLatest { result ->
+                when (result) {
+                    is UiResult.Success -> {
+                        filterPickerState.update {
+                            it.copy(categories = result.data.asSequence())
+                        }
+                    }
+                    else -> {
+                        // TODO: Handle error
+                    }
+                }
+            }
+        }
+    }
 
     constructor(
         componentContext: ComponentContext,
@@ -155,7 +180,7 @@ class MainComponent(
                     it.copy(
                         selectedType = null,
                         selectedSortOrder = null,
-                        selectedCategory = emptyList()
+                        selectedCategoryIds = sequenceOf()
                     )
                 }
             }
@@ -165,6 +190,13 @@ class MainComponent(
                     it.copy(
                         selectedSortOrder = intent.sortOrder
                     )
+                }
+            }
+
+            is Intent.OnSelectCategories -> {
+                filterPickerState.value.categoryPickerSheet.collapse()
+                filterPickerState.update {
+                    it.copy(selectedCategoryIds = intent.categoryIds)
                 }
             }
         }
@@ -223,6 +255,7 @@ class MainComponent(
         data class OnChangeMonth(val month: Month) : Intent()
         object OnClickMonthPicker : Intent()
         data class OnSelectType(val type: CategoryType) : Intent()
+        data class OnSelectCategories(val categoryIds: Sequence<Int>) : Intent()
         object OnResetFilter : Intent()
         data class OnSelectSort(val sortOrder: String) : Intent()
         object OnApplyFilter : Intent()
@@ -236,11 +269,12 @@ class MainComponent(
 
     data class FilterPickerState(
         val filterPickerSheet: BottomSheet = BottomSheet(),
+        val categoryPickerSheet: BottomSheet = BottomSheet(),
         val selectedType: CategoryType? = null,
         val appliedFilter: Boolean = false,
         val sortOrders: List<String> = listOf("Newest", "Oldest"),
         val selectedSortOrder: String? = null,
-        val selectedCategory: List<Int> = emptyList(),
-        val categoryIds: List<Int> = emptyList()
+        val categories: Sequence<CategoryModel> = sequenceOf(),
+        val selectedCategoryIds: Sequence<Int> = sequenceOf()
     )
 }

@@ -4,9 +4,7 @@ import dev.rezyfr.trackerr.data.mapper.TransactionMapper
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.domain.UseCase
 import dev.rezyfr.trackerr.domain.handleFlowResult
-import dev.rezyfr.trackerr.domain.handleResult
 import dev.rezyfr.trackerr.domain.model.CategoryType
-import dev.rezyfr.trackerr.domain.model.transaction.TransactionModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionWithDateModel
 import dev.rezyfr.trackerr.domain.repository.TransactionRepository
 import kotlinx.coroutines.flow.Flow
@@ -20,9 +18,11 @@ class GetTransactionWithDateUseCase(
             execute = {
                 val sortOrder = if (params?.sortOrder == "Oldest") "ASC"
                 else "DESC"
+                val categoryIds = if (params?.categoryIds?.toList().isNullOrEmpty()) null else
+                    params?.categoryIds?.joinToString(separator = ",")
                 transactionRepository.getTransactionWithDate(
                     sortOrder = sortOrder,
-                    categoryIds = params?.categoryIds,
+                    categoryIds = categoryIds,
                     type = params?.type
                 )
             },
@@ -36,7 +36,7 @@ class GetTransactionWithDateUseCase(
 
     data class Params(
         val sortOrder: String? = null,
-        val categoryIds: List<Int>? = null,
+        val categoryIds: Sequence<Int>? = null,
         val type: CategoryType? = null
     )
 }

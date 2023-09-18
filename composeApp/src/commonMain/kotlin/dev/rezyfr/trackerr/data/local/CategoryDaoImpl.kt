@@ -38,8 +38,13 @@ class CategoryDaoImpl(
         }
     }
 
-    override fun getCategories(type: CategoryType): Flow<List<CategoryEntity>> {
-        return database.categoryQueries.getCategories(type.name).asFlow()
-            .mapToList(Dispatchers.Default)
+    override fun getCategories(type: CategoryType?): Flow<List<CategoryEntity>> {
+        type?.let {
+            return database.categoryQueries.getCategories(type.name).asFlow()
+                .mapToList(Dispatchers.Default)
+        } ?: run {
+            return database.categoryQueries.getAllCategories().asFlow()
+                .mapToList(Dispatchers.Default)
+        }
     }
 }

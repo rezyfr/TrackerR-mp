@@ -1,11 +1,15 @@
 package dev.rezyfr.trackerr.presentation.screens.main.transaction
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ExpandCircleDown
@@ -25,7 +29,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
 import dev.rezyfr.trackerr.domain.UiResult
@@ -46,7 +52,7 @@ fun TransactionTab(
     selectedMonth: Month,
     selectedSort: String? = null,
     selectedType: CategoryType? = null,
-    categoryIds: List<Int>? = null,
+    categoryIds: Sequence<Int>? = null,
     appliedFilter: Boolean = false,
     onMonthClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},
@@ -93,7 +99,8 @@ fun TransactionScreen(
             TransactionTopBar(
                 selectedMonth = selectedMonth,
                 onMonthClick = onMonthClick,
-                onFilterClick = onFilterClick
+                onFilterClick = onFilterClick,
+                state = state
             )
         },
     ) {
@@ -155,6 +162,7 @@ private fun TransactionTopBar(
     selectedMonth: String,
     onMonthClick: () -> Unit,
     onFilterClick: () -> Unit = {},
+    state: TransactionStore.State
 ) {
     CenterAlignedTopAppBar(
         title = {},
@@ -173,13 +181,40 @@ private fun TransactionTopBar(
             )
         },
         actions = {
-            IconButton(
-                modifier = Modifier
-                    .padding(end = 16.dp, top = 8.dp)
-                    .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp)),
-                onClick = onFilterClick
+            var filterCount = 0
+            if (state.isCategoryActive) filterCount++
+            if (state.isSortActive) filterCount++
+            if (state.isTypeActive) filterCount++
+            Box(
+                Modifier
             ) {
-                Icon(Icons.Rounded.FilterList, null)
+                IconButton(
+                    modifier = Modifier
+                        .padding(end = 16.dp, top = 8.dp)
+                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(8.dp))
+                        .align(Alignment.Center),
+                    onClick = onFilterClick
+                ) {
+                    Icon(
+                        Icons.Rounded.FilterList,
+                        null,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                Box(
+                    Modifier
+                        .padding(end = 16.dp, top = 8.dp)
+                        .size(24.dp)
+                        .background(MaterialTheme.colorScheme.primary, CircleShape)
+                        .align(Alignment.TopEnd)
+                ) {
+                    Text(
+                        filterCount.toString(),
+                        style = MaterialTheme.typography.labelSmall.copy(color = MaterialTheme.colorScheme.onPrimary),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
         }
     )

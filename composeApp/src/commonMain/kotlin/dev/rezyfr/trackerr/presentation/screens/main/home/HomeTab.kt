@@ -188,7 +188,7 @@ private fun HomeContent(
             FrequencySection(
                 state.transactionFrequency,
                 state.selectedGranularity,
-                Modifier.fillParentMaxWidth(1.9f),
+                Modifier.fillParentMaxWidth(1.2f),
                 onEvent
             )
         }
@@ -223,7 +223,7 @@ private fun FrequencySection(
                 lineShadow = true,
             )
             LineChart(
-                modifier.height(185.dp),
+                modifier.height(185.dp).fillMaxWidth(),
                 animateChart = true,
                 linesParameters = listOf(expenseParam),
                 xAxisData = freqData.xAxisData,

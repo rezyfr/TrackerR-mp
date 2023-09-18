@@ -15,7 +15,7 @@ class GetCategoriesUseCase(
     private val mapper: CategoryMapper
 ) : UseCase<UiResult<List<CategoryModel>>, CategoryType> {
     override fun executeFlow(params: CategoryType?): Flow<UiResult<List<CategoryModel>>> {
-        return categoryRepository.getCategories(params!!).catch {
+        return categoryRepository.getCategories(params).catch {
             UiResult.Error(Exception(it))
         }.map {
             UiResult.Success(it.map(mapper::mapEntityToDomain))

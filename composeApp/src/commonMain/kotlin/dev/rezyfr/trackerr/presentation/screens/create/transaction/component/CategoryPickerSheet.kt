@@ -57,23 +57,40 @@ fun CategoryPickerSheet(
         },
     ) {
         if (categories is UiResult.Success) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier.padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(categories.data) { category ->
-                    CategoryItem(
-                        category = category,
-                        isSelected = selectedCategory?.id == category.id,
-                        onClick = { selectedCategory = category }
-                    )
-                }
-                item {
-                    AddCategory {
-                        onAddClick.invoke()
-                    }
+            CategoryGrid(
+                categories = categories.data.asSequence(),
+                isSelected = { selectedCategory?.id == it.id },
+                onClick = { selectedCategory = it },
+                onAddClick = onAddClick
+            )
+        }
+    }
+}
+
+@Composable
+fun CategoryGrid(
+    categories: Sequence<CategoryModel>,
+    isSelected: (CategoryModel) -> Boolean,
+    onClick: (CategoryModel) -> Unit,
+    onAddClick: (() -> Unit)? = {}
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+        modifier = Modifier.padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(categories.toList()) { category ->
+            CategoryItem(
+                category = category,
+                isSelected = isSelected(category),
+                onClick = { onClick(category) }
+            )
+        }
+        onAddClick?.let {
+            item {
+                AddCategory {
+                    onAddClick.invoke()
                 }
             }
         }

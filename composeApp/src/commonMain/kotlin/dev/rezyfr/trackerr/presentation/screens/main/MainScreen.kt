@@ -103,7 +103,7 @@ fun MainMenu(mainComponent: MainComponent) {
                     selectedMonth = monthPickerState.selectedMonth,
                     selectedSort = filterPickerState.selectedSortOrder,
                     selectedType = filterPickerState.selectedType,
-                    categoryIds = filterPickerState.selectedCategory,
+                    categoryIds = filterPickerState.selectedCategoryIds,
                     appliedFilter = filterPickerState.appliedFilter,
                     onMonthClick = {
                         monthPickerState.monthPickerSheet.expand()
@@ -143,9 +143,12 @@ fun MainMenu(mainComponent: MainComponent) {
         ) {
             FilterPickerSheet(
                 modifier = Modifier.fillMaxWidth(),
+                categorySheet = filterPickerState.categoryPickerSheet,
                 sortOrders = filterPickerState.sortOrders,
                 sortOrder = filterPickerState.selectedSortOrder.orEmpty(),
                 type = filterPickerState.selectedType,
+                categories = filterPickerState.categories,
+                selectedCategories = filterPickerState.selectedCategoryIds,
                 onTypeSelect = {
                     mainComponent.onEvent(MainComponent.Intent.OnSelectType(it))
                 },
@@ -157,7 +160,10 @@ fun MainMenu(mainComponent: MainComponent) {
                 },
                 onContinue = {
                     mainComponent.onEvent(MainComponent.Intent.OnApplyFilter)
-                }
+                },
+                onCategorySelect = {
+                    mainComponent.onEvent(MainComponent.Intent.OnSelectCategories(it.asSequence()))
+                },
             )
         }
     }
@@ -177,7 +183,7 @@ fun MainTabContent(
     selectedMonth: Month,
     selectedSort: String? = null,
     selectedType: CategoryType? = null,
-    categoryIds: List<Int>? = null,
+    categoryIds: Sequence<Int>? = null,
     appliedFilter: Boolean = false,
     onMonthClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},

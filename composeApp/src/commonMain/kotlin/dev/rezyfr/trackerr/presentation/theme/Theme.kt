@@ -64,13 +64,13 @@ val MainTypography = Typography(
     ),
     bodyLarge = TextStyle(
         fontFamily = interFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = FontWeight.Medium,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),
     bodyMedium = TextStyle(
         fontFamily = interFontFamily,
-        fontWeight = FontWeight.Medium,
+        fontWeight = FontWeight.SemiBold,
         fontSize = 16.sp,
         lineHeight = 19.sp,
     ),

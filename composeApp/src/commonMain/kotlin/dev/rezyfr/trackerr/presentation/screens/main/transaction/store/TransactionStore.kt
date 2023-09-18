@@ -14,7 +14,7 @@ interface TransactionStore : Store<TransactionStore.Intent, TransactionStore.Sta
         ) : Intent()
         data class ApplyFilter(
             val month: Month,
-            val categoryId: List<Int>? = null,
+            val categoryId: Sequence<Int>? = null,
             val type: CategoryType? = null,
             val sort: String? = null
         ) : Intent()
@@ -22,10 +22,18 @@ interface TransactionStore : Store<TransactionStore.Intent, TransactionStore.Sta
 
     sealed class Result {
         data class GetTransaction(val result: UiResult<List<TransactionWithDateModel>>) : Result()
+        data class ApplyFilter(
+            val categoryId: Sequence<Int>? = null,
+            val type: CategoryType? = null,
+            val sort: String? = null
+        ) : Result()
     }
 
     data class State(
         val transaction: UiResult<List<TransactionWithDateModel>> = UiResult.Uninitialized,
+        val isSortActive: Boolean = false,
+        val isTypeActive: Boolean = false,
+        val isCategoryActive: Boolean = false,
     )
 
     sealed class Label {
