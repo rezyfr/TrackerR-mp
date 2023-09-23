@@ -6,6 +6,7 @@ import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.request.CreateTransactionRequest
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionReportResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
@@ -27,11 +28,12 @@ class TransactionServiceImpl(
     private val settings: Settings,
     baseUrl: String
 ) : TransactionService {
-    private val recent = "$baseUrl/transaction/recent"
-    private val summary = "$baseUrl/transaction/summary"
-    private val create = "$baseUrl/transaction"
-    private val frequency = "$baseUrl/transaction/frequency"
-    private val withDate = "$baseUrl/transaction/with-date"
+    private val transaction = "$baseUrl/transaction/"
+    private val recent = "$transaction/recent"
+    private val summary = "$transaction/summary"
+    private val frequency = "$transaction/frequency"
+    private val withDate = "$transaction/with-date"
+    private val report = "$transaction/report"
     override suspend fun getRecentTransaction(): NetworkResponse<BaseDto<List<TransactionResponse>>> {
         return execute {
             httpClient.get {
@@ -61,7 +63,7 @@ class TransactionServiceImpl(
         return execute {
             httpClient.post {
                 setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
-                url(create)
+                url(transaction)
                 setJsonBody(
                     CreateTransactionRequest(
                         amount = amount,
@@ -97,6 +99,15 @@ class TransactionServiceImpl(
                 type?.let { parameter("type", it.name) }
                 sortOrder?.let { parameter("sortOrder", it) }
                 categoryIds?.let { parameter("categoryId", categoryIds) }
+            }.body()
+        }
+    }
+
+    override suspend fun getTransactionReport(): NetworkResponse<BaseDto<TransactionReportResponse>> {
+        return execute {
+            httpClient.get {
+                setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
+                url(report)
             }.body()
         }
     }

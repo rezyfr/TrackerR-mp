@@ -25,6 +25,7 @@ import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryCompo
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.main.home.HomeComponent
 import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionComponent
+import dev.rezyfr.trackerr.presentation.screens.reportwrap.ReportWrapComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,7 +40,8 @@ class MainComponent(
     private val home: (ComponentContext) -> HomeComponent,
     private val transaction: (ComponentContext) -> TransactionComponent,
     private val addTransaction: (ComponentContext, (AddTransactionComponent.Action) -> Unit) -> AddTransactionComponent,
-    private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent
+    private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent,
+    private val reportWrap: (ComponentContext, (ReportWrapComponent.Action) -> Unit) -> ReportWrapComponent,
 ) : ComponentContext by componentContext, KoinComponent {
 
     private val getCategoriesUseCase: GetCategoriesUseCase by inject()
@@ -92,6 +94,13 @@ class MainComponent(
                 action = action
             )
         },
+        reportWrap = { context, action ->
+            ReportWrapComponent(
+                componentContext = context,
+                storeFactory = storeFactory,
+                action = action
+            )
+        }
     )
 
     private val navigation = StackNavigation<Configuration>()
@@ -118,15 +127,17 @@ class MainComponent(
             is Configuration.Home -> Tab.Home(
                 homeComponent = home(componentContext)
             )
-
-            Configuration.Transaction -> Tab.Transaction(
+            is Configuration.Transaction -> Tab.Transaction(
                 transactionComponent = transaction(componentContext)
             )
-            Configuration.AddTransaction -> Screen.AddTransaction(
+            is Configuration.AddTransaction -> Screen.AddTransaction(
                 addTransactionComponent = addTransaction(componentContext, ::onAddTransactionAction)
             )
-            Configuration.AddCategory -> Screen.AddCategory(
+            is Configuration.AddCategory -> Screen.AddCategory(
                 addCategoryComponent = addCategory(componentContext, ::onAddCategoryAction)
+            )
+            is Configuration.ReportWrap -> Screen.ReportWrap(
+                reportWrapComponent = reportWrap(componentContext, ::onReportWrapAction)
             )
         }
 
@@ -144,6 +155,10 @@ class MainComponent(
         when (action) {
             Action.NavigateToAddTransaction -> {
                 navigation.push(Configuration.AddTransaction)
+            }
+
+            Action.NavigateToReportWrap -> {
+                navigation.push(Configuration.ReportWrap)
             }
         }
     }
@@ -224,6 +239,14 @@ class MainComponent(
         }
     }
 
+    private fun onReportWrapAction(action: ReportWrapComponent.Action) {
+        when (action) {
+            ReportWrapComponent.Action.NavigateBack -> {
+                navigation.pop()
+            }
+        }
+    }
+
     private sealed class Configuration : Parcelable {
         @Parcelize
         object Home : Configuration()
@@ -233,6 +256,8 @@ class MainComponent(
         object AddTransaction : Configuration()
         @Parcelize
         object AddCategory : Configuration()
+        @Parcelize
+        object ReportWrap : Configuration()
     }
 
     sealed class Tab(val index: Int): Child {
@@ -243,12 +268,14 @@ class MainComponent(
     sealed class Screen : Child {
         data class AddTransaction(val addTransactionComponent: AddTransactionComponent) : Child
         data class AddCategory(val addCategoryComponent: AddCategoryComponent) : Child
+        data class ReportWrap(val reportWrapComponent: ReportWrapComponent) : Child
     }
 
     sealed interface Child
 
     sealed class Action {
         object NavigateToAddTransaction : Action()
+        object NavigateToReportWrap : Action()
     }
 
     sealed class Intent {

@@ -47,4 +47,7 @@ class CategoryDaoImpl(
                 .mapToList(Dispatchers.Default)
         }
     }
+    override suspend fun getCategoryById(id: Int): CategoryEntity? {
+        return database.categoryQueries.getCategoryById(id.toLong()).executeAsOneOrNull()
+    }
 }

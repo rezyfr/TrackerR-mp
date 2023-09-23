@@ -12,8 +12,8 @@ actual fun Number?.format(
 ): String {
     if (this == null || (this is Double && isNaN())) return if (!isNeedDefaultBlank) "-" else ""
     val symbol = DecimalFormatSymbols(Locale.getDefault())
-    symbol.decimalSeparator = '.'
-    symbol.groupingSeparator = ','
+    symbol.decimalSeparator = ','
+    symbol.groupingSeparator = '.'
     val decimalFormat = DecimalFormat(pattern.value, symbol)
     maxFractionDigit?.let {
         decimalFormat.maximumFractionDigits = it

@@ -11,4 +11,5 @@ interface CategoryRepository {
     fun addCategory(category: CategoryEntity) : Result<Unit>
     fun getCategories(type: CategoryType?): Flow<List<CategoryEntity>>
     suspend fun createCategory(type: CategoryType, name: String, color: Long, iconId: Int) : Result<CategoryResponse>
+    suspend fun getCategoryById(id: Int) : CategoryEntity?
 }

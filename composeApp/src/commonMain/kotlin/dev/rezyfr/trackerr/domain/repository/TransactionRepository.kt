@@ -3,6 +3,7 @@ package dev.rezyfr.trackerr.domain.repository
 import dev.rezyfr.trackerr.data.remote.dto.BaseDto
 import dev.rezyfr.trackerr.data.remote.dto.NetworkResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionReportResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
@@ -27,4 +28,5 @@ interface TransactionRepository {
         type: CategoryType? = null,
         categoryIds: String? = null,
     ) : Result<List<TransactionWithDateResponse>>
+    suspend fun getTransactionReport() : Result<TransactionReportResponse>
 }

@@ -38,4 +38,7 @@ class CategoryRepositoryImpl(
     ): Result<CategoryResponse> {
         return categoryService.createCategory(type, name, color, iconId).handleResponse()
     }
+    override suspend fun getCategoryById(id: Int): CategoryEntity? {
+        return categoryDao.getCategoryById(id)
+    }
 }

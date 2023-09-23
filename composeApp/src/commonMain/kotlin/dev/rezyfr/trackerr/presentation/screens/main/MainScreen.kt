@@ -113,7 +113,10 @@ fun MainMenu(mainComponent: MainComponent) {
                     },
                     onAppliedFilter = {
                         mainComponent.onEvent(MainComponent.Intent.OnApplyFilter)
-                    }
+                    },
+                    onReportWrapClick = {
+                        mainComponent.onAction(MainComponent.Action.NavigateToReportWrap)
+                    },
                 )
                 TransparentPrimaryBackground(
                     height = bgTranslation.value, modifier = Modifier.align(
@@ -187,7 +190,8 @@ fun MainTabContent(
     appliedFilter: Boolean = false,
     onMonthClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},
-    onAppliedFilter: () -> Unit = {}
+    onAppliedFilter: () -> Unit = {},
+    onReportWrapClick: () -> Unit = {}
 ) {
     Children(child) {
         (it.instance as MainComponent.Tab).let { child ->
@@ -208,7 +212,8 @@ fun MainTabContent(
                         onMonthClick = onMonthClick,
                         onFilterClick = onFilterClick,
                         appliedFilter = appliedFilter,
-                        onAppliedFilter = onAppliedFilter
+                        onAppliedFilter = onAppliedFilter,
+                        onReportWrapClick = onReportWrapClick
                     )
                 }
             }

@@ -28,7 +28,7 @@ suspend fun <R, T> handleResult(
 
 fun <R, T> handleFlowResult(
     execute: suspend () -> Result<T>,
-    onSuccess: (T) -> R
+    onSuccess: suspend (T) -> R
 ) : Flow<UiResult<R>> = flow {
     emit(UiResult.Loading)
     execute().onSuccess {

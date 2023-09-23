@@ -22,6 +22,7 @@ import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
 import dev.rezyfr.trackerr.presentation.screens.main.MainMenu
 import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
+import dev.rezyfr.trackerr.presentation.screens.reportwrap.ReportWrapScreen
 import dev.rezyfr.trackerr.presentation.screens.start.StartScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
 
@@ -57,6 +58,7 @@ fun RootScreen(
                                 is MainComponent.Tab.Transaction -> MainMenu(child.mainComponent)
                                 is MainComponent.Screen.AddTransaction -> AddTransactionScreen(mainComponentInstance.addTransactionComponent)
                                 is MainComponent.Screen.AddCategory -> AddCategoryScreen(mainComponentInstance.addCategoryComponent)
+                                is MainComponent.Screen.ReportWrap -> ReportWrapScreen(mainComponentInstance.reportWrapComponent)
                             }
                         }
                     }

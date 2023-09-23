@@ -6,3 +6,6 @@ SELECT * FROM CategoryEntity WHERE type = :type;
 
 getAllCategories:
 SELECT * FROM CategoryEntity;
+
+getCategoryById:
+SELECT * FROM CategoryEntity WHERE id = :id;

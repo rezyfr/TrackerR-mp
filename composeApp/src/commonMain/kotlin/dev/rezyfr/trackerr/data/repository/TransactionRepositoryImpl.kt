@@ -2,6 +2,7 @@ package dev.rezyfr.trackerr.data.repository
 
 import dev.rezyfr.trackerr.data.remote.dto.handleResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionFrequencyResponse
+import dev.rezyfr.trackerr.data.remote.dto.response.TransactionReportResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionSummaryResponse
 import dev.rezyfr.trackerr.data.remote.dto.response.TransactionWithDateResponse
@@ -47,5 +48,9 @@ class TransactionRepositoryImpl(
         categoryIds: String?,
     ): Result<List<TransactionWithDateResponse>> {
         return transactionService.getTransactionWithDate(sortOrder, type, categoryIds).handleResponse()
+    }
+
+    override suspend fun getTransactionReport(): Result<TransactionReportResponse> {
+        return transactionService.getTransactionReport().handleResponse()
     }
 }
