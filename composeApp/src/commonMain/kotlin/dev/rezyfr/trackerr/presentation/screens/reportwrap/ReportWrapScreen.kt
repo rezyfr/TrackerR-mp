@@ -1,24 +1,28 @@
 package dev.rezyfr.trackerr.presentation.screens.reportwrap
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.seiko.imageloader.rememberImagePainter
 import dev.rezyfr.trackerr.domain.UiResult
-import dev.rezyfr.trackerr.domain.model.CategoryModel
 import dev.rezyfr.trackerr.domain.model.transaction.TransactionReportModel
 import dev.rezyfr.trackerr.presentation.HSpacer
 import dev.rezyfr.trackerr.presentation.VSpacer
@@ -66,11 +70,15 @@ private fun ReportWrapContent(
     var index by remember { mutableStateOf(0) }
 
     Box(
-        Modifier.fillMaxSize()
-            .background(if (index == 0) Red100 else Green100)
+        Modifier.fillMaxSize().background(if (index == 0) Red100 else Green100)
     ) {
         if (state.report is UiResult.Success) {
-            ReportContent(state.report.data.totalAmount, state.report.data.income)
+            ReportContent(
+                totalAmount = state.report.data.totalAmount,
+                reportItem = state.report.data.income,
+                onStoryProgressFinish = { index++ },
+                currentIndex = index
+            )
         }
     }
 }
@@ -78,7 +86,24 @@ private fun ReportWrapContent(
 private fun BoxScope.ReportContent(
     totalAmount: Long,
     reportItem: TransactionReportModel.ReportItem,
+    currentIndex: Int,
+    onStoryProgressFinish: () -> Unit = {}
 ) {
+    Row(
+        Modifier.align(Alignment.TopCenter)
+            .fillMaxWidth()
+            .padding(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        repeat(2) {
+            StoryProgress(
+                onStoryProgressFinish = onStoryProgressFinish,
+                index = it,
+                currentIndex = currentIndex,
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
     Column(
         Modifier.align(Alignment.Center),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -98,6 +123,44 @@ private fun BoxScope.ReportContent(
         reportItem
     )
 }
+@Composable
+fun StoryProgress(
+    modifier: Modifier = Modifier,
+    onStoryProgressFinish: () -> Unit = {},
+    currentIndex: Int,
+    index: Int
+) {
+    Napier.d("Current Index: $currentIndex")
+    val progress = remember { Animatable(0f) }
+
+    StoryProgressBar(
+        modifier,
+        progress.value,
+    )
+
+    LaunchedEffect(currentIndex) {
+        if (currentIndex != index) return@LaunchedEffect
+        progress.animateTo(1f, animationSpec = tween(3000, easing = LinearEasing))
+        if (progress.value == 1f) {
+            onStoryProgressFinish.invoke()
+        }
+    }
+}
+
+@Composable
+fun StoryProgressBar(
+    modifier: Modifier = Modifier,
+    progress: Float,
+) {
+    LinearProgressIndicator(
+        progress = progress,
+        modifier = modifier.height(4.dp),
+        color = MaterialTheme.colorScheme.background,
+        trackColor = MaterialTheme.colorScheme.background.copy(alpha = 0.1f),
+        strokeCap = StrokeCap.Round
+    )
+}
+
 @Composable
 private fun ReportCategoryCard(
     modifier: Modifier = Modifier,
@@ -140,8 +203,10 @@ private fun ReportCategoryCard(
                 Text(reportItem.category.name, style = MaterialTheme.typography.titleSmall)
             }
         }
-        Text(reportItem.categoryAmount.format(), style = MaterialTheme.typography.bodySmall.copy(
-            fontSize = 36.sp
-        ))
+        Text(
+            reportItem.categoryAmount.format(), style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 36.sp
+            )
+        )
     }
 }

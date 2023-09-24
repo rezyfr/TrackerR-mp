@@ -1,6 +1,7 @@
 package dev.rezyfr.trackerr.presentation.screens.reportwrap
 
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.mvikotlin.core.store.StoreFactory
 import com.arkivanov.mvikotlin.extensions.coroutines.stateFlow
 import dev.rezyfr.trackerr.presentation.screens.reportwrap.store.ReportWrapStore

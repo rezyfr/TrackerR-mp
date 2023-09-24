@@ -9,6 +9,7 @@ import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import com.arkivanov.decompose.value.Value
 import com.arkivanov.decompose.value.operator.map
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import com.arkivanov.mvikotlin.core.store.StoreFactory
@@ -42,7 +43,7 @@ class MainComponent(
     private val addTransaction: (ComponentContext, (AddTransactionComponent.Action) -> Unit) -> AddTransactionComponent,
     private val addCategory: (ComponentContext, (AddCategoryComponent.Action) -> Unit) -> AddCategoryComponent,
     private val reportWrap: (ComponentContext, (ReportWrapComponent.Action) -> Unit) -> ReportWrapComponent,
-) : ComponentContext by componentContext, KoinComponent {
+) : ComponentContext by componentContext, BackHandlerOwner, KoinComponent {
 
     private val getCategoriesUseCase: GetCategoriesUseCase by inject()
 
@@ -245,6 +246,10 @@ class MainComponent(
                 navigation.pop()
             }
         }
+    }
+
+    fun onBackClicked(){
+        navigation.pop()
     }
 
     private sealed class Configuration : Parcelable {

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalDecomposeApi::class)
+
 package dev.rezyfr.trackerr.presentation.screens.root
 
 import androidx.compose.foundation.background
@@ -8,9 +10,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.Children
+import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.predictiveBackAnimation
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.slide
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.stackAnimation
+import com.arkivanov.essenty.backhandler.BackHandlerOwner
 import dev.rezyfr.trackerr.domain.UiResult
 import dev.rezyfr.trackerr.presentation.screens.auth.AuthComponent
 import dev.rezyfr.trackerr.presentation.screens.create.account.AddAccountScreen
@@ -26,6 +31,7 @@ import dev.rezyfr.trackerr.presentation.screens.reportwrap.ReportWrapScreen
 import dev.rezyfr.trackerr.presentation.screens.start.StartScreen
 import dev.rezyfr.trackerr.presentation.theme.Light20
 
+@OptIn(ExperimentalDecomposeApi::class)
 @Composable
 fun RootScreen(
     component: RootComponent,
@@ -51,7 +57,13 @@ fun RootScreen(
                     }
                 }
                 is RootComponent.Child.Main -> {
-                    Children(child.mainComponent.child) { mainChild ->
+                    Children(
+                        child.mainComponent.child,
+                        animation = predictiveBackAnimation(
+                            backHandler = child.mainComponent.backHandler,
+                            onBack = { child.mainComponent.onBackClicked() }
+                        )
+                    ) { mainChild ->
                         mainChild.instance.let { mainComponentInstance ->
                             when (mainComponentInstance) {
                                 is MainComponent.Tab.Home,
