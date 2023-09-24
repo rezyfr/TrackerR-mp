@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -34,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -50,6 +52,9 @@ import dev.rezyfr.trackerr.presentation.theme.Light40
 import dev.rezyfr.trackerr.presentation.theme.Light80
 import dev.rezyfr.trackerr.presentation.theme.Red100
 import io.github.aakira.napier.Napier
+import kotlinx.datetime.Clock
+
+private const val STORY_MAX_PROGRESS = 1f
 
 @Composable
 fun ReportWrapScreen(
@@ -68,16 +73,14 @@ private fun ReportWrapContent(
     onAction: (ReportWrapComponent.Action) -> Unit
 ) {
     var index by remember { mutableStateOf(0) }
-
-    Box(
-        Modifier.fillMaxSize().background(if (index == 0) Red100 else Green100)
-    ) {
+    Box(Modifier.fillMaxSize().background(if (index == 0) Red100 else Green100)) {
         if (state.report is UiResult.Success) {
             ReportContent(
                 totalAmount = state.report.data.totalAmount,
                 reportItem = state.report.data.income,
                 onStoryProgressFinish = { index++ },
-                currentIndex = index
+                currentIndex = index,
+                onStoryFinish = { onAction(ReportWrapComponent.Action.NavigateBack) }
             )
         }
     }
@@ -87,7 +90,8 @@ private fun BoxScope.ReportContent(
     totalAmount: Long,
     reportItem: TransactionReportModel.ReportItem,
     currentIndex: Int,
-    onStoryProgressFinish: () -> Unit = {}
+    onStoryProgressFinish: () -> Unit = {},
+    onStoryFinish: (ReportWrapComponent.Action) -> Unit
 ) {
     Row(
         Modifier.align(Alignment.TopCenter)
@@ -95,14 +99,13 @@ private fun BoxScope.ReportContent(
             .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        repeat(2) {
-            StoryProgress(
-                onStoryProgressFinish = onStoryProgressFinish,
-                index = it,
-                currentIndex = currentIndex,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        StoryProgress(
+            onStoryProgressFinish = onStoryProgressFinish,
+            currentIndex = currentIndex,
+            modifier = Modifier.weight(1f),
+            steps = 2,
+            onStoryFinish = onStoryFinish
+        )
     }
     Column(
         Modifier.align(Alignment.Center),
@@ -128,21 +131,33 @@ fun StoryProgress(
     modifier: Modifier = Modifier,
     onStoryProgressFinish: () -> Unit = {},
     currentIndex: Int,
-    index: Int
+    steps: Int,
+    onStoryFinish: (ReportWrapComponent.Action) -> Unit
 ) {
-    Napier.d("Current Index: $currentIndex")
     val progress = remember { Animatable(0f) }
-
-    StoryProgressBar(
-        modifier,
-        progress.value,
-    )
+    repeat(steps) {
+        StoryProgressBar(
+            modifier,
+            progress = when {
+                currentIndex == it -> progress.value
+                it <= currentIndex -> STORY_MAX_PROGRESS
+                else -> 0f
+            }
+        )
+    }
 
     LaunchedEffect(currentIndex) {
-        if (currentIndex != index) return@LaunchedEffect
-        progress.animateTo(1f, animationSpec = tween(3000, easing = LinearEasing))
-        if (progress.value == 1f) {
-            onStoryProgressFinish.invoke()
+        if (currentIndex < steps) {
+            progress.animateTo(STORY_MAX_PROGRESS, animationSpec = tween(3000, easing = LinearEasing))
+        }
+        if (currentIndex < steps) {
+            onStoryProgressFinish()
+        }
+        if (progress.value == STORY_MAX_PROGRESS && currentIndex < steps-1) {
+            progress.snapTo(0f)
+        }
+        if (progress.value == STORY_MAX_PROGRESS && currentIndex == steps-1) {
+            onStoryFinish(ReportWrapComponent.Action.NavigateBack)
         }
     }
 }
@@ -160,7 +175,6 @@ fun StoryProgressBar(
         strokeCap = StrokeCap.Round
     )
 }
-
 @Composable
 private fun ReportCategoryCard(
     modifier: Modifier = Modifier,
