@@ -41,7 +41,7 @@ interface AddTransactionStore : Store<AddTransactionStore.Intent, AddTransaction
         data class OnWalletChange(val wallet: WalletModel) : Result()
         data class OnDateChange(val date: DateProperty) : Result()
         data class OnTypeChange(val type: CategoryType) : Result()
-        data class CreateTransaction(val result: UiResult<TransactionModel>) : Result()
+        data class CreateTransaction(val result: UiResult<Unit>) : Result()
         data class GetWallets(val result: UiResult<List<WalletModel>>) : Result()
         data class GetCategories(val result: UiResult<List<CategoryModel>>) : Result()
     }
@@ -57,7 +57,7 @@ interface AddTransactionStore : Store<AddTransactionStore.Intent, AddTransaction
         val description: String = "",
         val selectedWallet: WalletModel? = null,
         val selectedCategory: CategoryModel? = null,
-        val transactionResult: UiResult<TransactionModel> = UiResult.Uninitialized,
+        val transactionResult: UiResult<Unit> = UiResult.Uninitialized,
         val walletResult: UiResult<List<WalletModel>> = UiResult.Uninitialized,
         val dateOptions: Triple<List<DateProperty>, List<DateProperty>, List<DateProperty>> = Triple(
             calculateDayOfMonths(),

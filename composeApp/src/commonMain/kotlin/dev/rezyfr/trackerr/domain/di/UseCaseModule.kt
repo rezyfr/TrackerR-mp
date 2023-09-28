@@ -35,7 +35,7 @@ fun getUseCaseModule() = module {
     // Transaction
     single { GetRecentTransactionUseCase(get(), get()) }
     single { GetTransactionSummaryUseCase(get(), get()) }
-    single { CreateTransactionUseCase(get(), get()) }
+    single { CreateTransactionUseCase(get()) }
     single { GetTransactionFrequencyUseCase(get(), get())}
     single { GetTransactionWithDateUseCase(get(), get()) }
     single { GetTransactionReportUseCase(get(), get(), get(), get()) }

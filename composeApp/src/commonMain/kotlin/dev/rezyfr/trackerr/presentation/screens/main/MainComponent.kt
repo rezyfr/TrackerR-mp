@@ -25,8 +25,10 @@ import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import dev.rezyfr.trackerr.presentation.screens.create.category.AddCategoryComponent
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.main.home.HomeComponent
+import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
 import dev.rezyfr.trackerr.presentation.screens.main.transaction.TransactionComponent
 import dev.rezyfr.trackerr.presentation.screens.reportwrap.ReportWrapComponent
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -224,7 +226,10 @@ class MainComponent(
                 navigation.pop()
             }
             AddTransactionComponent.Action.Finish -> {
-                navigation.pop()
+                navigation.pop {
+                    Napier.d("ActiveInstance: ${stack.value.active.instance}")
+                    (stack.value.active.instance as? Tab.Home)?.homeComponent?.onEvent(HomeStore.Intent.Init(monthPickerState.value.selectedMonth, true))
+                }
             }
             AddTransactionComponent.Action.NavigateToAddCategory -> {
                 navigation.push(Configuration.AddCategory)

@@ -199,7 +199,7 @@ fun MainTabContent(
                 is MainComponent.Tab.Home -> HomeTab(
                     child.homeComponent,
                     onMonthClick = onMonthClick,
-                    selectedMonth = selectedMonth
+                    selectedMonth = selectedMonth,
                 )
 
                 is MainComponent.Tab.Transaction -> {

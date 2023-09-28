@@ -14,6 +14,8 @@ import dev.rezyfr.trackerr.domain.usecase.transaction.GetTransactionSummaryUseCa
 import dev.rezyfr.trackerr.domain.usecase.wallet.GetWalletBalanceUseCase
 import dev.rezyfr.trackerr.mainDispatcher
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
+import dev.rezyfr.trackerr.presentation.component.base.datepicker.toMonth
+import dev.rezyfr.trackerr.presentation.component.util.getCurrentLdt
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -44,15 +46,16 @@ class HomeStoreFactory(
         ) {
 
         var hasSync: Boolean = false
+        var month: Int = -1
 
         private fun syncData(state: HomeStore.State, month: Month, forceSync: Boolean) {
             if (hasSync && !forceSync) return
+            hasSync = true
             getRecentTransaction()
             getTransactionSummary(month.value)
             getWalletBalance()
             syncCategory()
             getTransactionFrequency(state.selectedGranularity)
-            hasSync = true
         }
 
         private fun syncCategory() {
@@ -84,6 +87,8 @@ class HomeStoreFactory(
         }
 
         private fun getTransactionSummary(month: Int) {
+            if (this.month == month) return
+            this.month = month
             scope.launch {
                 dispatch(HomeStore.Result.GetTransactionSummary(UiResult.Loading))
                 getTransactionSummaryUseCase.execute(month).handleResult(

@@ -28,12 +28,12 @@ class TransactionServiceImpl(
     private val settings: Settings,
     baseUrl: String
 ) : TransactionService {
-    private val transaction = "$baseUrl/transaction/"
-    private val recent = "$transaction/recent"
-    private val summary = "$transaction/summary"
-    private val frequency = "$transaction/frequency"
-    private val withDate = "$transaction/with-date"
-    private val report = "$transaction/report"
+    private val recent = "$baseUrl/transaction/recent"
+    private val summary = "$baseUrl/transaction/summary"
+    private val create = "$baseUrl/transaction"
+    private val frequency = "$baseUrl/transaction/frequency"
+    private val withDate = "$baseUrl/transaction/with-date"
+    private val report = "$baseUrl/transaction/report"
     override suspend fun getRecentTransaction(): NetworkResponse<BaseDto<List<TransactionResponse>>> {
         return execute {
             httpClient.get {
@@ -63,7 +63,7 @@ class TransactionServiceImpl(
         return execute {
             httpClient.post {
                 setAuthHeader(settings[SettingsConstant.KEY_ACCESS_TOKEN, ""])
-                url(transaction)
+                url(create)
                 setJsonBody(
                     CreateTransactionRequest(
                         amount = amount,

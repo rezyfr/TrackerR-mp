@@ -37,7 +37,6 @@ interface HomeStore: Store<HomeStore.Intent, HomeStore.State, HomeStore.Label> {
         val transactionSummary: UiResult<TransactionSummaryModel> = UiResult.Uninitialized,
         val transactionFrequency : UiResult<TransactionFrequencyModel> = UiResult.Uninitialized,
         val selectedGranularity: Granularity = Granularity.WEEK,
-        val hasSync: Boolean = false
     )
 
     sealed class Label {

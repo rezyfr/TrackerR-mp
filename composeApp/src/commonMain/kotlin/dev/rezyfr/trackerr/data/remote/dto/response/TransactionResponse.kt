@@ -21,5 +21,5 @@ data class TransactionResponse(
     @SerialName("walletIcon")
     val walletIcon: String,
     @SerialName("category")
-    val category: CategoryResponse
+    val category: CategoryResponse?
 )

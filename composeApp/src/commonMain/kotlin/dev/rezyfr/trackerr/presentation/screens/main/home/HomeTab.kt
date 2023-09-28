@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.rounded.ExpandCircleDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,8 +39,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,11 +62,10 @@ import dev.rezyfr.trackerr.presentation.VSpacer
 import dev.rezyfr.trackerr.presentation.component.base.TrCapsuleButton
 import dev.rezyfr.trackerr.presentation.component.base.TrOutlinedButton
 import dev.rezyfr.trackerr.presentation.component.base.datepicker.Month
-import dev.rezyfr.trackerr.presentation.component.ui.BottomSheet
+import dev.rezyfr.trackerr.presentation.component.ui.LoadingDots
 import dev.rezyfr.trackerr.presentation.component.ui.TransactionItem
 import dev.rezyfr.trackerr.presentation.component.util.format
 import dev.rezyfr.trackerr.presentation.screens.main.home.store.HomeStore
-import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
 import dev.rezyfr.trackerr.presentation.theme.Green100
 import dev.rezyfr.trackerr.presentation.theme.HomeTopBackground
 import dev.rezyfr.trackerr.presentation.theme.Red100
@@ -82,7 +83,7 @@ fun HomeTab(
     val state by homeComponent.state.collectAsState()
 
     LaunchedEffect(true) {
-        homeComponent.onEvent(HomeStore.Intent.Init(selectedMonth))
+        homeComponent.onEvent(HomeStore.Intent.Init(selectedMonth, false))
     }
 
     LaunchedEffect(selectedMonth) {
@@ -93,7 +94,8 @@ fun HomeTab(
         state = state,
         onEvent = homeComponent::onEvent,
         selectedMonth = selectedMonth.text,
-        onMonthClick = onMonthClick
+        onMonthClick = onMonthClick,
+        refresh = { homeComponent.onEvent(HomeStore.Intent.Init(selectedMonth, true)) },
     )
 }
 
@@ -103,10 +105,14 @@ fun HomeScreen(
     selectedMonth: String,
     onEvent: (HomeStore.Intent) -> Unit = {},
     onMonthClick: () -> Unit = {},
+    refresh: () -> Unit = {}
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(
+        Modifier
+            .fillMaxSize()
+    ) {
         Scaffold(
-            topBar = { HomeTopBar(selectedMonth, onMonthClick) }
+            topBar = { HomeTopBar(selectedMonth, refresh, onMonthClick) }
         ) {
             HomeContent(
                 state = state,
@@ -116,11 +122,11 @@ fun HomeScreen(
         }
     }
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeTopBar(
     selectedMonth: String,
+    onSyncClicked: () -> Unit = {},
     onMonthClick: () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
@@ -160,7 +166,18 @@ private fun HomeTopBar(
                 Icons.Filled.Notifications,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(16.dp).size(32.dp)
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
+                    .size(32.dp)
+            )
+            Icon(
+                Icons.Filled.Refresh,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .padding(top = 16.dp, bottom = 16.dp, end = 16.dp)
+                    .size(32.dp)
+                    .clickable { onSyncClicked.invoke() }
             )
         },
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -169,7 +186,6 @@ private fun HomeTopBar(
         )
     )
 }
-
 @Composable
 private fun HomeContent(
     modifier: Modifier = Modifier,
@@ -197,7 +213,6 @@ private fun HomeContent(
         }
     }
 }
-
 @Composable
 private fun FrequencySection(
     transactionFrequency: UiResult<TransactionFrequencyModel>,
@@ -238,8 +253,11 @@ private fun FrequencySection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(185.dp)
-                    .background(MaterialTheme.colorScheme.background)
-            )
+                    .background(MaterialTheme.colorScheme.background),
+                contentAlignment = Alignment.Center
+            ) {
+                LoadingDots()
+            }
         }
         VSpacer(8)
         GranularitySection(
@@ -251,7 +269,6 @@ private fun FrequencySection(
         )
     }
 }
-
 @Composable
 fun GranularitySection(
     modifier: Modifier = Modifier,
@@ -268,7 +285,6 @@ fun GranularitySection(
         GranularityButton(Granularity.YEAR, selectedGranularity, onClick)
     }
 }
-
 @Composable
 fun GranularityButton(
     granularity: Granularity,
@@ -289,7 +305,6 @@ fun GranularityButton(
         )
     }
 }
-
 @Composable
 private fun SummarySection(
     accBalance: UiResult<Long>,
@@ -314,7 +329,6 @@ private fun SummarySection(
         TransactionSummary(modifier.padding(bottom = 24.dp), transactionSummary)
     }
 }
-
 @Composable
 private fun TransactionSummary(
     modifier: Modifier = Modifier,
@@ -325,111 +339,122 @@ private fun TransactionSummary(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = modifier.padding(horizontal = 16.dp)
     ) {
-        if (summary is UiResult.Success) {
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Green100)
-            ) {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
+        when (summary) {
+            is UiResult.Success -> {
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.cardColors(containerColor = Green100)
                 ) {
-                    Box(
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.onPrimary)
-                            .size(36.dp)
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            Res.image.ic_income.painterResource(),
-                            null,
-                            Modifier.size(24.dp).align(Alignment.Center)
-                        )
+                        Box(
+                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.onPrimary)
+                                .size(36.dp)
+                        ) {
+                            Image(
+                                Res.image.ic_income.painterResource(),
+                                null,
+                                Modifier.size(24.dp).align(Alignment.Center)
+                            )
+                        }
+                        HSpacer(10)
+                        Column(
+                            Modifier.wrapContentHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "Income",
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary)
+                            )
+                            val totalIncome = summary.data.totalIncome.format()
+                            Text(
+                                "Rp$totalIncome",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = if (totalIncome.length > 6) 14.sp else 16.sp
+                                ),
+                                maxLines = 1
+                            )
+                        }
                     }
-                    HSpacer(10)
-                    Column(
-                        Modifier.wrapContentHeight(),
-                        verticalArrangement = Arrangement.SpaceBetween
+                }
+                Card(
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = CardDefaults.cardColors(containerColor = Red100)
+                ) {
+                    Row(
+                        Modifier.fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            "Income",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary)
-                        )
-                        val totalIncome = summary.data.totalIncome.format()
-                        Text(
-                            "Rp$totalIncome",
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontSize = if (totalIncome.length > 6) 14.sp else 16.sp
-                            ),
-                            maxLines = 1
-                        )
+                        Box(
+                            modifier = Modifier.clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.onPrimary)
+                                .size(36.dp)
+                        ) {
+                            Image(
+                                Res.image.ic_expense.painterResource(),
+                                null,
+                                Modifier.size(24.dp).align(Alignment.Center)
+                            )
+                        }
+                        HSpacer(10)
+                        Column(
+                            Modifier.wrapContentHeight(),
+                            verticalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                "Expenses",
+                                style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary),
+                            )
+                            val totalExpense = summary.data.totalExpense.format()
+                            Text(
+                                "Rp$totalExpense",
+                                style = MaterialTheme.typography.bodyLarge.copy(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontSize = if (totalExpense.length > 6) 14.sp else 16.sp
+                                ),
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
-            Card(
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(28.dp),
-                colors = CardDefaults.cardColors(containerColor = Red100)
-            ) {
-                Row(
-                    Modifier.fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier.clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.onPrimary)
-                            .size(36.dp)
-                    ) {
-                        Image(
-                            Res.image.ic_expense.painterResource(),
-                            null,
-                            Modifier.size(24.dp).align(Alignment.Center)
-                        )
-                    }
-                    HSpacer(10)
-                    Column(
-                        Modifier.wrapContentHeight(),
-                        verticalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(
-                            "Expenses",
-                            style = MaterialTheme.typography.bodySmall.copy(color = MaterialTheme.colorScheme.onPrimary),
-                        )
-                        val totalExpense = summary.data.totalExpense.format()
-                        Text(
-                            "Rp$totalExpense",
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontSize = if (totalExpense.length > 6) 14.sp else 16.sp
-                            ),
-                            maxLines = 1
-                        )
-                    }
-                }
+
+            is UiResult.Loading -> {
+                LoadingDots()
             }
+
+            else -> {}
         }
     }
 }
-
 @Composable
 private fun AccountBalance(
     modifier: Modifier = Modifier,
     balance: UiResult<Long>
 ) {
     Napier.d("Recompose AccountBalance: $balance")
-    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            "Account Balance", style = MaterialTheme.typography.bodySmall.copy(
-                color = MaterialTheme.colorScheme.tertiary
-            )
-        )
-        VSpacer(4)
+    Column(
+        modifier.heightIn(min = 60.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         when (balance) {
             is UiResult.Success -> {
+                Text(
+                    "Account Balance", style = MaterialTheme.typography.bodySmall.copy(
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                )
+                VSpacer(4)
                 Text(
                     text = "Rp${balance.data.format()}",
                     style = MaterialTheme.typography.titleMedium.copy(fontSize = 40.sp)
@@ -437,16 +462,16 @@ private fun AccountBalance(
             }
 
             is UiResult.Error -> {
-
             }
 
+            is UiResult.Loading -> {
+                LoadingDots()
+            }
             else -> {
-
             }
         }
     }
 }
-
 @Composable
 fun RecentTransaction(
     recent: UiResult<List<TransactionModel>>
@@ -474,12 +499,16 @@ fun RecentTransaction(
             }
         }
 
-        is UiResult.Error -> {
+        is UiResult.Loading -> {
+            Box(Modifier.fillMaxWidth().height(100.dp), contentAlignment = Alignment.Center) {
+                LoadingDots()
+            }
+        }
 
+        is UiResult.Error -> {
         }
 
         else -> {
-
         }
     }
 }
