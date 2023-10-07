@@ -24,7 +24,7 @@ fun main() = application {
         state = rememberWindowState(width = 800.dp, height = 600.dp),
         onCloseRequest = ::exitApplication,
     ) {
-        App(rootComponent) }
+        App(rootComponent, true) }
 }
 
 fun <T> invokeOnAwtSync(block: () -> T): T {

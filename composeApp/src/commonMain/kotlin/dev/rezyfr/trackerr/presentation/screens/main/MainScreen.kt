@@ -61,7 +61,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 
 @Composable
-fun MainMenu(mainComponent: MainComponent) {
+fun MainScreen(mainComponent: MainComponent) {
     var isFabFocused by remember { mutableStateOf(false) }
     val rotation = remember { Animatable(0f) }
     val bgTranslation = remember { Animatable(0f) }
@@ -181,7 +181,7 @@ fun MainMenu(mainComponent: MainComponent) {
 }
 
 @Composable
-fun MainTabContent(
+private fun MainTabContent(
     child: Value<ChildStack<*, MainComponent.Child>>,
     selectedMonth: Month,
     selectedSort: String? = null,
@@ -222,7 +222,7 @@ fun MainTabContent(
 }
 
 @Composable
-fun MainFab(
+private fun MainFab(
     rotation: Float = 0f,
     translation: Float = 0f,
     onClick: () -> Unit = {},
@@ -235,7 +235,7 @@ fun MainFab(
 }
 
 @Composable
-fun IncomeFab(
+private fun IncomeFab(
     translation: Float = 0f,
     onClick: () -> Unit = {},
 ) {
@@ -248,7 +248,7 @@ fun IncomeFab(
 }
 
 @Composable
-fun ExpenseFab(
+private fun ExpenseFab(
     translation: Float = 0f,
     onClick: () -> Unit = {},
 ) {
@@ -261,7 +261,7 @@ fun ExpenseFab(
 }
 
 @Composable
-fun AddFab(
+private fun AddFab(
     rotation: Float = 0f,
     onClick: () -> Unit = {},
 ) {
@@ -308,7 +308,7 @@ fun TrFab(
 }
 
 @Composable
-fun TransparentPrimaryBackground(modifier: Modifier = Modifier, height: Float) {
+private fun TransparentPrimaryBackground(modifier: Modifier = Modifier, height: Float) {
     Box(
         modifier
             .fillMaxWidth()
@@ -325,7 +325,7 @@ fun TransparentPrimaryBackground(modifier: Modifier = Modifier, height: Float) {
 }
 
 @Composable
-fun RootNavBar(
+private fun RootNavBar(
     tabs: List<MainTab> = listOf(MainTab.Home, MainTab.Transaction),
     onTabSelected: (Int) -> Unit,
     selectedTabIndex: Int,

@@ -24,7 +24,8 @@ import dev.rezyfr.trackerr.presentation.screens.create.transaction.AddTransactio
 import dev.rezyfr.trackerr.presentation.screens.create.transaction.component.AddCategory
 import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 import dev.rezyfr.trackerr.presentation.screens.main.MainComponent
-import dev.rezyfr.trackerr.presentation.screens.main.MainMenu
+import dev.rezyfr.trackerr.presentation.screens.main.MainScreen
+import dev.rezyfr.trackerr.presentation.screens.main.MainScreenLarge
 import dev.rezyfr.trackerr.presentation.screens.onboarding.OnboardingScreen
 import dev.rezyfr.trackerr.presentation.screens.register.RegisterScreen
 import dev.rezyfr.trackerr.presentation.screens.reportwrap.ReportWrapScreen
@@ -35,6 +36,7 @@ import dev.rezyfr.trackerr.presentation.theme.Light20
 @Composable
 fun RootScreen(
     component: RootComponent,
+    isLargeScreen: Boolean = false
 ) {
     val state = component.state.collectAsState()
 
@@ -67,7 +69,8 @@ fun RootScreen(
                         mainChild.instance.let { mainComponentInstance ->
                             when (mainComponentInstance) {
                                 is MainComponent.Tab.Home,
-                                is MainComponent.Tab.Transaction -> MainMenu(child.mainComponent)
+                                is MainComponent.Tab.Transaction -> if(isLargeScreen.not()) MainScreen(child.mainComponent)
+                                else MainScreenLarge(child.mainComponent)
                                 is MainComponent.Screen.AddTransaction -> AddTransactionScreen(mainComponentInstance.addTransactionComponent)
                                 is MainComponent.Screen.AddCategory -> AddCategoryScreen(mainComponentInstance.addCategoryComponent)
                                 is MainComponent.Screen.ReportWrap -> ReportWrapScreen(mainComponentInstance.reportWrapComponent)

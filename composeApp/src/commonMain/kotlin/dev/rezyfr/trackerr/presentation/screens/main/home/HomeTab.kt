@@ -270,7 +270,7 @@ private fun FrequencySection(
     }
 }
 @Composable
-fun GranularitySection(
+private fun GranularitySection(
     modifier: Modifier = Modifier,
     selectedGranularity: Granularity = Granularity.WEEK,
     onClick: (Granularity) -> Unit = {}
@@ -473,7 +473,7 @@ private fun AccountBalance(
     }
 }
 @Composable
-fun RecentTransaction(
+private fun RecentTransaction(
     recent: UiResult<List<TransactionModel>>
 ) {
     Napier.d("Recompose RecentTransaction: $recent")

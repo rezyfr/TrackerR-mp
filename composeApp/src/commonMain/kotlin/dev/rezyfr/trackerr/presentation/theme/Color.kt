@@ -63,5 +63,4 @@ fun String.color(): Color {
 fun CategoryType.typeIndicatorColor() = when (this) {
     CategoryType.EXPENSE -> Red100
     CategoryType.INCOME -> Green100
-    else -> Green100
 }

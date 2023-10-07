@@ -9,8 +9,9 @@ import dev.rezyfr.trackerr.presentation.theme.AppTheme
 @Composable
 fun App(
     component: RootComponent,
+    isLargeScreen: Boolean = false
 ) {
     AppTheme {
-        RootScreen(component)
+        RootScreen(component, isLargeScreen)
     }
 }
