@@ -29,5 +29,6 @@ class RegisterComponent(
     sealed class Action {
         object NavigateToLogin : Action()
         object NavigateBack : Action()
+        object NavigateToOnboarding : Action()
     }
 }

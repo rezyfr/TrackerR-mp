@@ -47,7 +47,9 @@ fun RootScreen(
                     Children(child.authComponent.childStack, animation = stackAnimation(slide())) {
                         it.instance.let { authChild ->
                             when (authChild) {
-                                is AuthComponent.Child.Login -> LoginScreen(authChild.loginComponent)
+                                is AuthComponent.Child.Login -> LoginScreen(authChild.loginComponent) {
+                                    component.onAction(RootComponent.Action.NavigateToMain)
+                                }
                                 is AuthComponent.Child.Register -> RegisterScreen(authChild.registerComponent)
                                 is AuthComponent.Child.Onboarding -> OnboardingScreen(authChild.onboardingComponent)
                                 is AuthComponent.Child.Start -> StartScreen(authChild.startComponent)

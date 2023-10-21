@@ -46,7 +46,7 @@ fun TransactionItem(
                 null,
                 modifier = Modifier.size(60.dp)
                     .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(Color(transaction.categoryColor).copy(alpha = 0.2f))
                     .padding(16.dp),
                 colorFilter = ColorFilter.tint(Color(transaction.categoryColor))
             )

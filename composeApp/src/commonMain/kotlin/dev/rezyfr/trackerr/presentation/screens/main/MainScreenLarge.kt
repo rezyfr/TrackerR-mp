@@ -3,8 +3,11 @@ package dev.rezyfr.trackerr.presentation.screens.main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.NavigationRail
@@ -22,6 +26,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -56,10 +61,11 @@ fun MainScreenLarge(mainComponent: MainComponent) {
         RootNavRail(
             onTabSelected = mainComponent::onTabSelected,
             selectedTabIndex = activeIndex,
-            onFabClick = { mainComponent.onAction(MainComponent.Action.NavigateToAddTransaction) }
+            onFabClick = { mainComponent.onAction(MainComponent.Action.NavigateToAddTransaction) },
+            modifier = Modifier.weight(2f)
         )
         HSpacer(8)
-        Box(Modifier.weight(1f)) {
+        Box(Modifier.weight(8f)) {
             MainTabContent(
                 child = mainComponent.child,
                 selectedMonth = monthPickerState.selectedMonth,
@@ -181,6 +187,7 @@ private fun AddFab(
 }
 @Composable
 private fun RootNavRail(
+    modifier: Modifier = Modifier,
     tabs: List<MainTab> = listOf(MainTab.Home, MainTab.Transaction),
     onTabSelected: (Int) -> Unit,
     selectedTabIndex: Int,
@@ -190,7 +197,7 @@ private fun RootNavRail(
         elevation = 0.dp,
         backgroundColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.primary,
-        modifier = Modifier,
+        modifier = modifier,
         content = {
             Box(
                 Modifier.padding(16.dp)
@@ -211,21 +218,38 @@ private fun RootNavRail(
             VSpacer(8)
             tabs.forEachIndexed { index, tab ->
                 val isSelected = index == selectedTabIndex
-                Box(Modifier.size(72.dp)) {
+                VSpacer(8)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 32.dp)
+                        .noRippleClick { onTabSelected(index) },
+                ) {
                     Image(
-                        modifier = Modifier.size(24.dp).noRippleClick { onTabSelected(index) }.align(Alignment.Center),
+                        modifier = Modifier
+                            .padding(start = 16.dp)
+                            .size(24.dp),
                         painter = if (isSelected) tab.activeIcon.painterResource() else tab.inactiveIcon.painterResource(),
                         contentDescription = null,
                     )
+                    HSpacer(16)
+                    Text(
+                        text = tab.title,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (isSelected) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.tertiary
+                    )
+                    Spacer(Modifier.weight(1f))
                     if (isSelected) {
                         Box(
-                            Modifier.width(6.dp).height(12.dp).align(Alignment.CenterEnd).background(
+                            Modifier.width(6.dp).height(32.dp).background(
                                 MaterialTheme.colorScheme.primary,
                                 RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)
                             )
                         )
                     }
                 }
+                VSpacer(8)
             }
             VSpacer(8)
             AddFab(onClick = onFabClick)

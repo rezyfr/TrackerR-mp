@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,20 +35,20 @@ import dev.rezyfr.trackerr.presentation.component.base.ButtonText
 import dev.rezyfr.trackerr.presentation.component.base.TrPrimaryButton
 import dev.rezyfr.trackerr.presentation.component.base.TrTextField
 import dev.rezyfr.trackerr.presentation.component.base.TrTopBar
+import dev.rezyfr.trackerr.presentation.screens.login.LoginScreen
 import dev.rezyfr.trackerr.presentation.screens.register.store.RegisterStore
 
 @Composable
 fun RegisterScreen(
     registerComponent: RegisterComponent
 ) {
-//    val navigator = LocalNavigator.currentOrThrow
     val registerState by registerComponent.state.collectAsState()
 
-//    LaunchedEffect(registerState.registerResult) {
-//        if (registerState.registerResult is UiResult.Success) {
-//            navigator.replaceAll(LoginScreen())
-//        }
-//    }
+    LaunchedEffect(registerState.registerResult) {
+        if (registerState.registerResult is UiResult.Success) {
+            registerComponent.onAction(RegisterComponent.Action.NavigateToOnboarding)
+        }
+    }
 
     RegisterScreen(
         state = registerState,
@@ -55,7 +56,6 @@ fun RegisterScreen(
         onAction = registerComponent::onAction,
     )
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
@@ -65,7 +65,9 @@ fun RegisterScreen(
 ) {
     Scaffold(
         topBar = {
-            TrTopBar(text = "Sign Up", onBackPressed = { onAction(RegisterComponent.Action.NavigateBack) })
+            TrTopBar(
+                text = "Sign Up",
+                onBackPressed = { onAction(RegisterComponent.Action.NavigateBack) })
         }
     ) {
         RegisterContent(
@@ -76,7 +78,6 @@ fun RegisterScreen(
         )
     }
 }
-
 @Composable
 fun RegisterContent(
     state: RegisterStore.State,
@@ -116,7 +117,6 @@ fun RegisterContent(
         )
     }
 }
-
 @Composable
 fun PasswordField(
     password: String,
@@ -143,7 +143,6 @@ fun PasswordField(
         }
     )
 }
-
 @Composable
 fun SignUpButton(
     registerResult: UiResult<Unit>,
@@ -159,7 +158,6 @@ fun SignUpButton(
         onClick = onClick
     )
 }
-
 @Composable
 fun HaveAccountText(
     modifier: Modifier = Modifier,

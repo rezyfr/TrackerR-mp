@@ -103,7 +103,6 @@ class AuthComponent(
         when (action) {
             is LoginComponent.Action.NavigateToRegister -> navigation.push(Configuration.Register)
             is LoginComponent.Action.NavigateBack -> navigation.pop()
-            is LoginComponent.Action.NavigateToOnboarding -> navigation.push(Configuration.OnBoarding)
         }
     }
 
@@ -111,6 +110,7 @@ class AuthComponent(
         when (action) {
             is RegisterComponent.Action.NavigateToLogin -> navigation.pop()
             is RegisterComponent.Action.NavigateBack -> navigation.pop()
+            is RegisterComponent.Action.NavigateToOnboarding -> navigation.replaceCurrent(Configuration.OnBoarding)
         }
     }
 
